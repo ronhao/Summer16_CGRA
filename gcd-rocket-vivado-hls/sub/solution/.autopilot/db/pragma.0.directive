@@ -1,0 +1,14 @@
+<AutoPilot:ProjectResources xmlns:AutoPilot="com.autoesl.autopilot.ui.directiveView">
+<sourceFile name="">
+<directive functionLabel="" functionName="sub" label="">
+<pragma name="DATA_PACK">
+<option name="variable" positionalBoolean="4" value="io_cmd"/>
+</pragma>
+</directive>
+<directive functionLabel="" functionName="sub" label="">
+<pragma name="DATA_PACK">
+<option name="variable" positionalBoolean="4" value="io_resp"/>
+</pragma>
+</directive>
+</sourceFile>
+</AutoPilot:ProjectResources>

@@ -1,0 +1,278 @@
+
+
+================================================================
+== Vivado HLS Report for 'mul'
+================================================================
+* Date:           Thu Jun 30 16:41:56 2016
+
+* Version:        2015.3 (Build 1368829 on Mon Sep 28 20:31:51 PM 2015)
+* Project:        mul
+* Solution:       solution
+* Product family: zynq
+* Target device:  xc7z020clg484-2
+
+
+================================================================
+== Performance Estimates
+================================================================
++ Timing (ns): 
+    * Summary: 
+    +--------+-------+----------+------------+
+    |  Clock | Target| Estimated| Uncertainty|
+    +--------+-------+----------+------------+
+    |ap_clk  |   5.00|      1.82|        0.62|
+    +--------+-------+----------+------------+
+
++ Latency (clock cycles): 
+    * Summary: 
+    +-----+-----+-----+-----+---------+
+    |  Latency  |  Interval | Pipeline|
+    | min | max | min | max |   Type  |
+    +-----+-----+-----+-----+---------+
+    |   18|   18|   19|   19|   none  |
+    +-----+-----+-----+-----+---------+
+
+    + Detail: 
+        * Instance: 
+        N/A
+
+        * Loop: 
+        N/A
+
+============================================================
++ Verbose Summary: Synthesis Manager
+============================================================
+InlineROM: 1
+ExposeGlobal: 0
+============================================================
++ Verbose Summary: CDFG Model
+============================================================
+IsTopModel: 1
+ResetActiveHigh: 1
+IsCombinational: 0
+IsDatapathOnly: 0
+HasWiredReturn: 1
+HasMFsm: 0
+HasVarLatency: 1
+IsPipeline: 0
+IsRtlPipelined: 0
+IsInstanceOverlapped: 0
+IsDontTouch: 0
+HasImplIP: 0
+IsGatedGlobalClock: 0
+
+
+============================================================
++ Verbose Summary: Schedule
+============================================================
+* Number of FSM states: 19
+* Pipeline: 0
+* Dataflow Pipeline: 0
+
+* FSM state transitions: 
+1 --> 
+	2  / true
+2 --> 
+	3  / true
+3 --> 
+	4  / true
+4 --> 
+	5  / true
+5 --> 
+	6  / true
+6 --> 
+	7  / true
+7 --> 
+	8  / true
+8 --> 
+	9  / true
+9 --> 
+	10  / true
+10 --> 
+	11  / true
+11 --> 
+	12  / true
+12 --> 
+	13  / true
+13 --> 
+	14  / true
+14 --> 
+	15  / true
+15 --> 
+	16  / true
+16 --> 
+	17  / true
+17 --> 
+	18  / true
+18 --> 
+	19  / true
+19 --> 
+* FSM state operations: 
+
+ <State 1>: 1.82ns
+ST_1: tmp [1/1] 0.00ns
+:6  %tmp = call i160 @_ssdm_op_Read.ap_hs.volatile.i160P(i160* %io_cmd_V)
+
+ST_1: tmp_rd_V [1/1] 0.00ns
+:7  %tmp_rd_V = call i5 @_ssdm_op_PartSelect.i5.i160.i32.i32(i160 %tmp, i32 20, i32 24)
+
+ST_1: a_V [1/1] 0.00ns
+:8  %a_V = call i64 @_ssdm_op_PartSelect.i64.i160.i32.i32(i160 %tmp, i32 32, i32 95)
+
+ST_1: b_V [1/1] 0.00ns
+:9  %b_V = call i64 @_ssdm_op_PartSelect.i64.i160.i32.i32(i160 %tmp, i32 96, i32 159)
+
+ST_1: a_V_2 [19/19] 1.82ns
+:10  %a_V_2 = mul i64 %b_V, %a_V
+
+
+ <State 2>: 1.82ns
+ST_2: a_V_2 [18/19] 1.82ns
+:10  %a_V_2 = mul i64 %b_V, %a_V
+
+
+ <State 3>: 1.82ns
+ST_3: a_V_2 [17/19] 1.82ns
+:10  %a_V_2 = mul i64 %b_V, %a_V
+
+
+ <State 4>: 1.82ns
+ST_4: a_V_2 [16/19] 1.82ns
+:10  %a_V_2 = mul i64 %b_V, %a_V
+
+
+ <State 5>: 1.82ns
+ST_5: a_V_2 [15/19] 1.82ns
+:10  %a_V_2 = mul i64 %b_V, %a_V
+
+
+ <State 6>: 1.82ns
+ST_6: a_V_2 [14/19] 1.82ns
+:10  %a_V_2 = mul i64 %b_V, %a_V
+
+
+ <State 7>: 1.82ns
+ST_7: a_V_2 [13/19] 1.82ns
+:10  %a_V_2 = mul i64 %b_V, %a_V
+
+
+ <State 8>: 1.82ns
+ST_8: a_V_2 [12/19] 1.82ns
+:10  %a_V_2 = mul i64 %b_V, %a_V
+
+
+ <State 9>: 1.82ns
+ST_9: a_V_2 [11/19] 1.82ns
+:10  %a_V_2 = mul i64 %b_V, %a_V
+
+
+ <State 10>: 1.82ns
+ST_10: a_V_2 [10/19] 1.82ns
+:10  %a_V_2 = mul i64 %b_V, %a_V
+
+
+ <State 11>: 1.82ns
+ST_11: a_V_2 [9/19] 1.82ns
+:10  %a_V_2 = mul i64 %b_V, %a_V
+
+
+ <State 12>: 1.82ns
+ST_12: a_V_2 [8/19] 1.82ns
+:10  %a_V_2 = mul i64 %b_V, %a_V
+
+
+ <State 13>: 1.82ns
+ST_13: a_V_2 [7/19] 1.82ns
+:10  %a_V_2 = mul i64 %b_V, %a_V
+
+
+ <State 14>: 1.82ns
+ST_14: a_V_2 [6/19] 1.82ns
+:10  %a_V_2 = mul i64 %b_V, %a_V
+
+
+ <State 15>: 1.82ns
+ST_15: a_V_2 [5/19] 1.82ns
+:10  %a_V_2 = mul i64 %b_V, %a_V
+
+
+ <State 16>: 1.82ns
+ST_16: a_V_2 [4/19] 1.82ns
+:10  %a_V_2 = mul i64 %b_V, %a_V
+
+
+ <State 17>: 1.82ns
+ST_17: a_V_2 [3/19] 1.82ns
+:10  %a_V_2 = mul i64 %b_V, %a_V
+
+
+ <State 18>: 1.82ns
+ST_18: a_V_2 [2/19] 1.82ns
+:10  %a_V_2 = mul i64 %b_V, %a_V
+
+
+ <State 19>: 1.82ns
+ST_19: stg_42 [1/1] 0.00ns
+:0  call void (...)* @_ssdm_op_SpecBitsMap(i160* %io_cmd_V), !map !7
+
+ST_19: stg_43 [1/1] 0.00ns
+:1  call void (...)* @_ssdm_op_SpecBitsMap(i74* %io_resp_V), !map !38
+
+ST_19: stg_44 [1/1] 0.00ns
+:2  call void (...)* @_ssdm_op_SpecTopModule([4 x i8]* @mul_str) nounwind
+
+ST_19: stg_45 [1/1] 0.00ns
+:3  call void (...)* @_ssdm_op_SpecInterface(i74* %io_resp_V, [6 x i8]* @p_str, i32 0, i32 0, i32 0, i32 0, [1 x i8]* @p_str1, [1 x i8]* @p_str1, [1 x i8]* @p_str1, [1 x i8]* @p_str1) nounwind
+
+ST_19: stg_46 [1/1] 0.00ns
+:4  call void (...)* @_ssdm_op_SpecInterface(i160* %io_cmd_V, [6 x i8]* @p_str, i32 0, i32 0, i32 0, i32 0, [1 x i8]* @p_str1, [1 x i8]* @p_str1, [1 x i8]* @p_str1, [1 x i8]* @p_str1) nounwind
+
+ST_19: stg_47 [1/1] 0.00ns
+:5  call void (...)* @_ssdm_op_SpecInterface(i32 0, [13 x i8]* @p_str2, i32 0, i32 0, i32 0, i32 0, [1 x i8]* @p_str1, [1 x i8]* @p_str1, [1 x i8]* @p_str1, [1 x i8]* @p_str1) nounwind
+
+ST_19: a_V_2 [1/19] 1.82ns
+:10  %a_V_2 = mul i64 %b_V, %a_V
+
+ST_19: tmp_1 [1/1] 0.00ns
+:11  %tmp_1 = call i74 @_ssdm_op_BitConcatenate.i74.i64.i5.i5(i64 %a_V_2, i5 %tmp_rd_V, i5 0)
+
+ST_19: stg_50 [1/1] 0.00ns
+:12  call void @_ssdm_op_Write.ap_hs.volatile.i74P(i74* %io_resp_V, i74 %tmp_1)
+
+ST_19: stg_51 [1/1] 0.00ns
+:13  ret void
+
+
+
+============================================================
++ Verbose Summary: Binding
+============================================================
+N/A
+* FSMD analyzer results:
+  - Output states:
+  - Chain level:
+	State 1
+	State 2
+	State 3
+	State 4
+	State 5
+	State 6
+	State 7
+	State 8
+	State 9
+	State 10
+	State 11
+	State 12
+	State 13
+	State 14
+	State 15
+	State 16
+	State 17
+	State 18
+	State 19
+
+
+============================================================
++ Verbose Summary: Datapath Resource usage 
+============================================================
+N/A

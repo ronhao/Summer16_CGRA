@@ -1,0 +1,193 @@
+
+
+================================================================
+== Vivado HLS Report for 'gcd'
+================================================================
+* Date:           Sun Jun 26 21:45:48 2016
+
+* Version:        2015.3 (Build 1368829 on Mon Sep 28 20:31:51 PM 2015)
+* Project:        gcd
+* Solution:       solution
+* Product family: zynq
+* Target device:  xc7z020clg484-2
+
+
+================================================================
+== Performance Estimates
+================================================================
++ Timing (ns): 
+    * Summary: 
+    +--------+-------+----------+------------+
+    |  Clock | Target| Estimated| Uncertainty|
+    +--------+-------+----------+------------+
+    |ap_clk  |   5.00|      3.95|        0.62|
+    +--------+-------+----------+------------+
+
++ Latency (clock cycles): 
+    * Summary: 
+    +-----+-----+-----+-----+---------+
+    |  Latency  |  Interval | Pipeline|
+    | min | max | min | max |   Type  |
+    +-----+-----+-----+-----+---------+
+    |    ?|    ?|    ?|    ?|   none  |
+    +-----+-----+-----+-----+---------+
+
+    + Detail: 
+        * Instance: 
+        N/A
+
+        * Loop: 
+        +----------+-----+-----+----------+-----------+-----------+------+----------+
+        |          |  Latency  | Iteration|  Initiation Interval  | Trip |          |
+        | Loop Name| min | max |  Latency |  achieved |   target  | Count| Pipelined|
+        +----------+-----+-----+----------+-----------+-----------+------+----------+
+        |- Loop 1  |    ?|    ?|         1|          1|          1|     ?|    yes   |
+        +----------+-----+-----+----------+-----------+-----------+------+----------+
+
+============================================================
++ Verbose Summary: Synthesis Manager
+============================================================
+InlineROM: 1
+ExposeGlobal: 0
+============================================================
++ Verbose Summary: CDFG Model
+============================================================
+IsTopModel: 1
+ResetActiveHigh: 1
+IsCombinational: 0
+IsDatapathOnly: 0
+HasWiredReturn: 1
+HasMFsm: 0
+HasVarLatency: 1
+IsPipeline: 0
+IsRtlPipelined: 0
+IsInstanceOverlapped: 0
+IsDontTouch: 0
+HasImplIP: 0
+IsGatedGlobalClock: 0
+
++ Individual pipeline summary: 
+  * Pipeline-0: initiation interval (II) = 1, depth = 1
+
+
+============================================================
++ Verbose Summary: Schedule
+============================================================
+* Number of FSM states: 3
+* Pipeline: 1
+  Pipeline-0: II = 1, D = 1, States = { 2 }
+* Dataflow Pipeline: 0
+
+* FSM state transitions: 
+1 --> 
+	2  / true
+2 --> 
+	3  / (tmp)
+	2  / (!tmp)
+3 --> 
+* FSM state operations: 
+
+ <State 1>: 1.31ns
+ST_1: stg_4 [1/1] 0.00ns
+:0  call void (...)* @_ssdm_op_SpecBitsMap(i160* %io_cmd_V), !map !7
+
+ST_1: stg_5 [1/1] 0.00ns
+:1  call void (...)* @_ssdm_op_SpecBitsMap(i74* %io_resp_V), !map !38
+
+ST_1: stg_6 [1/1] 0.00ns
+:2  call void (...)* @_ssdm_op_SpecTopModule([4 x i8]* @gcd_str) nounwind
+
+ST_1: stg_7 [1/1] 0.00ns
+:3  call void (...)* @_ssdm_op_SpecInterface(i74* %io_resp_V, [6 x i8]* @p_str, i32 0, i32 0, i32 0, i32 0, [1 x i8]* @p_str1, [1 x i8]* @p_str1, [1 x i8]* @p_str1, [1 x i8]* @p_str1) nounwind
+
+ST_1: stg_8 [1/1] 0.00ns
+:4  call void (...)* @_ssdm_op_SpecInterface(i160* %io_cmd_V, [6 x i8]* @p_str, i32 0, i32 0, i32 0, i32 0, [1 x i8]* @p_str1, [1 x i8]* @p_str1, [1 x i8]* @p_str1, [1 x i8]* @p_str1) nounwind
+
+ST_1: stg_9 [1/1] 0.00ns
+:5  call void (...)* @_ssdm_op_SpecInterface(i32 0, [13 x i8]* @p_str2, i32 0, i32 0, i32 0, i32 0, [1 x i8]* @p_str1, [1 x i8]* @p_str1, [1 x i8]* @p_str1, [1 x i8]* @p_str1) nounwind
+
+ST_1: tmp1 [1/1] 0.00ns
+:6  %tmp1 = call i160 @_ssdm_op_Read.ap_hs.volatile.i160P(i160* %io_cmd_V)
+
+ST_1: tmp_rd_V [1/1] 0.00ns
+:7  %tmp_rd_V = call i5 @_ssdm_op_PartSelect.i5.i160.i32.i32(i160 %tmp1, i32 20, i32 24)
+
+ST_1: a_V [1/1] 0.00ns
+:8  %a_V = call i64 @_ssdm_op_PartSelect.i64.i160.i32.i32(i160 %tmp1, i32 32, i32 95)
+
+ST_1: b_V [1/1] 0.00ns
+:9  %b_V = call i64 @_ssdm_op_PartSelect.i64.i160.i32.i32(i160 %tmp1, i32 96, i32 159)
+
+ST_1: stg_14 [1/1] 1.31ns
+:10  br label %1
+
+
+ <State 2>: 3.95ns
+ST_2: tmp_data_V [1/1] 0.00ns
+:0  %tmp_data_V = phi i64 [ %a_V, %0 ], [ %a_V_2, %2 ]
+
+ST_2: p_1 [1/1] 0.00ns
+:1  %p_1 = phi i64 [ %b_V, %0 ], [ %b_V_2, %2 ]
+
+ST_2: tmp [1/1] 2.26ns
+:2  %tmp = icmp eq i64 %tmp_data_V, %p_1
+
+ST_2: stg_18 [1/1] 0.00ns
+:3  br i1 %tmp, label %3, label %2
+
+ST_2: tmp_3 [1/1] 0.00ns
+:0  %tmp_3 = call i32 (...)* @_ssdm_op_SpecRegionBegin([12 x i8]* @p_str3)
+
+ST_2: stg_20 [1/1] 0.00ns
+:1  call void (...)* @_ssdm_op_SpecPipeline(i32 1, i32 1, i32 1, i32 0, [1 x i8]* @p_str1) nounwind
+
+ST_2: tmp_2 [1/1] 2.26ns
+:2  %tmp_2 = icmp ugt i64 %tmp_data_V, %p_1
+
+ST_2: a_V_1 [1/1] 2.80ns
+:3  %a_V_1 = sub i64 %tmp_data_V, %p_1
+
+ST_2: b_V_1 [1/1] 2.80ns
+:4  %b_V_1 = sub i64 %p_1, %tmp_data_V
+
+ST_2: a_V_2 [1/1] 1.15ns
+:5  %a_V_2 = select i1 %tmp_2, i64 %a_V_1, i64 %tmp_data_V
+
+ST_2: b_V_2 [1/1] 1.15ns
+:6  %b_V_2 = select i1 %tmp_2, i64 %p_1, i64 %b_V_1
+
+ST_2: empty [1/1] 0.00ns
+:7  %empty = call i32 (...)* @_ssdm_op_SpecRegionEnd([12 x i8]* @p_str3, i32 %tmp_3)
+
+ST_2: stg_27 [1/1] 0.00ns
+:8  br label %1
+
+
+ <State 3>: 0.00ns
+ST_3: tmp_1 [1/1] 0.00ns
+:0  %tmp_1 = call i74 @_ssdm_op_BitConcatenate.i74.i64.i5.i5(i64 %tmp_data_V, i5 %tmp_rd_V, i5 0)
+
+ST_3: stg_29 [1/1] 0.00ns
+:1  call void @_ssdm_op_Write.ap_hs.volatile.i74P(i74* %io_resp_V, i74 %tmp_1)
+
+ST_3: stg_30 [1/1] 0.00ns
+:2  ret void
+
+
+
+============================================================
++ Verbose Summary: Binding
+============================================================
+N/A
+* FSMD analyzer results:
+  - Output states:
+  - Chain level:
+	State 1
+	State 2
+	State 3
+
+
+============================================================
++ Verbose Summary: Datapath Resource usage 
+============================================================
+N/A

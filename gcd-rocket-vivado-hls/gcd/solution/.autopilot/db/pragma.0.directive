@@ -1,0 +1,17 @@
+<AutoPilot:ProjectResources xmlns:AutoPilot="com.autoesl.autopilot.ui.directiveView">
+<sourceFile name="">
+<directive functionLabel="" functionName="gcd" label="">
+<pragma name="DATA_PACK">
+<option name="variable" positionalBoolean="4" value="io_cmd"/>
+</pragma>
+</directive>
+<directive functionLabel="" functionName="gcd" label="">
+<pragma name="DATA_PACK">
+<option name="variable" positionalBoolean="4" value="io_resp"/>
+</pragma>
+</directive>
+<directive functionLabel="" functionName="gcd" label="">
+<pragma name="PIPELINE"/>
+</directive>
+</sourceFile>
+</AutoPilot:ProjectResources>
