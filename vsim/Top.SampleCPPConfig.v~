@@ -85301,6 +85301,219 @@ module RoccCommandRouter(input clk, input reset,
   end
 endmodule
 
+// Yangyi: RTL adder
+module adder_Accel
+(
+  clk,
+  rst,
+  cmd,
+  cmd_vld,
+  cmd_rdy,
+  resp,
+  resp_vld,
+  resp_rdy,      
+);
+
+  // check if can remove the "wire"s
+  input              clk;
+  input              rst;
+  input      [159:0] cmd;
+  input              cmd_vld;
+  output reg         cmd_rdy;
+  output     [73:0]  resp;
+  output reg         resp_vld;
+  input              resp_rdy;
+  
+  // Spread The cmd Wires
+  wire [6:0]  cmd_inst_funct;  
+  wire [4:0]  cmd_inst_rs2;    
+  wire [4:0]  cmd_inst_rs1;    
+  wire        cmd_inst_xd;     
+  wire        cmd_inst_xs1;    
+  wire        cmd_inst_xs2;    
+  wire [4:0]  cmd_inst_rd;     
+  wire [6:0]  cmd_inst_opcode; 
+  wire [63:0] cmd_rs1_data;         
+  wire [63:0] cmd_rs2_data;         
+  
+  assign cmd_inst_funct  = cmd[6:0];
+  assign cmd_inst_rs2    = cmd[11:7];
+  assign cmd_inst_rs1    = cmd[16:12];
+  assign cmd_inst_xd     = cmd[17];
+  assign cmd_inst_xs1    = cmd[18];
+  assign cmd_inst_xs2    = cmd[19];
+  assign cmd_inst_rd     = cmd[24:20];
+  assign cmd_inst_opcode = cmd[31:25];
+  assign cmd_rs1_data    = cmd[95:32];
+  assign cmd_rs2_data    = cmd[159:96];
+  
+  // Generate resp Wires
+  wire [63:0] resp_data;
+  wire [4:0]  resp_rd;
+  wire        SampleAccel_io_mem_req_valid;
+  wire        SampleAccel_io_autl_acquire_valid;
+  wire        ClientTileLinkIOArbiter_io_in_1_acquire_ready;
+  wire        SampleAccel_io_interrupt;
+  wire        SampleAccel_io_busy;
+  
+  assign resp = 
+           {
+           resp_data, 
+           resp_rd, 
+           SampleAccel_io_mem_req_valid, 
+           SampleAccel_io_autl_acquire_valid, 
+           ClientTileLinkIOArbiter_io_in_1_acquire_ready,
+           SampleAccel_io_interrupt,
+           SampleAccel_io_busy
+           };
+
+  // ---Datapath---
+  // Add
+  parameter data_nbits = 64;
+  
+  wire [data_nbits-1:0] adder_out;
+  
+  yh326_Adder#(data_nbits) adder
+  (
+    .in0 (cmd_rs1_data),
+    .in1 (cmd_rs2_data),
+    .out (adder_out)
+  );
+  
+  yh326_Reg#(data_nbits) d_reg
+  (
+    .clk (clk),
+    .q   (resp_data),
+    .d   (adder_out)
+  );
+  
+  // rd transition
+  parameter rd_nbits = 5;
+  
+  yh326_Reg#(rd_nbits) rd_reg
+  (
+    .clk (clk),
+    .q   (resp_rd),
+    .d   (cmd_inst_rd)
+  );
+  
+  // Assign Values To The 5 Unused resp Ports
+  assign SampleAccel_io_mem_req_valid = 1'b0;
+  assign SampleAccel_io_autl_acquire_valid = 1'b0;
+  assign ClientTileLinkIOArbiter_io_in_1_acquire_ready = 1'b0;
+  assign SampleAccel_io_interrupt = 1'b0;
+  assign SampleAccel_io_busy = 1'b0;
+
+  // States Definition
+  parameter STATE_IDLE = 2'd0;
+  parameter STATE_DONE = 2'd1;
+
+  // State Advancement
+  reg [1:0]  state_reg;
+  reg [1:0]  next_state_reg;
+
+  always @ (posedge clk) begin
+    if (rst) begin
+      state_reg <= STATE_IDLE;
+    end else begin
+      state_reg <= next_state_reg;
+    end
+  end
+
+  // State Advancement Calculations
+  wire cmd_go;
+  wire resp_go;
+
+  assign cmd_go  = cmd_vld  && cmd_rdy;
+  assign resp_go = resp_vld && resp_rdy; 
+
+  always @ (*) begin
+    // why would I need this? Answer: this line enables that by default, next_state_reg inherits state_reg.
+    next_state_reg = state_reg;
+  
+    case ( state_reg )
+      STATE_IDLE: if (cmd_go)  next_state_reg = STATE_DONE;
+      STATE_DONE: if (resp_go) next_state_reg = STATE_IDLE;
+    endcase
+  end
+
+  // State Outputs
+  always @ (*) begin
+    case ( state_reg )
+      STATE_IDLE:
+        begin
+        cmd_rdy  <= 1'b1;
+        resp_vld <= 1'b0;
+        end
+      STATE_DONE:
+        begin
+        cmd_rdy  <= 1'b0;
+        resp_vld <= 1'b1;
+        end
+    endcase
+  end
+  /*
+  task as
+  (
+    input as_cmd_rdy;
+    input as_resp_vld
+  );
+  begin
+    cmd_rdy  = as_cmd_rdy;
+    resp_vld = as_resp_vld;
+  end
+  endtask
+  
+  always @ (*) begin
+    case ( state_reg )
+      //              cmd_rdy, resp_vld
+      STATE_IDLE:  as(      1,        0);
+      STATE_DONE:  as(      0,        1);
+    endcase
+  end
+  */
+endmodule
+
+module yh326_Adder
+#(
+  parameter p_nbits = 1
+)(
+  in0,
+  in1,
+  cin,
+  out,
+  cout
+);
+
+  input  [p_nbits-1:0] in0;
+  input  [p_nbits-1:0] in1;
+  input                cin;
+  output [p_nbits-1:0] out;
+  output               cout;
+
+  assign {cout,out} = in0 + in1 + cin;
+
+endmodule
+
+module yh326_Reg
+#(
+  parameter p_nbits = 1
+)(
+  clk, // Clock input
+  q,   // Data output
+  d    // Data input
+);
+
+  input                clk;
+  output [p_nbits-1:0] q;
+  input  [p_nbits-1:0] d;
+
+  always @( posedge clk ) begin
+    q <= d;
+  end
+
+endmodule
+
 //gai: gcd accelerator gererated by vivado HLS
 
 // ==============================================================
@@ -85322,26 +85535,7 @@ module gcd (
         io_cmd_V_ap_ack,
         io_resp_V,
         io_resp_V_ap_vld,
-        io_resp_V_ap_ack,
-        io_mem_req_ready,
-        io_mem_req_bits_addr,
-        io_mem_req_bits_tag,
-        io_mem_req_bits_cmd,
-        io_mem_req_bits_typ,
-        io_mem_req_bits_kill,
-        io_mem_req_bits_phys,
-        io_mem_req_bits_data,
-        io_mem_resp_valid,
-        io_mem_resp_bits_addr,
-        io_mem_resp_bits_tag,
-        io_mem_resp_bits_cmd,
-        io_mem_resp_bits_typ,
-        io_mem_resp_bits_data,
-        io_mem_resp_bits_nack,
-        io_mem_resp_bits_replay,
-        io_mem_resp_bits_has_data,
-        io_mem_resp_bits_data_word_bypass,
-        io_mem_resp_bits_store_data
+        io_resp_V_ap_ack
 );
 
 parameter    ap_const_logic_1 = 1'b1;
@@ -85371,27 +85565,7 @@ output   io_cmd_V_ap_ack;
 output  [73:0] io_resp_V;
 output   io_resp_V_ap_vld;
 input   io_resp_V_ap_ack;
-// Weier's edit (start)
-input    io_mem_req_ready;
-output reg [39:0]  io_mem_req_bits_addr;
-output reg [9:0]  io_mem_req_bits_tag;
-output reg [4:0]  io_mem_req_bits_cmd;
-output reg [2:0]  io_mem_req_bits_typ;
-output   io_mem_req_bits_kill;
-output   io_mem_req_bits_phys;
-output reg [63:0]  io_mem_req_bits_data;
-input   io_mem_resp_valid;
-input  [39:0] io_mem_resp_bits_addr;
-input  [9:0] io_mem_resp_bits_tag;
-input  [4:0] io_mem_resp_bits_cmd;
-input  [2:0] io_mem_resp_bits_typ;
-input  [63:0] io_mem_resp_bits_data;
-input   io_mem_resp_bits_nack;
-input   io_mem_resp_bits_replay;
-input   io_mem_resp_bits_has_data;
-input  [63:0] io_mem_resp_bits_data_word_bypass;
-input  [63:0] io_mem_resp_bits_store_data;
-// Weier's edit (end)
+
 reg io_cmd_V_ap_ack;
 reg io_resp_V_ap_vld;
 reg   [4:0] tmp_rd_V_reg_166;
@@ -85414,52 +85588,9 @@ wire   [63:0] a_V_1_fu_128_p2;
 wire   [63:0] b_V_1_fu_134_p2;
 reg   [2:0] ap_NS_fsm;
 
-// Weier's edit (start)
-wire [6:0] io_cmd_V_inst_funct;
-wire [4:0] io_cmd_V_inst_rs2;
-wire [4:0] io_cmd_V_inst_rs1;
-wire io_cmd_V_inst_xd;
-wire io_cmd_V_inst_xs1;
-wire io_cmd_V_inst_xs2;
-wire [4:0] io_cmd_V_inst_rd;
-wire [6:0] io_cmd_V_inst_opcode;
-wire [63:0] io_cmd_V_rs1;
-wire [63:0] io_cmd_V_rs2;
-reg    io_mem_req_valid;
-
-assign io_cmd_V_inst_funct = io_cmd_V[6:0];
-assign io_cmd_V_inst_rs2 = io_cmd_V[11:7];
-assign io_cmd_V_inst_rs1 = io_cmd_V [16:12];
-assign io_cmd_V_inst_xd = io_cmd_V[17];
-assign io_cmd_V_inst_xs1 = io_cmd_V[18];
-assign io_cmd_V_inst_xs2 = io_cmd_V[19];
-assign io_cmd_V_inst_rd = io_cmd_V[24:20];
-assign io_cmd_V_inst_opcode = io_cmd_V[31:25];
-assign io_cmd_V_rs1 = io_cmd_V[95:32];
-assign io_cmd_V_rs2 = io_cmd_V[159:96];
-
-// check if the instruction is load & store
-// funct    operation
-// 0        custom0
-
-// store data 0xffffffff to memory address 0x10000000
-always @ (posedge ap_clk) begin
-    if (io_mem_req_ready == 1'b1) begin
-        io_mem_req_valid <= 1'b1;
-        io_mem_req_bits_addr <= 40'h10000000;
-        io_mem_req_bits_tag <= 10'b0;
-        io_mem_req_bits_cmd <= 5'b00001;
-        io_mem_req_bits_typ <= 3'b010;
-        io_mem_req_bits_data <= 64'hFFFFFFFF;
-    end else begin
-        io_mem_req_valid <= 1'b0;
-    end
-end
 
 
-// Weier's edit (end)
 
-/*
 /// the current state (ap_CS_fsm) of the state machine. ///
 always @ (posedge ap_clk) begin : ap_ret_ap_CS_fsm
     if (ap_rst == 1'b1) begin
@@ -85619,7 +85750,7 @@ assign io_resp_V = {{{tmp_data_V_reg_67}, {tmp_rd_V_reg_166}}, {ap_const_lv5_0}}
 assign tmp_2_fu_122_p2 = (tmp_data_V_reg_67 > p_1_reg_77? 1'b1: 1'b0);
 assign tmp_fu_116_p2 = (tmp_data_V_reg_67 == p_1_reg_77? 1'b1: 1'b0);
 
-*/
+
 endmodule //gcd
 
 // ==============================================================
@@ -88557,6 +88688,40 @@ module RocketTile(input clk, input reset,
        .io_out_0_bits_rs2( RoccCommandRouter_io_out_0_bits_rs2 ),
        .io_busy( RoccCommandRouter_io_busy )
   );
+  
+  // Yangyi
+  adder_Accel SampleAccel
+  (
+    .clk      ( clk ),
+    .rst      ( reset ),
+    .cmd      ({
+                RoccCommandRouter_io_out_0_bits_rs2,
+                RoccCommandRouter_io_out_0_bits_rs1,
+                RoccCommandRouter_io_out_0_bits_inst_opcode,
+                RoccCommandRouter_io_out_0_bits_inst_rd,
+                RoccCommandRouter_io_out_0_bits_inst_xs2,
+                RoccCommandRouter_io_out_0_bits_inst_xs1,
+                RoccCommandRouter_io_out_0_bits_inst_xd,
+                RoccCommandRouter_io_out_0_bits_inst_rs1,
+                RoccCommandRouter_io_out_0_bits_inst_rs2,
+                RoccCommandRouter_io_out_0_bits_inst_funct
+              }),
+    .cmd_vld  ( RoccCommandRouter_io_out_0_valid ),
+    .cmd_rdy  ( SampleAccel_io_cmd_ready ),
+    .resp     ({
+                SampleAccel_io_resp_bits_data,
+                SampleAccel_io_resp_bits_rd,
+                SampleAccel_io_mem_req_valid,
+                SampleAccel_io_autl_acquire_valid,
+                ClientTileLinkIOArbiter_io_in_1_acquire_ready,
+                SampleAccel_io_interrupt,
+                SampleAccel_io_busy
+              }),
+    .resp_vld ( SampleAccel_io_resp_valid ),
+    .resp_rdy ( Queue_io_enq_ready )
+  );
+  
+  /*
   //gai
   gcd SampleAccel(.ap_clk(clk), .ap_rst(reset),
        .io_cmd_V_ap_ack( SampleAccel_io_cmd_ready ),
@@ -88593,7 +88758,7 @@ module RocketTile(input clk, input reset,
                    ClientTileLinkIOArbiter_io_in_1_acquire_ready,
                    SampleAccel_io_interrupt,
                    SampleAccel_io_busy
-                   }),
+                   })
        //.io_resp_V[0]( SampleAccel_io_busy ),
        //.io_resp_V[1]( SampleAccel_io_interrupt ),
        //.io_resp_V[2]( ClientTileLinkIOArbiter_io_in_1_acquire_ready ),
@@ -88601,28 +88766,25 @@ module RocketTile(input clk, input reset,
        //.io_resp_V[4]( SampleAccel_io_mem_req_valid ),
        //.io_resp_V[9:5]( SampleAccel_io_resp_bits_rd ),
        //.io_resp_V[73:10]( SampleAccel_io_resp_bits_data )
-       //Weier's edit (start)
-       
-       .io_mem_req_ready( SimpleHellaCacheIF_io_requestor_req_ready ),
-       .io_mem_req_bits_addr( SimpleHellaCacheIF_io_cache_req_bits_addr ),
-       .io_mem_req_bits_tag( SimpleHellaCacheIF_io_cache_req_bits_tag ),
-       .io_mem_req_bits_cmd( SimpleHellaCacheIF_io_cache_req_bits_cmd ),
-       .io_mem_req_bits_typ( SimpleHellaCacheIF_io_cache_req_bits_typ ),
-       .io_mem_req_bits_kill( SimpleHellaCacheIF_io_cache_req_bits_kill ),
-       .io_mem_req_bits_phys( SampleAccel_io_mem_req_bits_phys ),
-       .io_mem_req_bits_data( SimpleHellaCacheIF_io_cache_req_bits_data ),
-       .io_mem_resp_valid( SimpleHellaCacheIF_io_requestor_resp_valid ),
-       .io_mem_resp_bits_addr( SimpleHellaCacheIF_io_requestor_resp_bits_addr ),
-       .io_mem_resp_bits_tag( SimpleHellaCacheIF_io_requestor_resp_bits_tag ),
-       .io_mem_resp_bits_cmd( SimpleHellaCacheIF_io_requestor_resp_bits_cmd ),
-       .io_mem_resp_bits_typ( SimpleHellaCacheIF_io_requestor_resp_bits_typ ),
-       .io_mem_resp_bits_data( SimpleHellaCacheIF_io_requestor_resp_bits_data ),
-       .io_mem_resp_bits_nack( SimpleHellaCacheIF_io_requestor_resp_bits_nack ),
-       .io_mem_resp_bits_replay( SimpleHellaCacheIF_io_requestor_resp_bits_replay ),
-       .io_mem_resp_bits_has_data( SimpleHellaCacheIF_io_requestor_resp_bits_has_data ),
-       .io_mem_resp_bits_data_word_bypass( SimpleHellaCacheIF_io_requestor_resp_bits_data_word_bypass ),
-       .io_mem_resp_bits_store_data( SimpleHellaCacheIF_io_requestor_resp_bits_store_data )
-       //Weier's edit (end)
+       //.io_mem_req_ready( SimpleHellaCacheIF_io_requestor_req_ready ),
+       //.io_mem_req_bits_addr(  )
+       //.io_mem_req_bits_tag(  )
+       //.io_mem_req_bits_cmd(  )
+       //.io_mem_req_bits_typ(  )
+       //.io_mem_req_bits_kill(  )
+       //.io_mem_req_bits_phys( SampleAccel_io_mem_req_bits_phys ),
+       //.io_mem_req_bits_data(  )
+       //.io_mem_resp_valid( SimpleHellaCacheIF_io_requestor_resp_valid ),
+       //.io_mem_resp_bits_addr( SimpleHellaCacheIF_io_requestor_resp_bits_addr ),
+       //.io_mem_resp_bits_tag( SimpleHellaCacheIF_io_requestor_resp_bits_tag ),
+       //.io_mem_resp_bits_cmd( SimpleHellaCacheIF_io_requestor_resp_bits_cmd ),
+       //.io_mem_resp_bits_typ( SimpleHellaCacheIF_io_requestor_resp_bits_typ ),
+       //.io_mem_resp_bits_data( SimpleHellaCacheIF_io_requestor_resp_bits_data ),
+       //.io_mem_resp_bits_nack( SimpleHellaCacheIF_io_requestor_resp_bits_nack ),
+       //.io_mem_resp_bits_replay( SimpleHellaCacheIF_io_requestor_resp_bits_replay ),
+       //.io_mem_resp_bits_has_data( SimpleHellaCacheIF_io_requestor_resp_bits_has_data ),
+       //.io_mem_resp_bits_data_word_bypass( SimpleHellaCacheIF_io_requestor_resp_bits_data_word_bypass ),
+       //.io_mem_resp_bits_store_data( SimpleHellaCacheIF_io_requestor_resp_bits_store_data ),
        //.io_mem_replay_next_valid(  )
        //.io_mem_replay_next_bits(  )
        //.io_mem_xcpt_ma_ld(  )
@@ -88681,18 +88843,17 @@ module RocketTile(input clk, input reset,
        //.io_csr_wen(  )
        //.io_host_id( io_host_id )
   );
+  */
   SimpleHellaCacheIF SimpleHellaCacheIF(.clk(clk), .reset(reset),
        .io_requestor_req_ready( SimpleHellaCacheIF_io_requestor_req_ready ),
        .io_requestor_req_valid( SampleAccel_io_mem_req_valid ),
-       //Weier's edit (start)
-       .io_requestor_req_bits_addr( SimpleHellaCacheIF_io_cache_req_bits_addr ),
-       .io_requestor_req_bits_tag( SimpleHellaCacheIF_io_cache_req_bits_tag ),
-       .io_requestor_req_bits_cmd( SimpleHellaCacheIF_io_cache_req_bits_cmd ),
-       .io_requestor_req_bits_typ( SimpleHellaCacheIF_io_cache_req_bits_typ ),
-       .io_requestor_req_bits_kill( SimpleHellaCacheIF_io_cache_req_bits_kill ),
+       //.io_requestor_req_bits_addr(  )
+       //.io_requestor_req_bits_tag(  )
+       //.io_requestor_req_bits_cmd(  )
+       //.io_requestor_req_bits_typ(  )
+       //.io_requestor_req_bits_kill(  )
        .io_requestor_req_bits_phys( SampleAccel_io_mem_req_bits_phys ),
-       .io_requestor_req_bits_data( SimpleHellaCacheIF_io_cache_req_bits_data ),
-       //Weier's edit (end)
+       //.io_requestor_req_bits_data(  )
        .io_requestor_resp_valid( SimpleHellaCacheIF_io_requestor_resp_valid ),
        .io_requestor_resp_bits_addr( SimpleHellaCacheIF_io_requestor_resp_bits_addr ),
        .io_requestor_resp_bits_tag( SimpleHellaCacheIF_io_requestor_resp_bits_tag ),
