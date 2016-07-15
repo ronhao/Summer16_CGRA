@@ -85314,6 +85314,10 @@ module adder_Accel
   resp_rdy,      
 );
 
+  initial begin
+    $display("adder_Accel");
+  end
+
   // check if can remove the "wire"s
   input              clk;
   input              rst;
@@ -85404,19 +85408,20 @@ module adder_Accel
   assign SampleAccel_io_interrupt = 1'b0;
   assign SampleAccel_io_busy = 1'b0;
 
+  // ---Control Path---
   // States Definition
   parameter STATE_IDLE = 2'd0;
   parameter STATE_DONE = 2'd1;
 
   // State Advancement
   reg [1:0]  state_reg;
-  reg [1:0]  next_state_reg;
+  reg [1:0]  next_state;
 
   always @ (posedge clk) begin
     if (rst) begin
       state_reg <= STATE_IDLE;
     end else begin
-      state_reg <= next_state_reg;
+      state_reg <= next_state;
     end
   end
 
@@ -85428,12 +85433,23 @@ module adder_Accel
   assign resp_go = resp_vld && resp_rdy; 
 
   always @ (*) begin
-    // why would I need this? Answer: this line enables that by default, next_state_reg inherits state_reg.
-    next_state_reg = state_reg;
-  
     case ( state_reg )
-      STATE_IDLE: if (cmd_go)  next_state_reg = STATE_DONE;
-      STATE_DONE: if (resp_go) next_state_reg = STATE_IDLE;
+      STATE_IDLE: 
+        begin
+          if (cmd_go) begin
+            next_state = STATE_DONE;
+          end else begin
+            next_state = state_reg;
+          end
+        end
+      STATE_DONE: 
+        begin
+          if (resp_go) begin
+            next_state = STATE_IDLE;
+          end else begin
+            next_state = state_reg;
+          end
+        end
     endcase
   end
 
@@ -85442,13 +85458,13 @@ module adder_Accel
     case ( state_reg )
       STATE_IDLE:
         begin
-        cmd_rdy  <= 1'b1;
-        resp_vld <= 1'b0;
+        cmd_rdy  = 1'b1;
+        resp_vld = 1'b0;
         end
       STATE_DONE:
         begin
-        cmd_rdy  <= 1'b0;
-        resp_vld <= 1'b1;
+        cmd_rdy  = 1'b0;
+        resp_vld = 1'b1;
         end
     endcase
   end
@@ -85480,18 +85496,19 @@ module yh326_Adder
 )(
   in0,
   in1,
-  cin,
+  //cin,
   out,
-  cout
+  //cout
 );
 
   input  [p_nbits-1:0] in0;
   input  [p_nbits-1:0] in1;
-  input                cin;
+  //input                cin;
   output [p_nbits-1:0] out;
-  output               cout;
+  //output               cout;
 
-  assign {cout,out} = in0 + in1 + cin;
+  //assign {cout,out} = in0 + in1 + cin;
+  assign out = in0 + in1;
 
 endmodule
 
@@ -88688,6 +88705,94 @@ module RocketTile(input clk, input reset,
        .io_out_0_bits_rs2( RoccCommandRouter_io_out_0_bits_rs2 ),
        .io_busy( RoccCommandRouter_io_busy )
   );
+  
+  reg toggle;
+  
+  always @ (posedge clk) begin
+    if (reset) begin
+      toggle <= 1'b0;
+    end
+    if (RoccCommandRouter_io_out_0_valid) begin
+      toggle <= 1'b1;
+      $display("~~~~~");
+      $display("RoccCommandRouter_io_out_0_valid:");
+      $display(RoccCommandRouter_io_out_0_valid);
+      $display("------");
+      $display("rst:");
+      $display(SampleAccel.rst);
+      $display("state_reg:");
+      $display(SampleAccel.state_reg);
+      $display("next_state:");
+      $display(SampleAccel.next_state);
+      $display("cmd_vld:");
+      $display(SampleAccel.cmd_vld);
+      $display("cmd_rdy:");
+      $display(SampleAccel.cmd_rdy);
+      $display("cmd_go:");
+      $display(SampleAccel.cmd_go);
+      $display("resp_vld:");
+      $display(SampleAccel.resp_vld);
+      $display("resp_rdy:");
+      $display(SampleAccel.resp_rdy);
+      $display("resp_go:");
+      $display(SampleAccel.resp_go);
+      $display("------");
+      $display("rs1_data:");
+      $display(SampleAccel.cmd_rs1_data);
+      $display("rs2_data:");
+      $display(SampleAccel.cmd_rs2_data);
+      $display("adder_out:");
+      $display(SampleAccel.adder_out);
+      $display("resp_data:");
+      $display(SampleAccel.resp_data);
+      $display("------");
+      $display("cmd_inst_rd:");
+      $display(SampleAccel.cmd_inst_rd);
+      $display("resp_rd:");
+      $display(SampleAccel.resp_rd);
+      $display("------");
+    end
+    if (toggle) begin
+      toggle <= 1'b0;
+      $display("~~~~~");
+      $display("RoccCommandRouter_io_out_0_valid:");
+      $display(RoccCommandRouter_io_out_0_valid);
+      $display("------");
+      $display("rst:");
+      $display(SampleAccel.rst);
+      $display("state_reg:");
+      $display(SampleAccel.state_reg);
+      $display("next_state:");
+      $display(SampleAccel.next_state);
+      $display("cmd_vld:");
+      $display(SampleAccel.cmd_vld);
+      $display("cmd_rdy:");
+      $display(SampleAccel.cmd_rdy);
+      $display("cmd_go:");
+      $display(SampleAccel.cmd_go);
+      $display("resp_vld:");
+      $display(SampleAccel.resp_vld);
+      $display("resp_rdy:");
+      $display(SampleAccel.resp_rdy);
+      $display("resp_go:");
+      $display(SampleAccel.resp_go);
+      $display("------");
+      $display("rs1_data:");
+      $display(SampleAccel.cmd_rs1_data);
+      $display("rs2_data:");
+      $display(SampleAccel.cmd_rs2_data);
+      $display("adder_out:");
+      $display(SampleAccel.adder_out);
+      $display("resp_data:");
+      $display(SampleAccel.resp_data);
+      $display("------");
+      $display("cmd_inst_rd:");
+      $display(SampleAccel.cmd_inst_rd);
+      $display("resp_rd:");
+      $display(SampleAccel.resp_rd);
+      $display("------");
+    end
+  end
   
   // Yangyi
   adder_Accel SampleAccel
