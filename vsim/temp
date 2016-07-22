@@ -1,0 +1,1394 @@
+echo "\`ifndef CONST_VH" > /home/student/yh326/Summer16_CGRA/vsim/generated-src/consts.SampleCPPConfig.vh
+echo "\`define CONST_VH" >> /home/student/yh326/Summer16_CGRA/vsim/generated-src/consts.SampleCPPConfig.vh
+sed -r 's/\(([A-Za-z0-9_]+),([A-Za-z0-9_]+)\)/`define \1 \2/' /home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.prm >> /home/student/yh326/Summer16_CGRA/vsim/generated-src/consts.SampleCPPConfig.vh
+echo "\`define TBVFRAG \"Top.SampleCPPConfig.tb.vfrag\"" >> /home/student/yh326/Summer16_CGRA/vsim/generated-src/consts.SampleCPPConfig.vh
+echo "\`endif // CONST_VH" >> /home/student/yh326/Summer16_CGRA/vsim/generated-src/consts.SampleCPPConfig.vh
+# gai: switch in the modified verilog design
+cp ./Top.SampleCPPConfig.v /home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v && \
+	cd . && \
+	rm -rf csrc && \
+	vcs -full64 -notice -line +lint=all,noVCDE,noONGS,noUI -error=PCWM-L -timescale=1ns/10ps -quiet +rad +v2k +vcs+lic+wait +vc+list -CC "-I/work/zhang/common/tools/synopsys/vcs64/include" -CC "-I/work/zhang/common/tools/rocket/rocket-chip/riscv-tools/include" -CC "-I/work/zhang/common/tools/rocket/rocket-chip/dramsim2" -CC "-std=c++11" -CC "-Wl,-rpath,/work/zhang/common/tools/rocket/rocket-chip/riscv-tools/lib" -CC "-include /home/student/yh326/Summer16_CGRA/vsim/generated-src/consts.SampleCPPConfig.h" -CC "-include /home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.scr_map.h" -e vcs_main /work/zhang/common/tools/rocket/rocket-chip/riscv-tools/lib/libfesvr.so ./libdramsim.a +incdir+/home/student/yh326/Summer16_CGRA/vsim/generated-src +define+CLOCK_PERIOD=0.5 /home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v /home/student/yh326/Summer16_CGRA/vsim/generated-src/consts.SampleCPPConfig.vh /home/student/yh326/Summer16_CGRA/vsim/generated-src/memdessertMemDessert.SampleCPPConfig.v /work/zhang/common/tools/rocket/rocket-chip/vsrc/rocketTestHarness.v /work/zhang/common/tools/rocket/rocket-chip/vsrc/backup_mem.v  /work/zhang/common/tools/rocket/rocket-chip/csrc/vcs_main.rocketTestHarness.cc /work/zhang/common/tools/rocket/rocket-chip/csrc/mm.cc /work/zhang/common/tools/rocket/rocket-chip/csrc/mm_dramsim2.cc  +define+PRINTF_COND=rocketTestHarness.verbose +libext+.v  -o ./simv-Top-SampleCPPConfig \
+  +vcs+vcdpluson -debug_pp \
+
+
+Lint-[IWU] Implicit wire is used
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 85413
+  No type is specified for wire 'io_autl_grant_ready'. Default wire type is 
+  being applied according to the IEEE spec.
+  See the Verilog LRM(1364-2005), section 4.5.
+
+
+Lint-[IWU] Implicit wire is used
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 89860
+  No type is specified for wire 'resp_go_ctrl_to_dpath'. Default wire type is 
+  being applied according to the IEEE spec.
+  See the Verilog LRM(1364-2005), section 4.5.
+
+
+Lint-[IWU] Implicit wire is used
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.tb.vfrag, 126
+  No type is specified for wire 'w_last_0'. Default wire type is being applied
+  according to the IEEE spec.
+  See the Verilog LRM(1364-2005), section 4.5.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/memdessertMemDessert.SampleCPPConfig.v, 278
+"memdessertQueue dataq( .clk (clk),  .reset (reset),  .io_enq_ready (dataq_io_enq_ready),  .io_enq_valid (io_wide_resp_valid),  .io_enq_bits_data (io_wide_resp_bits_data),  .io_enq_bits_tag (io_wide_resp_bits_tag),  .io_deq_ready (T0),  .io_deq_valid (dataq_io_deq_valid),  .io_deq_bits_data (dataq_io_deq_bits_data),  .io_deq_bits_tag (dataq_io_deq_bits_tag));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 1022
+"FinishQueue FinishQueue( .clk (clk),  .reset (reset),  .io_enq_ready (FinishQueue_io_enq_ready),  .io_enq_valid (T1),  .io_enq_bits_fin_manager_xact_id (T0),  .io_enq_bits_dst (io_grant_bits_header_src),  .io_deq_ready (io_finish_ready),  .io_deq_valid (FinishQueue_io_deq_valid),  .io_deq_bits_fin_manager_xact_id (FinishQueue_io_deq_bits_fin_manager_xact_id),  .io_deq_bits_dst (FinishQueue_io_deq_bits_dst));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 2139
+"Queue_13 Queue( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_io_enq_ready),  .io_enq_valid (io_client_acquire_valid),  .io_enq_bits_header_src (io_client_acquire_bits_header_src),  .io_enq_bits_header_dst (io_client_acquire_bits_header_dst),  .io_enq_bits_payload_addr_block (io_client_acquire_bits_payload_addr_block),  .io_enq_bits_payload_client_xact_id (io_client_acquire_bits_payload_client_xact_id),  .io_enq_bits_payload_addr_beat (io_client_acquire_bits_payload_addr_beat),  .io_enq_bits_payload_is_builtin_type (io_client_acquire_bits_payload_is_builtin_type),  .io_enq_bits_payload_a_type (io_client_acquire_bits_payload_a_type),  .io_enq_bits_payload_union (io_client_acquire_bits_payload_union),  .io_enq_bits_payload_data (io_client_acquire_bit ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 2164
+"Queue_14 Queue_1( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_1_io_enq_ready),  .io_enq_valid (io_manager_probe_valid),  .io_enq_bits_header_src (io_manager_probe_bits_header_src),  .io_enq_bits_header_dst (io_manager_probe_bits_header_dst),  .io_enq_bits_payload_addr_block (io_manager_probe_bits_payload_addr_block),  .io_enq_bits_payload_p_type (io_manager_probe_bits_payload_p_type),  .io_deq_ready (io_client_probe_ready),  .io_deq_valid (Queue_1_io_deq_valid),  .io_deq_bits_header_src (Queue_1_io_deq_bits_header_src),  .io_deq_bits_header_dst (Queue_1_io_deq_bits_header_dst),  .io_deq_bits_payload_addr_block (Queue_1_io_deq_bits_payload_addr_block),  .io_deq_bits_payload_p_type (Queue_1_io_deq_bits_payload_p_type));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 2179
+"Queue_15 Queue_2( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_2_io_enq_ready),  .io_enq_valid (io_client_release_valid),  .io_enq_bits_header_src (io_client_release_bits_header_src),  .io_enq_bits_header_dst (io_client_release_bits_header_dst),  .io_enq_bits_payload_addr_beat (io_client_release_bits_payload_addr_beat),  .io_enq_bits_payload_addr_block (io_client_release_bits_payload_addr_block),  .io_enq_bits_payload_client_xact_id (io_client_release_bits_payload_client_xact_id),  .io_enq_bits_payload_voluntary (io_client_release_bits_payload_voluntary),  .io_enq_bits_payload_r_type (io_client_release_bits_payload_r_type),  .io_enq_bits_payload_data (io_client_release_bits_payload_data),  .io_deq_ready (io_manager_release_ready),  .io_deq_valid ( ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 2202
+"Queue_16 Queue_3( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_3_io_enq_ready),  .io_enq_valid (io_manager_grant_valid),  .io_enq_bits_header_src (io_manager_grant_bits_header_src),  .io_enq_bits_header_dst (io_manager_grant_bits_header_dst),  .io_enq_bits_payload_addr_beat (io_manager_grant_bits_payload_addr_beat),  .io_enq_bits_payload_client_xact_id (io_manager_grant_bits_payload_client_xact_id),  .io_enq_bits_payload_manager_xact_id (io_manager_grant_bits_payload_manager_xact_id),  .io_enq_bits_payload_is_builtin_type (io_manager_grant_bits_payload_is_builtin_type),  .io_enq_bits_payload_g_type (io_manager_grant_bits_payload_g_type),  .io_enq_bits_payload_data (io_manager_grant_bits_payload_data),  .io_deq_ready (io_client_grant_ready),  .io_d ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 2225
+"Queue_17 Queue_4( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_4_io_enq_ready),  .io_enq_valid (io_client_finish_valid),  .io_enq_bits_header_src (io_client_finish_bits_header_src),  .io_enq_bits_header_dst (io_client_finish_bits_header_dst),  .io_enq_bits_payload_manager_xact_id (io_client_finish_bits_payload_manager_xact_id),  .io_deq_ready (io_manager_finish_ready),  .io_deq_valid (Queue_4_io_deq_valid),  .io_deq_bits_header_src (Queue_4_io_deq_bits_header_src),  .io_deq_bits_header_dst (Queue_4_io_deq_bits_header_dst),  .io_deq_bits_payload_manager_xact_id (Queue_4_io_deq_bits_payload_manager_xact_id));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 2374
+"FinishQueue FinishQueue( .clk (clk),  .reset (reset),  .io_enq_ready (FinishQueue_io_enq_ready),  .io_enq_valid (T1),  .io_enq_bits_fin_manager_xact_id (T0),  .io_enq_bits_dst (io_grant_bits_header_src),  .io_deq_ready (io_finish_ready),  .io_deq_valid (FinishQueue_io_deq_valid),  .io_deq_bits_fin_manager_xact_id (FinishQueue_io_deq_bits_fin_manager_xact_id),  .io_deq_bits_dst (FinishQueue_io_deq_bits_dst));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 2753
+"FinishQueue FinishQueue( .clk (clk),  .reset (reset),  .io_enq_ready (FinishQueue_io_enq_ready),  .io_enq_valid (T1),  .io_enq_bits_fin_manager_xact_id (T0),  .io_enq_bits_dst (io_grant_bits_header_src),  .io_deq_ready (io_finish_ready),  .io_deq_valid (FinishQueue_io_deq_valid),  .io_deq_bits_fin_manager_xact_id (FinishQueue_io_deq_bits_fin_manager_xact_id),  .io_deq_bits_dst (FinishQueue_io_deq_bits_dst));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 3459
+"Queue_18 Queue( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_io_enq_ready),  .io_enq_valid (io_client_release_valid),  .io_enq_bits_header_src (io_client_release_bits_header_src),  .io_enq_bits_header_dst (io_client_release_bits_header_dst),  .io_enq_bits_payload_addr_beat (io_client_release_bits_payload_addr_beat),  .io_enq_bits_payload_addr_block (io_client_release_bits_payload_addr_block),  .io_enq_bits_payload_client_xact_id (io_client_release_bits_payload_client_xact_id),  .io_enq_bits_payload_voluntary (io_client_release_bits_payload_voluntary),  .io_enq_bits_payload_r_type (io_client_release_bits_payload_r_type),  .io_enq_bits_payload_data (io_client_release_bits_payload_data),  .io_deq_ready (io_manager_release_ready),  .io_deq_valid (Queu ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 4777
+"LockingRRArbiter_5 LockingRRArbiter( .clk (clk),  .reset (reset),  .io_in_4_ready (LockingRRArbiter_io_in_4_ready),  .io_in_4_valid (T48),  .io_in_4_bits_header_src (io_in_4_bits_header_src),  .io_in_4_bits_header_dst (io_in_4_bits_header_dst),  .io_in_4_bits_payload_addr_block (io_in_4_bits_payload_addr_block),  .io_in_4_bits_payload_client_xact_id (io_in_4_bits_payload_client_xact_id),  .io_in_4_bits_payload_addr_beat (io_in_4_bits_payload_addr_beat),  .io_in_4_bits_payload_is_builtin_type (io_in_4_bits_payload_is_builtin_type),  .io_in_4_bits_payload_a_type (io_in_4_bits_payload_a_type),  .io_in_4_bits_payload_union (io_in_4_bits_payload_union),  .io_in_4_bits_payload_data (io_in_4_bits_payload_data),  .io_in_3_ready (LockingRRArbiter_io_in_3_ready), ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 4846
+"LockingRRArbiter_5 LockingRRArbiter_1( .clk (clk),  .reset (reset),  .io_in_4_ready (LockingRRArbiter_1_io_in_4_ready),  .io_in_4_valid (T38),  .io_in_4_bits_header_src (io_in_4_bits_header_src),  .io_in_4_bits_header_dst (io_in_4_bits_header_dst),  .io_in_4_bits_payload_addr_block (io_in_4_bits_payload_addr_block),  .io_in_4_bits_payload_client_xact_id (io_in_4_bits_payload_client_xact_id),  .io_in_4_bits_payload_addr_beat (io_in_4_bits_payload_addr_beat),  .io_in_4_bits_payload_is_builtin_type (io_in_4_bits_payload_is_builtin_type),  .io_in_4_bits_payload_a_type (io_in_4_bits_payload_a_type),  .io_in_4_bits_payload_union (io_in_4_bits_payload_union),  .io_in_4_bits_payload_data (io_in_4_bits_payload_data),  .io_in_3_ready (LockingRRArbiter_1_io_in_3_r ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 4915
+"LockingRRArbiter_5 LockingRRArbiter_2( .clk (clk),  .reset (reset),  .io_in_4_ready (LockingRRArbiter_2_io_in_4_ready),  .io_in_4_valid (T28),  .io_in_4_bits_header_src (io_in_4_bits_header_src),  .io_in_4_bits_header_dst (io_in_4_bits_header_dst),  .io_in_4_bits_payload_addr_block (io_in_4_bits_payload_addr_block),  .io_in_4_bits_payload_client_xact_id (io_in_4_bits_payload_client_xact_id),  .io_in_4_bits_payload_addr_beat (io_in_4_bits_payload_addr_beat),  .io_in_4_bits_payload_is_builtin_type (io_in_4_bits_payload_is_builtin_type),  .io_in_4_bits_payload_a_type (io_in_4_bits_payload_a_type),  .io_in_4_bits_payload_union (io_in_4_bits_payload_union),  .io_in_4_bits_payload_data (io_in_4_bits_payload_data),  .io_in_3_ready (LockingRRArbiter_2_io_in_3_r ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 4984
+"LockingRRArbiter_5 LockingRRArbiter_3( .clk (clk),  .reset (reset),  .io_in_4_ready (LockingRRArbiter_3_io_in_4_ready),  .io_in_4_valid (T18),  .io_in_4_bits_header_src (io_in_4_bits_header_src),  .io_in_4_bits_header_dst (io_in_4_bits_header_dst),  .io_in_4_bits_payload_addr_block (io_in_4_bits_payload_addr_block),  .io_in_4_bits_payload_client_xact_id (io_in_4_bits_payload_client_xact_id),  .io_in_4_bits_payload_addr_beat (io_in_4_bits_payload_addr_beat),  .io_in_4_bits_payload_is_builtin_type (io_in_4_bits_payload_is_builtin_type),  .io_in_4_bits_payload_a_type (io_in_4_bits_payload_a_type),  .io_in_4_bits_payload_union (io_in_4_bits_payload_union),  .io_in_4_bits_payload_data (io_in_4_bits_payload_data),  .io_in_3_ready (LockingRRArbiter_3_io_in_3_r ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 5053
+"LockingRRArbiter_5 LockingRRArbiter_4( .clk (clk),  .reset (reset),  .io_in_4_ready (LockingRRArbiter_4_io_in_4_ready),  .io_in_4_valid (T8),  .io_in_4_bits_header_src (io_in_4_bits_header_src),  .io_in_4_bits_header_dst (io_in_4_bits_header_dst),  .io_in_4_bits_payload_addr_block (io_in_4_bits_payload_addr_block),  .io_in_4_bits_payload_client_xact_id (io_in_4_bits_payload_client_xact_id),  .io_in_4_bits_payload_addr_beat (io_in_4_bits_payload_addr_beat),  .io_in_4_bits_payload_is_builtin_type (io_in_4_bits_payload_is_builtin_type),  .io_in_4_bits_payload_a_type (io_in_4_bits_payload_a_type),  .io_in_4_bits_payload_union (io_in_4_bits_payload_union),  .io_in_4_bits_payload_data (io_in_4_bits_payload_data),  .io_in_3_ready (LockingRRArbiter_4_io_in_3_re ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 6177
+"LockingRRArbiter_6 LockingRRArbiter( .clk (clk),  .reset (reset),  .io_in_4_ready (LockingRRArbiter_io_in_4_ready),  .io_in_4_valid (T48),  .io_in_4_bits_header_src (io_in_4_bits_header_src),  .io_in_4_bits_header_dst (io_in_4_bits_header_dst),  .io_in_4_bits_payload_addr_beat (io_in_4_bits_payload_addr_beat),  .io_in_4_bits_payload_addr_block (io_in_4_bits_payload_addr_block),  .io_in_4_bits_payload_client_xact_id (io_in_4_bits_payload_client_xact_id),  .io_in_4_bits_payload_voluntary (io_in_4_bits_payload_voluntary),  .io_in_4_bits_payload_r_type (io_in_4_bits_payload_r_type),  .io_in_4_bits_payload_data (io_in_4_bits_payload_data),  .io_in_3_ready (LockingRRArbiter_io_in_3_ready),  .io_in_3_valid (T46),  .io_in_3_bits_header_src (io_in_3_bits_header_ ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 6240
+"LockingRRArbiter_6 LockingRRArbiter_1( .clk (clk),  .reset (reset),  .io_in_4_ready (LockingRRArbiter_1_io_in_4_ready),  .io_in_4_valid (T38),  .io_in_4_bits_header_src (io_in_4_bits_header_src),  .io_in_4_bits_header_dst (io_in_4_bits_header_dst),  .io_in_4_bits_payload_addr_beat (io_in_4_bits_payload_addr_beat),  .io_in_4_bits_payload_addr_block (io_in_4_bits_payload_addr_block),  .io_in_4_bits_payload_client_xact_id (io_in_4_bits_payload_client_xact_id),  .io_in_4_bits_payload_voluntary (io_in_4_bits_payload_voluntary),  .io_in_4_bits_payload_r_type (io_in_4_bits_payload_r_type),  .io_in_4_bits_payload_data (io_in_4_bits_payload_data),  .io_in_3_ready (LockingRRArbiter_1_io_in_3_ready),  .io_in_3_valid (T36),  .io_in_3_bits_header_src (io_in_3_bits_h ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 6303
+"LockingRRArbiter_6 LockingRRArbiter_2( .clk (clk),  .reset (reset),  .io_in_4_ready (LockingRRArbiter_2_io_in_4_ready),  .io_in_4_valid (T28),  .io_in_4_bits_header_src (io_in_4_bits_header_src),  .io_in_4_bits_header_dst (io_in_4_bits_header_dst),  .io_in_4_bits_payload_addr_beat (io_in_4_bits_payload_addr_beat),  .io_in_4_bits_payload_addr_block (io_in_4_bits_payload_addr_block),  .io_in_4_bits_payload_client_xact_id (io_in_4_bits_payload_client_xact_id),  .io_in_4_bits_payload_voluntary (io_in_4_bits_payload_voluntary),  .io_in_4_bits_payload_r_type (io_in_4_bits_payload_r_type),  .io_in_4_bits_payload_data (io_in_4_bits_payload_data),  .io_in_3_ready (LockingRRArbiter_2_io_in_3_ready),  .io_in_3_valid (T26),  .io_in_3_bits_header_src (io_in_3_bits_h ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 6366
+"LockingRRArbiter_6 LockingRRArbiter_3( .clk (clk),  .reset (reset),  .io_in_4_ready (LockingRRArbiter_3_io_in_4_ready),  .io_in_4_valid (T18),  .io_in_4_bits_header_src (io_in_4_bits_header_src),  .io_in_4_bits_header_dst (io_in_4_bits_header_dst),  .io_in_4_bits_payload_addr_beat (io_in_4_bits_payload_addr_beat),  .io_in_4_bits_payload_addr_block (io_in_4_bits_payload_addr_block),  .io_in_4_bits_payload_client_xact_id (io_in_4_bits_payload_client_xact_id),  .io_in_4_bits_payload_voluntary (io_in_4_bits_payload_voluntary),  .io_in_4_bits_payload_r_type (io_in_4_bits_payload_r_type),  .io_in_4_bits_payload_data (io_in_4_bits_payload_data),  .io_in_3_ready (LockingRRArbiter_3_io_in_3_ready),  .io_in_3_valid (T16),  .io_in_3_bits_header_src (io_in_3_bits_h ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 6429
+"LockingRRArbiter_6 LockingRRArbiter_4( .clk (clk),  .reset (reset),  .io_in_4_ready (LockingRRArbiter_4_io_in_4_ready),  .io_in_4_valid (T8),  .io_in_4_bits_header_src (io_in_4_bits_header_src),  .io_in_4_bits_header_dst (io_in_4_bits_header_dst),  .io_in_4_bits_payload_addr_beat (io_in_4_bits_payload_addr_beat),  .io_in_4_bits_payload_addr_block (io_in_4_bits_payload_addr_block),  .io_in_4_bits_payload_client_xact_id (io_in_4_bits_payload_client_xact_id),  .io_in_4_bits_payload_voluntary (io_in_4_bits_payload_voluntary),  .io_in_4_bits_payload_r_type (io_in_4_bits_payload_r_type),  .io_in_4_bits_payload_data (io_in_4_bits_payload_data),  .io_in_3_ready (LockingRRArbiter_4_io_in_3_ready),  .io_in_3_valid (T6),  .io_in_3_bits_header_src (io_in_3_bits_hea ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 7272
+"LockingRRArbiter_7 LockingRRArbiter( .clk (clk),  .reset (reset),  .io_in_4_ready (LockingRRArbiter_io_in_4_ready),  .io_in_4_valid (T48),  .io_in_4_bits_header_src (io_in_4_bits_header_src),  .io_in_4_bits_header_dst (io_in_4_bits_header_dst),  .io_in_4_bits_payload_addr_block (io_in_4_bits_payload_addr_block),  .io_in_4_bits_payload_p_type (io_in_4_bits_payload_p_type),  .io_in_3_ready (LockingRRArbiter_io_in_3_ready),  .io_in_3_valid (T46),  .io_in_3_bits_header_src (io_in_3_bits_header_src),  .io_in_3_bits_header_dst (io_in_3_bits_header_dst),  .io_in_3_bits_payload_addr_block (io_in_3_bits_payload_addr_block),  .io_in_3_bits_payload_p_type (io_in_3_bits_payload_p_type),  .io_in_2_ready (LockingRRArbiter_io_in_2_ready),  .io_in_2_valid (T44),  .io_i ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 7311
+"LockingRRArbiter_7 LockingRRArbiter_1( .clk (clk),  .reset (reset),  .io_in_4_ready (LockingRRArbiter_1_io_in_4_ready),  .io_in_4_valid (T38),  .io_in_4_bits_header_src (io_in_4_bits_header_src),  .io_in_4_bits_header_dst (io_in_4_bits_header_dst),  .io_in_4_bits_payload_addr_block (io_in_4_bits_payload_addr_block),  .io_in_4_bits_payload_p_type (io_in_4_bits_payload_p_type),  .io_in_3_ready (LockingRRArbiter_1_io_in_3_ready),  .io_in_3_valid (T36),  .io_in_3_bits_header_src (io_in_3_bits_header_src),  .io_in_3_bits_header_dst (io_in_3_bits_header_dst),  .io_in_3_bits_payload_addr_block (io_in_3_bits_payload_addr_block),  .io_in_3_bits_payload_p_type (io_in_3_bits_payload_p_type),  .io_in_2_ready (LockingRRArbiter_1_io_in_2_ready),  .io_in_2_valid (T34) ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 7350
+"LockingRRArbiter_7 LockingRRArbiter_2( .clk (clk),  .reset (reset),  .io_in_4_ready (LockingRRArbiter_2_io_in_4_ready),  .io_in_4_valid (T28),  .io_in_4_bits_header_src (io_in_4_bits_header_src),  .io_in_4_bits_header_dst (io_in_4_bits_header_dst),  .io_in_4_bits_payload_addr_block (io_in_4_bits_payload_addr_block),  .io_in_4_bits_payload_p_type (io_in_4_bits_payload_p_type),  .io_in_3_ready (LockingRRArbiter_2_io_in_3_ready),  .io_in_3_valid (T26),  .io_in_3_bits_header_src (io_in_3_bits_header_src),  .io_in_3_bits_header_dst (io_in_3_bits_header_dst),  .io_in_3_bits_payload_addr_block (io_in_3_bits_payload_addr_block),  .io_in_3_bits_payload_p_type (io_in_3_bits_payload_p_type),  .io_in_2_ready (LockingRRArbiter_2_io_in_2_ready),  .io_in_2_valid (T24) ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 7389
+"LockingRRArbiter_7 LockingRRArbiter_3( .clk (clk),  .reset (reset),  .io_in_4_ready (LockingRRArbiter_3_io_in_4_ready),  .io_in_4_valid (T18),  .io_in_4_bits_header_src (io_in_4_bits_header_src),  .io_in_4_bits_header_dst (io_in_4_bits_header_dst),  .io_in_4_bits_payload_addr_block (io_in_4_bits_payload_addr_block),  .io_in_4_bits_payload_p_type (io_in_4_bits_payload_p_type),  .io_in_3_ready (LockingRRArbiter_3_io_in_3_ready),  .io_in_3_valid (T16),  .io_in_3_bits_header_src (io_in_3_bits_header_src),  .io_in_3_bits_header_dst (io_in_3_bits_header_dst),  .io_in_3_bits_payload_addr_block (io_in_3_bits_payload_addr_block),  .io_in_3_bits_payload_p_type (io_in_3_bits_payload_p_type),  .io_in_2_ready (LockingRRArbiter_3_io_in_2_ready),  .io_in_2_valid (T14) ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 7428
+"LockingRRArbiter_7 LockingRRArbiter_4( .clk (clk),  .reset (reset),  .io_in_4_ready (LockingRRArbiter_4_io_in_4_ready),  .io_in_4_valid (T8),  .io_in_4_bits_header_src (io_in_4_bits_header_src),  .io_in_4_bits_header_dst (io_in_4_bits_header_dst),  .io_in_4_bits_payload_addr_block (io_in_4_bits_payload_addr_block),  .io_in_4_bits_payload_p_type (io_in_4_bits_payload_p_type),  .io_in_3_ready (LockingRRArbiter_4_io_in_3_ready),  .io_in_3_valid (T6),  .io_in_3_bits_header_src (io_in_3_bits_header_src),  .io_in_3_bits_header_dst (io_in_3_bits_header_dst),  .io_in_3_bits_payload_addr_block (io_in_3_bits_payload_addr_block),  .io_in_3_bits_payload_p_type (io_in_3_bits_payload_p_type),  .io_in_2_ready (LockingRRArbiter_4_io_in_2_ready),  .io_in_2_valid (T4),   ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 8522
+"LockingRRArbiter_8 LockingRRArbiter( .clk (clk),  .reset (reset),  .io_in_4_ready (LockingRRArbiter_io_in_4_ready),  .io_in_4_valid (T48),  .io_in_4_bits_header_src (io_in_4_bits_header_src),  .io_in_4_bits_header_dst (io_in_4_bits_header_dst),  .io_in_4_bits_payload_addr_beat (io_in_4_bits_payload_addr_beat),  .io_in_4_bits_payload_client_xact_id (io_in_4_bits_payload_client_xact_id),  .io_in_4_bits_payload_manager_xact_id (io_in_4_bits_payload_manager_xact_id),  .io_in_4_bits_payload_is_builtin_type (io_in_4_bits_payload_is_builtin_type),  .io_in_4_bits_payload_g_type (io_in_4_bits_payload_g_type),  .io_in_4_bits_payload_data (io_in_4_bits_payload_data),  .io_in_3_ready (LockingRRArbiter_io_in_3_ready),  .io_in_3_valid (T46),  .io_in_3_bits_header_src ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 8585
+"LockingRRArbiter_8 LockingRRArbiter_1( .clk (clk),  .reset (reset),  .io_in_4_ready (LockingRRArbiter_1_io_in_4_ready),  .io_in_4_valid (T38),  .io_in_4_bits_header_src (io_in_4_bits_header_src),  .io_in_4_bits_header_dst (io_in_4_bits_header_dst),  .io_in_4_bits_payload_addr_beat (io_in_4_bits_payload_addr_beat),  .io_in_4_bits_payload_client_xact_id (io_in_4_bits_payload_client_xact_id),  .io_in_4_bits_payload_manager_xact_id (io_in_4_bits_payload_manager_xact_id),  .io_in_4_bits_payload_is_builtin_type (io_in_4_bits_payload_is_builtin_type),  .io_in_4_bits_payload_g_type (io_in_4_bits_payload_g_type),  .io_in_4_bits_payload_data (io_in_4_bits_payload_data),  .io_in_3_ready (LockingRRArbiter_1_io_in_3_ready),  .io_in_3_valid (T36),  .io_in_3_bits_head ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 8648
+"LockingRRArbiter_8 LockingRRArbiter_2( .clk (clk),  .reset (reset),  .io_in_4_ready (LockingRRArbiter_2_io_in_4_ready),  .io_in_4_valid (T28),  .io_in_4_bits_header_src (io_in_4_bits_header_src),  .io_in_4_bits_header_dst (io_in_4_bits_header_dst),  .io_in_4_bits_payload_addr_beat (io_in_4_bits_payload_addr_beat),  .io_in_4_bits_payload_client_xact_id (io_in_4_bits_payload_client_xact_id),  .io_in_4_bits_payload_manager_xact_id (io_in_4_bits_payload_manager_xact_id),  .io_in_4_bits_payload_is_builtin_type (io_in_4_bits_payload_is_builtin_type),  .io_in_4_bits_payload_g_type (io_in_4_bits_payload_g_type),  .io_in_4_bits_payload_data (io_in_4_bits_payload_data),  .io_in_3_ready (LockingRRArbiter_2_io_in_3_ready),  .io_in_3_valid (T26),  .io_in_3_bits_head ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 8711
+"LockingRRArbiter_8 LockingRRArbiter_3( .clk (clk),  .reset (reset),  .io_in_4_ready (LockingRRArbiter_3_io_in_4_ready),  .io_in_4_valid (T18),  .io_in_4_bits_header_src (io_in_4_bits_header_src),  .io_in_4_bits_header_dst (io_in_4_bits_header_dst),  .io_in_4_bits_payload_addr_beat (io_in_4_bits_payload_addr_beat),  .io_in_4_bits_payload_client_xact_id (io_in_4_bits_payload_client_xact_id),  .io_in_4_bits_payload_manager_xact_id (io_in_4_bits_payload_manager_xact_id),  .io_in_4_bits_payload_is_builtin_type (io_in_4_bits_payload_is_builtin_type),  .io_in_4_bits_payload_g_type (io_in_4_bits_payload_g_type),  .io_in_4_bits_payload_data (io_in_4_bits_payload_data),  .io_in_3_ready (LockingRRArbiter_3_io_in_3_ready),  .io_in_3_valid (T16),  .io_in_3_bits_head ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 8774
+"LockingRRArbiter_8 LockingRRArbiter_4( .clk (clk),  .reset (reset),  .io_in_4_ready (LockingRRArbiter_4_io_in_4_ready),  .io_in_4_valid (T8),  .io_in_4_bits_header_src (io_in_4_bits_header_src),  .io_in_4_bits_header_dst (io_in_4_bits_header_dst),  .io_in_4_bits_payload_addr_beat (io_in_4_bits_payload_addr_beat),  .io_in_4_bits_payload_client_xact_id (io_in_4_bits_payload_client_xact_id),  .io_in_4_bits_payload_manager_xact_id (io_in_4_bits_payload_manager_xact_id),  .io_in_4_bits_payload_is_builtin_type (io_in_4_bits_payload_is_builtin_type),  .io_in_4_bits_payload_g_type (io_in_4_bits_payload_g_type),  .io_in_4_bits_payload_data (io_in_4_bits_payload_data),  .io_in_3_ready (LockingRRArbiter_4_io_in_3_ready),  .io_in_3_valid (T6),  .io_in_3_bits_header ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 9574
+"LockingRRArbiter_9 LockingRRArbiter( .clk (clk),  .reset (reset),  .io_in_4_ready (LockingRRArbiter_io_in_4_ready),  .io_in_4_valid (T48),  .io_in_4_bits_header_src (io_in_4_bits_header_src),  .io_in_4_bits_header_dst (io_in_4_bits_header_dst),  .io_in_4_bits_payload_manager_xact_id (io_in_4_bits_payload_manager_xact_id),  .io_in_3_ready (LockingRRArbiter_io_in_3_ready),  .io_in_3_valid (T46),  .io_in_3_bits_header_src (io_in_3_bits_header_src),  .io_in_3_bits_header_dst (io_in_3_bits_header_dst),  .io_in_3_bits_payload_manager_xact_id (io_in_3_bits_payload_manager_xact_id),  .io_in_2_ready (LockingRRArbiter_io_in_2_ready),  .io_in_2_valid (T44),  .io_in_2_bits_header_src (io_in_2_bits_header_src),  .io_in_2_bits_header_dst (io_in_2_bits_header_dst),  . ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 9607
+"LockingRRArbiter_9 LockingRRArbiter_1( .clk (clk),  .reset (reset),  .io_in_4_ready (LockingRRArbiter_1_io_in_4_ready),  .io_in_4_valid (T38),  .io_in_4_bits_header_src (io_in_4_bits_header_src),  .io_in_4_bits_header_dst (io_in_4_bits_header_dst),  .io_in_4_bits_payload_manager_xact_id (io_in_4_bits_payload_manager_xact_id),  .io_in_3_ready (LockingRRArbiter_1_io_in_3_ready),  .io_in_3_valid (T36),  .io_in_3_bits_header_src (io_in_3_bits_header_src),  .io_in_3_bits_header_dst (io_in_3_bits_header_dst),  .io_in_3_bits_payload_manager_xact_id (io_in_3_bits_payload_manager_xact_id),  .io_in_2_ready (LockingRRArbiter_1_io_in_2_ready),  .io_in_2_valid (T34),  .io_in_2_bits_header_src (io_in_2_bits_header_src),  .io_in_2_bits_header_dst (io_in_2_bits_header_ ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 9640
+"LockingRRArbiter_9 LockingRRArbiter_2( .clk (clk),  .reset (reset),  .io_in_4_ready (LockingRRArbiter_2_io_in_4_ready),  .io_in_4_valid (T28),  .io_in_4_bits_header_src (io_in_4_bits_header_src),  .io_in_4_bits_header_dst (io_in_4_bits_header_dst),  .io_in_4_bits_payload_manager_xact_id (io_in_4_bits_payload_manager_xact_id),  .io_in_3_ready (LockingRRArbiter_2_io_in_3_ready),  .io_in_3_valid (T26),  .io_in_3_bits_header_src (io_in_3_bits_header_src),  .io_in_3_bits_header_dst (io_in_3_bits_header_dst),  .io_in_3_bits_payload_manager_xact_id (io_in_3_bits_payload_manager_xact_id),  .io_in_2_ready (LockingRRArbiter_2_io_in_2_ready),  .io_in_2_valid (T24),  .io_in_2_bits_header_src (io_in_2_bits_header_src),  .io_in_2_bits_header_dst (io_in_2_bits_header_ ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 9673
+"LockingRRArbiter_9 LockingRRArbiter_3( .clk (clk),  .reset (reset),  .io_in_4_ready (LockingRRArbiter_3_io_in_4_ready),  .io_in_4_valid (T18),  .io_in_4_bits_header_src (io_in_4_bits_header_src),  .io_in_4_bits_header_dst (io_in_4_bits_header_dst),  .io_in_4_bits_payload_manager_xact_id (io_in_4_bits_payload_manager_xact_id),  .io_in_3_ready (LockingRRArbiter_3_io_in_3_ready),  .io_in_3_valid (T16),  .io_in_3_bits_header_src (io_in_3_bits_header_src),  .io_in_3_bits_header_dst (io_in_3_bits_header_dst),  .io_in_3_bits_payload_manager_xact_id (io_in_3_bits_payload_manager_xact_id),  .io_in_2_ready (LockingRRArbiter_3_io_in_2_ready),  .io_in_2_valid (T14),  .io_in_2_bits_header_src (io_in_2_bits_header_src),  .io_in_2_bits_header_dst (io_in_2_bits_header_ ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 9706
+"LockingRRArbiter_9 LockingRRArbiter_4( .clk (clk),  .reset (reset),  .io_in_4_ready (LockingRRArbiter_4_io_in_4_ready),  .io_in_4_valid (T8),  .io_in_4_bits_header_src (io_in_4_bits_header_src),  .io_in_4_bits_header_dst (io_in_4_bits_header_dst),  .io_in_4_bits_payload_manager_xact_id (io_in_4_bits_payload_manager_xact_id),  .io_in_3_ready (LockingRRArbiter_4_io_in_3_ready),  .io_in_3_valid (T6),  .io_in_3_bits_header_src (io_in_3_bits_header_src),  .io_in_3_bits_header_dst (io_in_3_bits_header_dst),  .io_in_3_bits_payload_manager_xact_id (io_in_3_bits_payload_manager_xact_id),  .io_in_2_ready (LockingRRArbiter_4_io_in_2_ready),  .io_in_2_valid (T4),  .io_in_2_bits_header_src (io_in_2_bits_header_src),  .io_in_2_bits_header_dst (io_in_2_bits_header_dst ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 11760
+"BasicCrossbar_0 acqNet( .clk (clk),  .reset (reset),  .io_in_4_ready (acqNet_io_in_4_ready),  .io_in_4_valid (T121),  .io_in_4_bits_header_src (T119),  .io_in_4_bits_header_dst (T118),  .io_in_4_bits_payload_addr_block (T117),  .io_in_4_bits_payload_client_xact_id (T116),  .io_in_4_bits_payload_addr_beat (T115),  .io_in_4_bits_payload_is_builtin_type (T114),  .io_in_4_bits_payload_a_type (T113),  .io_in_4_bits_payload_union (T112),  .io_in_4_bits_payload_data (T111),  .io_in_3_ready (acqNet_io_in_3_ready),  .io_in_3_valid (T110),  .io_in_3_bits_header_src (T108),  .io_in_3_bits_header_dst (T107),  .io_in_3_bits_payload_addr_block (T106),  .io_in_3_bits_payload_client_xact_id (T105),  .io_in_3_bits_payload_addr_beat (T104),  .io_in_3_bits_payload_is_buil ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_in_1_ready' is not connected,
+  input port 'io_in_1_bits_header_src' is not connected,
+  input port 'io_in_1_bits_header_dst' is not connected,
+  input port 'io_in_1_bits_payload_addr_block' is not connected,
+  input port 'io_in_1_bits_payload_client_xact_id' is not connected,
+  input port 'io_in_1_bits_payload_addr_beat' is not connected,
+  input port 'io_in_1_bits_payload_is_builtin_type' is not connected,
+  input port 'io_in_1_bits_payload_a_type' is not connected,
+  input port 'io_in_1_bits_payload_union' is not connected,
+  input port 'io_in_1_bits_payload_data' is not connected,
+  output port 'io_in_0_ready' is not connected,
+  input port 'io_in_0_bits_header_src' is not connected,
+  input port 'io_in_0_bits_header_dst' is not connected,
+  input port 'io_in_0_bits_payload_addr_block' is not connected,
+  input port 'io_in_0_bits_payload_client_xact_id' is not connected,
+  input port 'io_in_0_bits_payload_addr_beat' is not connected,
+  input port 'io_in_0_bits_payload_is_builtin_type' is not connected,
+  input port 'io_in_0_bits_payload_a_type' is not connected,
+  input port 'io_in_0_bits_payload_union' is not connected,
+  input port 'io_in_0_bits_payload_data' is not connected,
+  output port 'io_out_4_valid' is not connected,
+  output port 'io_out_4_bits_header_src' is not connected,
+  output port 'io_out_4_bits_header_dst' is not connected,
+  output port 'io_out_4_bits_payload_addr_block' is not connected,
+  output port 'io_out_4_bits_payload_client_xact_id' is not connected,
+  output port 'io_out_4_bits_payload_addr_beat' is not connected,
+  output port 'io_out_4_bits_payload_is_builtin_type' is not connected,
+  output port 'io_out_4_bits_payload_a_type' is not connected,
+  output port 'io_out_4_bits_payload_union' is not connected,
+  output port 'io_out_4_bits_payload_data' is not connected,
+  ... ...
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 11894
+"BasicCrossbar_1 relNet( .clk (clk),  .reset (reset),  .io_in_4_ready (relNet_io_in_4_ready),  .io_in_4_valid (T86),  .io_in_4_bits_header_src (T84),  .io_in_4_bits_header_dst (T83),  .io_in_4_bits_payload_addr_beat (T82),  .io_in_4_bits_payload_addr_block (T81),  .io_in_4_bits_payload_client_xact_id (T80),  .io_in_4_bits_payload_voluntary (T79),  .io_in_4_bits_payload_r_type (T78),  .io_in_4_bits_payload_data (T77),  .io_in_3_ready (relNet_io_in_3_ready),  .io_in_3_valid (T76),  .io_in_3_bits_header_src (T74),  .io_in_3_bits_header_dst (T73),  .io_in_3_bits_payload_addr_beat (T72),  .io_in_3_bits_payload_addr_block (T71),  .io_in_3_bits_payload_client_xact_id (T70),  .io_in_3_bits_payload_voluntary (T69),  .io_in_3_bits_payload_r_type (T68),  .io_in_3_b ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_in_1_ready' is not connected,
+  input port 'io_in_1_bits_header_src' is not connected,
+  input port 'io_in_1_bits_header_dst' is not connected,
+  input port 'io_in_1_bits_payload_addr_beat' is not connected,
+  input port 'io_in_1_bits_payload_addr_block' is not connected,
+  input port 'io_in_1_bits_payload_client_xact_id' is not connected,
+  input port 'io_in_1_bits_payload_voluntary' is not connected,
+  input port 'io_in_1_bits_payload_r_type' is not connected,
+  input port 'io_in_1_bits_payload_data' is not connected,
+  output port 'io_in_0_ready' is not connected,
+  input port 'io_in_0_bits_header_src' is not connected,
+  input port 'io_in_0_bits_header_dst' is not connected,
+  input port 'io_in_0_bits_payload_addr_beat' is not connected,
+  input port 'io_in_0_bits_payload_addr_block' is not connected,
+  input port 'io_in_0_bits_payload_client_xact_id' is not connected,
+  input port 'io_in_0_bits_payload_voluntary' is not connected,
+  input port 'io_in_0_bits_payload_r_type' is not connected,
+  input port 'io_in_0_bits_payload_data' is not connected,
+  output port 'io_out_4_valid' is not connected,
+  output port 'io_out_4_bits_header_src' is not connected,
+  output port 'io_out_4_bits_header_dst' is not connected,
+  output port 'io_out_4_bits_payload_addr_beat' is not connected,
+  output port 'io_out_4_bits_payload_addr_block' is not connected,
+  output port 'io_out_4_bits_payload_client_xact_id' is not connected,
+  output port 'io_out_4_bits_payload_voluntary' is not connected,
+  output port 'io_out_4_bits_payload_r_type' is not connected,
+  output port 'io_out_4_bits_payload_data' is not connected,
+  output port 'io_out_3_valid' is not connected,
+  output port 'io_out_3_bits_header_src' is not connected,
+  output port 'io_out_3_bits_header_dst' is not connected,
+  ... ...
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 12016
+"BasicCrossbar_2 prbNet( .clk (clk),  .reset (reset),  .io_in_4_valid (1'b0),  .io_in_3_valid (1'b0),  .io_in_2_valid (1'b0),  .io_in_1_ready (prbNet_io_in_1_ready),  .io_in_1_valid (T54),  .io_in_1_bits_header_src (T53),  .io_in_1_bits_header_dst (T51),  .io_in_1_bits_payload_addr_block (T50),  .io_in_1_bits_payload_p_type (T49),  .io_in_0_ready (prbNet_io_in_0_ready),  .io_in_0_valid (T48),  .io_in_0_bits_header_src (T47),  .io_in_0_bits_header_dst (T45),  .io_in_0_bits_payload_addr_block (T44),  .io_in_0_bits_payload_p_type (T43),  .io_out_4_ready (T42),  .io_out_4_valid (prbNet_io_out_4_valid),  .io_out_4_bits_header_src (prbNet_io_out_4_bits_header_src),  .io_out_4_bits_header_dst (prbNet_io_out_4_bits_header_dst),  .io_out_4_bits_payload_addr_block ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_in_4_ready' is not connected,
+  input port 'io_in_4_bits_header_src' is not connected,
+  input port 'io_in_4_bits_header_dst' is not connected,
+  input port 'io_in_4_bits_payload_addr_block' is not connected,
+  input port 'io_in_4_bits_payload_p_type' is not connected,
+  output port 'io_in_3_ready' is not connected,
+  input port 'io_in_3_bits_header_src' is not connected,
+  input port 'io_in_3_bits_header_dst' is not connected,
+  input port 'io_in_3_bits_payload_addr_block' is not connected,
+  input port 'io_in_3_bits_payload_p_type' is not connected,
+  output port 'io_in_2_ready' is not connected,
+  input port 'io_in_2_bits_header_src' is not connected,
+  input port 'io_in_2_bits_header_dst' is not connected,
+  input port 'io_in_2_bits_payload_addr_block' is not connected,
+  input port 'io_in_2_bits_payload_p_type' is not connected,
+  output port 'io_out_1_valid' is not connected,
+  output port 'io_out_1_bits_header_src' is not connected,
+  output port 'io_out_1_bits_header_dst' is not connected,
+  output port 'io_out_1_bits_payload_addr_block' is not connected,
+  output port 'io_out_1_bits_payload_p_type' is not connected,
+  output port 'io_out_0_valid' is not connected,
+  output port 'io_out_0_bits_header_src' is not connected,
+  output port 'io_out_0_bits_header_dst' is not connected,
+  output port 'io_out_0_bits_payload_addr_block' is not connected,
+  output port 'io_out_0_bits_payload_p_type' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 12094
+"BasicCrossbar_3 gntNet( .clk (clk),  .reset (reset),  .io_in_4_valid (1'b0),  .io_in_3_valid (1'b0),  .io_in_2_valid (1'b0),  .io_in_1_ready (gntNet_io_in_1_ready),  .io_in_1_valid (T39),  .io_in_1_bits_header_src (T38),  .io_in_1_bits_header_dst (T36),  .io_in_1_bits_payload_addr_beat (T35),  .io_in_1_bits_payload_client_xact_id (T34),  .io_in_1_bits_payload_manager_xact_id (T33),  .io_in_1_bits_payload_is_builtin_type (T32),  .io_in_1_bits_payload_g_type (T31),  .io_in_1_bits_payload_data (T30),  .io_in_0_ready (gntNet_io_in_0_ready),  .io_in_0_valid (T29),  .io_in_0_bits_header_src (T28),  .io_in_0_bits_header_dst (T26),  .io_in_0_bits_payload_addr_beat (T25),  .io_in_0_bits_payload_client_xact_id (T24),  .io_in_0_bits_payload_manager_xact_id (T23),  ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_in_4_ready' is not connected,
+  input port 'io_in_4_bits_header_src' is not connected,
+  input port 'io_in_4_bits_header_dst' is not connected,
+  input port 'io_in_4_bits_payload_addr_beat' is not connected,
+  input port 'io_in_4_bits_payload_client_xact_id' is not connected,
+  input port 'io_in_4_bits_payload_manager_xact_id' is not connected,
+  input port 'io_in_4_bits_payload_is_builtin_type' is not connected,
+  input port 'io_in_4_bits_payload_g_type' is not connected,
+  input port 'io_in_4_bits_payload_data' is not connected,
+  output port 'io_in_3_ready' is not connected,
+  input port 'io_in_3_bits_header_src' is not connected,
+  input port 'io_in_3_bits_header_dst' is not connected,
+  input port 'io_in_3_bits_payload_addr_beat' is not connected,
+  input port 'io_in_3_bits_payload_client_xact_id' is not connected,
+  input port 'io_in_3_bits_payload_manager_xact_id' is not connected,
+  input port 'io_in_3_bits_payload_is_builtin_type' is not connected,
+  input port 'io_in_3_bits_payload_g_type' is not connected,
+  input port 'io_in_3_bits_payload_data' is not connected,
+  output port 'io_in_2_ready' is not connected,
+  input port 'io_in_2_bits_header_src' is not connected,
+  input port 'io_in_2_bits_header_dst' is not connected,
+  input port 'io_in_2_bits_payload_addr_beat' is not connected,
+  input port 'io_in_2_bits_payload_client_xact_id' is not connected,
+  input port 'io_in_2_bits_payload_manager_xact_id' is not connected,
+  input port 'io_in_2_bits_payload_is_builtin_type' is not connected,
+  input port 'io_in_2_bits_payload_g_type' is not connected,
+  input port 'io_in_2_bits_payload_data' is not connected,
+  output port 'io_out_1_valid' is not connected,
+  output port 'io_out_1_bits_header_src' is not connected,
+  output port 'io_out_1_bits_header_dst' is not connected,
+  ... ...
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 12224
+"BasicCrossbar_4 ackNet( .clk (clk),  .reset (reset),  .io_in_4_ready (ackNet_io_in_4_ready),  .io_in_4_valid (T16),  .io_in_4_bits_header_src (T14),  .io_in_4_bits_header_dst (T13),  .io_in_4_bits_payload_manager_xact_id (T12),  .io_in_3_ready (ackNet_io_in_3_ready),  .io_in_3_valid (T11),  .io_in_3_bits_header_src (T9),  .io_in_3_bits_header_dst (T8),  .io_in_3_bits_payload_manager_xact_id (T7),  .io_in_2_ready (ackNet_io_in_2_ready),  .io_in_2_valid (T6),  .io_in_2_bits_header_src (T4),  .io_in_2_bits_header_dst (T3),  .io_in_2_bits_payload_manager_xact_id (T2),  .io_in_1_valid (1'b0),  .io_in_0_valid (1'b0),  .io_out_4_ready (1'b0),  .io_out_3_ready (1'b0),  .io_out_2_ready (1'b0),  .io_out_1_ready (T1),  .io_out_1_valid (ackNet_io_out_1_valid),  .io ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_in_1_ready' is not connected,
+  input port 'io_in_1_bits_header_src' is not connected,
+  input port 'io_in_1_bits_header_dst' is not connected,
+  input port 'io_in_1_bits_payload_manager_xact_id' is not connected,
+  output port 'io_in_0_ready' is not connected,
+  input port 'io_in_0_bits_header_src' is not connected,
+  input port 'io_in_0_bits_header_dst' is not connected,
+  input port 'io_in_0_bits_payload_manager_xact_id' is not connected,
+  output port 'io_out_4_valid' is not connected,
+  output port 'io_out_4_bits_header_src' is not connected,
+  output port 'io_out_4_bits_header_dst' is not connected,
+  output port 'io_out_4_bits_payload_manager_xact_id' is not connected,
+  output port 'io_out_3_valid' is not connected,
+  output port 'io_out_3_bits_header_src' is not connected,
+  output port 'io_out_3_bits_header_dst' is not connected,
+  output port 'io_out_3_bits_payload_manager_xact_id' is not connected,
+  output port 'io_out_2_valid' is not connected,
+  output port 'io_out_2_bits_header_src' is not connected,
+  output port 'io_out_2_bits_header_dst' is not connected,
+  output port 'io_out_2_bits_payload_manager_xact_id' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 25501
+"LockingRRArbiter_10 LockingRRArbiter( .clk (clk),  .reset (reset),  .io_in_7_ready (LockingRRArbiter_io_in_7_ready),  .io_in_7_valid (io_in_7_acquire_valid),  .io_in_7_bits_addr_block (io_in_7_acquire_bits_addr_block),  .io_in_7_bits_client_xact_id (T63),  .io_in_7_bits_addr_beat (io_in_7_acquire_bits_addr_beat),  .io_in_7_bits_is_builtin_type (io_in_7_acquire_bits_is_builtin_type),  .io_in_7_bits_a_type (io_in_7_acquire_bits_a_type),  .io_in_7_bits_union (io_in_7_acquire_bits_union),  .io_in_7_bits_data (io_in_7_acquire_bits_data),  .io_in_6_ready (LockingRRArbiter_io_in_6_ready),  .io_in_6_valid (io_in_6_acquire_valid),  .io_in_6_bits_addr_block (io_in_6_acquire_bits_addr_block),  .io_in_6_bits_client_xact_id (T62),  .io_in_6_bits_addr_beat (io_in_6_a ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 27096
+"LockingRRArbiter_2 LockingRRArbiter( .clk (clk),  .reset (reset),  .io_in_7_ready (LockingRRArbiter_io_in_7_ready),  .io_in_7_valid (BroadcastAcquireTracker_6_io_inner_grant_valid),  .io_in_7_bits_addr_beat (BroadcastAcquireTracker_6_io_inner_grant_bits_addr_beat),  .io_in_7_bits_client_xact_id (BroadcastAcquireTracker_6_io_inner_grant_bits_client_xact_id),  .io_in_7_bits_manager_xact_id (BroadcastAcquireTracker_6_io_inner_grant_bits_manager_xact_id),  .io_in_7_bits_is_builtin_type (BroadcastAcquireTracker_6_io_inner_grant_bits_is_builtin_type),  .io_in_7_bits_g_type (BroadcastAcquireTracker_6_io_inner_grant_bits_g_type),  .io_in_7_bits_data (T267),  .io_in_7_bits_client_id (BroadcastAcquireTracker_6_io_inner_grant_bits_client_id),  .io_in_6_ready (Lock ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_out_bits_addr_beat' is not connected,
+  output port 'io_out_bits_data' is not connected,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 27180
+"LockingRRArbiter_3 LockingRRArbiter_1( .clk (clk),  .reset (reset),  .io_in_7_ready (LockingRRArbiter_1_io_in_7_ready),  .io_in_7_valid (BroadcastAcquireTracker_6_io_inner_probe_valid),  .io_in_7_bits_addr_block (BroadcastAcquireTracker_6_io_inner_probe_bits_addr_block),  .io_in_7_bits_p_type (BroadcastAcquireTracker_6_io_inner_probe_bits_p_type),  .io_in_7_bits_client_id (BroadcastAcquireTracker_6_io_inner_probe_bits_client_id),  .io_in_6_ready (LockingRRArbiter_1_io_in_6_ready),  .io_in_6_valid (BroadcastAcquireTracker_5_io_inner_probe_valid),  .io_in_6_bits_addr_block (BroadcastAcquireTracker_5_io_inner_probe_bits_addr_block),  .io_in_6_bits_p_type (BroadcastAcquireTracker_5_io_inner_probe_bits_p_type),  .io_in_6_bits_client_id (BroadcastAcquireTrack ... "
+  The above instance has fewer port connections than the module definition,
+  input port 'io_in_0_bits_addr_block' is not connected,
+  input port 'io_in_0_bits_p_type' is not connected,
+  input port 'io_in_0_bits_client_id' is not connected,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 28393
+"Queue_2 r_queue( .clk (clk),  .reset (reset),  .io_enq_ready (r_queue_io_enq_ready),  .io_enq_valid (io_ar_valid),  .io_enq_bits_addr (io_ar_bits_addr),  .io_enq_bits_len (io_ar_bits_len),  .io_enq_bits_size (io_ar_bits_size),  .io_enq_bits_burst (io_ar_bits_burst),  .io_enq_bits_lock (io_ar_bits_lock),  .io_enq_bits_cache (io_ar_bits_cache),  .io_enq_bits_prot (io_ar_bits_prot),  .io_enq_bits_qos (io_ar_bits_qos),  .io_enq_bits_region (io_ar_bits_region),  .io_enq_bits_id (io_ar_bits_id),  .io_enq_bits_user (io_ar_bits_user),  .io_deq_ready (T19),  .io_deq_valid (r_queue_io_deq_valid),  .io_deq_bits_len (r_queue_io_deq_bits_len),  .io_deq_bits_id (r_queue_io_deq_bits_id));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_deq_bits_addr' is not connected,
+  output port 'io_deq_bits_size' is not connected,
+  output port 'io_deq_bits_burst' is not connected,
+  output port 'io_deq_bits_lock' is not connected,
+  output port 'io_deq_bits_cache' is not connected,
+  output port 'io_deq_bits_prot' is not connected,
+  output port 'io_deq_bits_qos' is not connected,
+  output port 'io_deq_bits_region' is not connected,
+  output port 'io_deq_bits_user' is not connected,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 28422
+"Queue_19 b_queue( .clk (clk),  .reset (reset),  .io_enq_ready (b_queue_io_enq_ready),  .io_enq_valid (T17),  .io_enq_bits (io_aw_bits_id),  .io_deq_ready (T10),  .io_deq_valid (b_queue_io_deq_valid),  .io_deq_bits (b_queue_io_deq_bits));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 29401
+"RRArbiter_4 b_arb( .clk (clk),  .reset (reset),  .io_in_2_ready (b_arb_io_in_2_ready),  .io_in_2_valid (err_slave_io_b_valid),  .io_in_2_bits_resp (err_slave_io_b_bits_resp),  .io_in_2_bits_id (err_slave_io_b_bits_id),  .io_in_1_ready (b_arb_io_in_1_ready),  .io_in_1_valid (io_slave_1_b_valid),  .io_in_1_bits_resp (io_slave_1_b_bits_resp),  .io_in_1_bits_id (io_slave_1_b_bits_id),  .io_in_1_bits_user (io_slave_1_b_bits_user),  .io_in_0_ready (b_arb_io_in_0_ready),  .io_in_0_valid (io_slave_0_b_valid),  .io_in_0_bits_resp (io_slave_0_b_bits_resp),  .io_in_0_bits_id (io_slave_0_b_bits_id),  .io_in_0_bits_user (io_slave_0_b_bits_user),  .io_out_ready (io_master_b_ready),  .io_out_valid (b_arb_io_out_valid),  .io_out_bits_resp (b_arb_io_out_bits_resp),  .io ... "
+  The above instance has fewer port connections than the module definition,
+  input port 'io_in_2_bits_user' is not connected,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 29429
+"JunctionsPeekingArbiter_0 r_arb( .clk (clk),  .reset (reset),  .io_in_2_ready (r_arb_io_in_2_ready),  .io_in_2_valid (err_slave_io_r_valid),  .io_in_2_bits_resp (err_slave_io_r_bits_resp),  .io_in_2_bits_data (err_slave_io_r_bits_data),  .io_in_2_bits_last (err_slave_io_r_bits_last),  .io_in_2_bits_id (err_slave_io_r_bits_id),  .io_in_1_ready (r_arb_io_in_1_ready),  .io_in_1_valid (io_slave_1_r_valid),  .io_in_1_bits_resp (io_slave_1_r_bits_resp),  .io_in_1_bits_data (io_slave_1_r_bits_data),  .io_in_1_bits_last (io_slave_1_r_bits_last),  .io_in_1_bits_id (io_slave_1_r_bits_id),  .io_in_1_bits_user (io_slave_1_r_bits_user),  .io_in_0_ready (r_arb_io_in_0_ready),  .io_in_0_valid (io_slave_0_r_valid),  .io_in_0_bits_resp (io_slave_0_r_bits_resp),  .io_in_ ... "
+  The above instance has fewer port connections than the module definition,
+  input port 'io_in_2_bits_user' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 29984
+"RRArbiter_5 RRArbiter( .clk (clk),  .reset (reset),  .io_in_1_ready (RRArbiter_io_in_1_ready),  .io_in_1_valid (io_master_1_ar_valid),  .io_in_1_bits_addr (io_master_1_ar_bits_addr),  .io_in_1_bits_len (io_master_1_ar_bits_len),  .io_in_1_bits_size (io_master_1_ar_bits_size),  .io_in_1_bits_burst (io_master_1_ar_bits_burst),  .io_in_1_bits_lock (io_master_1_ar_bits_lock),  .io_in_1_bits_cache (io_master_1_ar_bits_cache),  .io_in_1_bits_prot (io_master_1_ar_bits_prot),  .io_in_1_bits_qos (io_master_1_ar_bits_qos),  .io_in_1_bits_region (io_master_1_ar_bits_region),  .io_in_1_bits_id (T52),  .io_in_1_bits_user (io_master_1_ar_bits_user),  .io_in_0_ready (RRArbiter_io_in_0_ready),  .io_in_0_valid (io_master_0_ar_valid),  .io_in_0_bits_addr (io_master_0_ar_ ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 32423
+"RRArbiter_6 b_arb( .clk (clk),  .reset (reset),  .io_in_3_ready (b_arb_io_in_3_ready),  .io_in_3_valid (err_slave_io_b_valid),  .io_in_3_bits_resp (err_slave_io_b_bits_resp),  .io_in_3_bits_id (err_slave_io_b_bits_id),  .io_in_2_ready (b_arb_io_in_2_ready),  .io_in_2_valid (io_slave_2_b_valid),  .io_in_2_bits_resp (io_slave_2_b_bits_resp),  .io_in_2_bits_id (io_slave_2_b_bits_id),  .io_in_2_bits_user (io_slave_2_b_bits_user),  .io_in_1_ready (b_arb_io_in_1_ready),  .io_in_1_valid (io_slave_1_b_valid),  .io_in_1_bits_resp (io_slave_1_b_bits_resp),  .io_in_1_bits_id (io_slave_1_b_bits_id),  .io_in_1_bits_user (io_slave_1_b_bits_user),  .io_in_0_ready (b_arb_io_in_0_ready),  .io_in_0_valid (io_slave_0_b_valid),  .io_in_0_bits_resp (io_slave_0_b_bits_resp), ... "
+  The above instance has fewer port connections than the module definition,
+  input port 'io_in_3_bits_user' is not connected,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 32456
+"JunctionsPeekingArbiter_1 r_arb( .clk (clk),  .reset (reset),  .io_in_3_ready (r_arb_io_in_3_ready),  .io_in_3_valid (err_slave_io_r_valid),  .io_in_3_bits_resp (err_slave_io_r_bits_resp),  .io_in_3_bits_data (err_slave_io_r_bits_data),  .io_in_3_bits_last (err_slave_io_r_bits_last),  .io_in_3_bits_id (err_slave_io_r_bits_id),  .io_in_2_ready (r_arb_io_in_2_ready),  .io_in_2_valid (io_slave_2_r_valid),  .io_in_2_bits_resp (io_slave_2_r_bits_resp),  .io_in_2_bits_data (io_slave_2_r_bits_data),  .io_in_2_bits_last (io_slave_2_r_bits_last),  .io_in_2_bits_id (io_slave_2_r_bits_id),  .io_in_2_bits_user (io_slave_2_r_bits_user),  .io_in_1_ready (r_arb_io_in_1_ready),  .io_in_1_valid (io_slave_1_r_valid),  .io_in_1_bits_resp (io_slave_1_r_bits_resp),  .io_in_ ... "
+  The above instance has fewer port connections than the module definition,
+  input port 'io_in_3_bits_user' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 34219
+"NastiCrossbar_0 xbar( .clk (clk),  .reset (reset),  .io_masters_1_aw_ready (xbar_io_masters_1_aw_ready),  .io_masters_1_aw_valid (io_masters_1_aw_valid),  .io_masters_1_aw_bits_addr (io_masters_1_aw_bits_addr),  .io_masters_1_aw_bits_len (io_masters_1_aw_bits_len),  .io_masters_1_aw_bits_size (io_masters_1_aw_bits_size),  .io_masters_1_aw_bits_burst (io_masters_1_aw_bits_burst),  .io_masters_1_aw_bits_lock (io_masters_1_aw_bits_lock),  .io_masters_1_aw_bits_cache (io_masters_1_aw_bits_cache),  .io_masters_1_aw_bits_prot (io_masters_1_aw_bits_prot),  .io_masters_1_aw_bits_qos (io_masters_1_aw_bits_qos),  .io_masters_1_aw_bits_region (io_masters_1_aw_bits_region),  .io_masters_1_aw_bits_id (io_masters_1_aw_bits_id),  .io_masters_1_aw_bits_user (io_masters ... "
+  The above instance has fewer port connections than the module definition,
+  input port 'io_slaves_1_b_bits_user' is not connected,
+  input port 'io_slaves_1_r_bits_user' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 36099
+"LockingRRArbiter_4 acqArb( .clk (clk),  .reset (reset),  .io_in_1_ready (acqArb_io_in_1_ready),  .io_in_1_valid (T51),  .io_in_1_bits_addr_block (T50),  .io_in_1_bits_client_xact_id (T49),  .io_in_1_bits_addr_beat (T48),  .io_in_1_bits_is_builtin_type (T47),  .io_in_1_bits_a_type (T46),  .io_in_1_bits_union (T43),  .io_in_1_bits_data (T42),  .io_in_0_ready (acqArb_io_in_0_ready),  .io_in_0_valid (T40),  .io_in_0_bits_addr_block (T39),  .io_in_0_bits_client_xact_id (T38),  .io_in_0_bits_addr_beat (T37),  .io_in_0_bits_is_builtin_type (T36),  .io_in_0_bits_a_type (T34),  .io_in_0_bits_union (T32),  .io_in_0_bits_data (T31),  .io_out_ready (io_out_acquire_ready),  .io_out_valid (acqArb_io_out_valid),  .io_out_bits_addr_block (acqArb_io_out_bits_addr_block) ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 36139
+"ReorderQueue_0 relRoq( .clk (clk),  .reset (reset),  .io_enq_ready (relRoq_io_enq_ready),  .io_enq_valid (T8),  .io_enq_bits_data (io_in_release_bits_voluntary),  .io_enq_bits_tag (io_in_release_bits_client_xact_id),  .io_deq_valid (T0),  .io_deq_tag (io_out_grant_bits_client_xact_id),  .io_deq_data (relRoq_io_deq_data));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_deq_matches' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 36921
+"ReorderQueue_0 ReorderQueue( .clk (clk),  .reset (reset),  .io_enq_ready (ReorderQueue_io_enq_ready),  .io_enq_valid (T83),  .io_enq_bits_data (T79),  .io_enq_bits_tag (io_in_acquire_bits_client_xact_id),  .io_deq_valid (T76),  .io_deq_tag (io_out_grant_bits_client_xact_id),  .io_deq_data (ReorderQueue_io_deq_data));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_deq_matches' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 38407
+"Arbiter_6 gnt_arb( .io_in_1_ready (gnt_arb_io_in_1_ready),  .io_in_1_valid (io_nasti_b_valid),  .io_in_1_bits_addr_beat (T36),  .io_in_1_bits_client_xact_id (T35),  .io_in_1_bits_manager_xact_id (T34),  .io_in_1_bits_is_builtin_type (T33),  .io_in_1_bits_g_type (T32),  .io_in_1_bits_data (T31),  .io_in_0_ready (gnt_arb_io_in_0_ready),  .io_in_0_valid (io_nasti_r_valid),  .io_in_0_bits_addr_beat (T22),  .io_in_0_bits_client_xact_id (T21),  .io_in_0_bits_manager_xact_id (T20),  .io_in_0_bits_is_builtin_type (T19),  .io_in_0_bits_g_type (T17),  .io_in_0_bits_data (T14),  .io_out_ready (io_tl_grant_ready),  .io_out_valid (gnt_arb_io_out_valid),  .io_out_bits_addr_beat (gnt_arb_io_out_bits_addr_beat),  .io_out_bits_client_xact_id (gnt_arb_io_out_bits_client_ ... "
+  The above instance has fewer port connections than the module definition,
+  input port 'io_in_1_bits_client_id' is not connected,
+  input port 'io_in_0_bits_client_id' is not connected,
+  output port 'io_out_bits_client_id' is not connected,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 40217
+"SmiArbiter_0 arb( .clk (clk),  .reset (reset),  .io_in_1_req_ready (arb_io_in_1_req_ready),  .io_in_1_req_valid (writer_io_smi_req_valid),  .io_in_1_req_bits_rw (writer_io_smi_req_bits_rw),  .io_in_1_req_bits_addr (writer_io_smi_req_bits_addr),  .io_in_1_req_bits_data (writer_io_smi_req_bits_data),  .io_in_1_resp_ready (writer_io_smi_resp_ready),  .io_in_1_resp_valid (arb_io_in_1_resp_valid),  .io_in_1_resp_bits (arb_io_in_1_resp_bits),  .io_in_0_req_ready (arb_io_in_0_req_ready),  .io_in_0_req_valid (reader_io_smi_req_valid),  .io_in_0_req_bits_rw (reader_io_smi_req_bits_rw),  .io_in_0_req_bits_addr (reader_io_smi_req_bits_addr),  .io_in_0_resp_ready (reader_io_smi_resp_ready),  .io_in_0_resp_valid (arb_io_in_0_resp_valid),  .io_in_0_resp_bits (arb_io_ ... "
+  The above instance has fewer port connections than the module definition,
+  input port 'io_in_0_req_bits_data' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 41153
+"SmiArbiter_1 arb( .clk (clk),  .reset (reset),  .io_in_1_req_ready (arb_io_in_1_req_ready),  .io_in_1_req_valid (writer_io_smi_req_valid),  .io_in_1_req_bits_rw (writer_io_smi_req_bits_rw),  .io_in_1_req_bits_addr (writer_io_smi_req_bits_addr),  .io_in_1_req_bits_data (writer_io_smi_req_bits_data),  .io_in_1_resp_ready (writer_io_smi_resp_ready),  .io_in_1_resp_valid (arb_io_in_1_resp_valid),  .io_in_1_resp_bits (arb_io_in_1_resp_bits),  .io_in_0_req_ready (arb_io_in_0_req_ready),  .io_in_0_req_valid (reader_io_smi_req_valid),  .io_in_0_req_bits_rw (reader_io_smi_req_bits_rw),  .io_in_0_req_bits_addr (reader_io_smi_req_bits_addr),  .io_in_0_resp_ready (reader_io_smi_resp_ready),  .io_in_0_resp_valid (arb_io_in_0_resp_valid),  .io_in_0_resp_bits (arb_io_ ... "
+  The above instance has fewer port connections than the module definition,
+  input port 'io_in_0_req_bits_data' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 42215
+"RocketChipTileLinkCrossbar l1tol2net( .clk (clk),  .reset (reset),  .io_clients_2_acquire_ready (l1tol2net_io_clients_2_acquire_ready),  .io_clients_2_acquire_valid (ClientTileLinkIOWrapper_1_io_out_acquire_valid),  .io_clients_2_acquire_bits_addr_block (ClientTileLinkIOWrapper_1_io_out_acquire_bits_addr_block),  .io_clients_2_acquire_bits_client_xact_id (ClientTileLinkIOWrapper_1_io_out_acquire_bits_client_xact_id),  .io_clients_2_acquire_bits_addr_beat (ClientTileLinkIOWrapper_1_io_out_acquire_bits_addr_beat),  .io_clients_2_acquire_bits_is_builtin_type (ClientTileLinkIOWrapper_1_io_out_acquire_bits_is_builtin_type),  .io_clients_2_acquire_bits_a_type (ClientTileLinkIOWrapper_1_io_out_acquire_bits_a_type),  .io_clients_2_acquire_bits_union (ClientTile ... "
+  The above instance has fewer port connections than the module definition,
+  input port 'io_clients_2_release_bits_addr_beat' is not connected,
+  input port 'io_clients_2_release_bits_addr_block' is not connected,
+  input port 'io_clients_2_release_bits_client_xact_id' is not connected,
+  input port 'io_clients_2_release_bits_voluntary' is not connected,
+  input port 'io_clients_2_release_bits_r_type' is not connected,
+  input port 'io_clients_2_release_bits_data' is not connected,
+  input port 'io_clients_1_release_bits_addr_beat' is not connected,
+  input port 'io_clients_1_release_bits_addr_block' is not connected,
+  input port 'io_clients_1_release_bits_client_xact_id' is not connected,
+  input port 'io_clients_1_release_bits_voluntary' is not connected,
+  input port 'io_clients_1_release_bits_r_type' is not connected,
+  input port 'io_clients_1_release_bits_data' is not connected,
+  input port 'io_managers_1_probe_bits_addr_block' is not connected,
+  input port 'io_managers_1_probe_bits_p_type' is not connected,
+  input port 'io_managers_1_probe_bits_client_id' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 42507
+"NastiRecursiveInterconnect_1 mmio_ic( .clk (clk),  .reset (reset),  .io_masters_1_aw_ready (mmio_ic_io_masters_1_aw_ready),  .io_masters_1_aw_valid (rtc_io_aw_valid),  .io_masters_1_aw_bits_addr (rtc_io_aw_bits_addr),  .io_masters_1_aw_bits_len (rtc_io_aw_bits_len),  .io_masters_1_aw_bits_size (rtc_io_aw_bits_size),  .io_masters_1_aw_bits_burst (rtc_io_aw_bits_burst),  .io_masters_1_aw_bits_lock (rtc_io_aw_bits_lock),  .io_masters_1_aw_bits_cache (rtc_io_aw_bits_cache),  .io_masters_1_aw_bits_prot (rtc_io_aw_bits_prot),  .io_masters_1_aw_bits_qos (rtc_io_aw_bits_qos),  .io_masters_1_aw_bits_region (rtc_io_aw_bits_region),  .io_masters_1_aw_bits_id (rtc_io_aw_bits_id),  .io_masters_1_aw_bits_user (rtc_io_aw_bits_user),  .io_masters_1_w_ready (mmio_ic_io_ ... "
+  The above instance has fewer port connections than the module definition,
+  input port 'io_masters_1_ar_bits_addr' is not connected,
+  input port 'io_masters_1_ar_bits_len' is not connected,
+  input port 'io_masters_1_ar_bits_size' is not connected,
+  input port 'io_masters_1_ar_bits_burst' is not connected,
+  input port 'io_masters_1_ar_bits_lock' is not connected,
+  input port 'io_masters_1_ar_bits_cache' is not connected,
+  input port 'io_masters_1_ar_bits_prot' is not connected,
+  input port 'io_masters_1_ar_bits_qos' is not connected,
+  input port 'io_masters_1_ar_bits_region' is not connected,
+  input port 'io_masters_1_ar_bits_id' is not connected,
+  input port 'io_masters_1_ar_bits_user' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 43029
+"ClientTileLinkEnqueuer ClientTileLinkEnqueuer( .io_inner_acquire_ready (ClientTileLinkEnqueuer_io_inner_acquire_ready),  .io_inner_acquire_valid (ClientTileLinkIOWrapper_2_io_out_acquire_valid),  .io_inner_acquire_bits_addr_block (ClientTileLinkIOWrapper_2_io_out_acquire_bits_addr_block),  .io_inner_acquire_bits_client_xact_id (ClientTileLinkIOWrapper_2_io_out_acquire_bits_client_xact_id),  .io_inner_acquire_bits_addr_beat (ClientTileLinkIOWrapper_2_io_out_acquire_bits_addr_beat),  .io_inner_acquire_bits_is_builtin_type (ClientTileLinkIOWrapper_2_io_out_acquire_bits_is_builtin_type),  .io_inner_acquire_bits_a_type (ClientTileLinkIOWrapper_2_io_out_acquire_bits_a_type),  .io_inner_acquire_bits_union (ClientTileLinkIOWrapper_2_io_out_acquire_bits_union),  ... "
+  The above instance has fewer port connections than the module definition,
+  input port 'io_inner_release_bits_addr_beat' is not connected,
+  input port 'io_inner_release_bits_addr_block' is not connected,
+  input port 'io_inner_release_bits_client_xact_id' is not connected,
+  input port 'io_inner_release_bits_voluntary' is not connected,
+  input port 'io_inner_release_bits_r_type' is not connected,
+  input port 'io_inner_release_bits_data' is not connected,
+  input port 'io_outer_probe_bits_addr_block' is not connected,
+  input port 'io_outer_probe_bits_p_type' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 43101
+"Queue_2 Queue( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_io_enq_ready),  .io_enq_valid (NastiIOTileLinkIOConverter_io_nasti_ar_valid),  .io_enq_bits_addr (NastiIOTileLinkIOConverter_io_nasti_ar_bits_addr),  .io_enq_bits_len (NastiIOTileLinkIOConverter_io_nasti_ar_bits_len),  .io_enq_bits_size (NastiIOTileLinkIOConverter_io_nasti_ar_bits_size),  .io_enq_bits_burst (NastiIOTileLinkIOConverter_io_nasti_ar_bits_burst),  .io_enq_bits_lock (NastiIOTileLinkIOConverter_io_nasti_ar_bits_lock),  .io_enq_bits_cache (NastiIOTileLinkIOConverter_io_nasti_ar_bits_cache),  .io_enq_bits_prot (NastiIOTileLinkIOConverter_io_nasti_ar_bits_prot),  .io_enq_bits_qos (NastiIOTileLinkIOConverter_io_nasti_ar_bits_qos),  .io_enq_bits_region (NastiIOTileLinkIOConverter_io ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 43130
+"Queue_2 Queue_1( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_1_io_enq_ready),  .io_enq_valid (NastiIOTileLinkIOConverter_io_nasti_aw_valid),  .io_enq_bits_addr (NastiIOTileLinkIOConverter_io_nasti_aw_bits_addr),  .io_enq_bits_len (NastiIOTileLinkIOConverter_io_nasti_aw_bits_len),  .io_enq_bits_size (NastiIOTileLinkIOConverter_io_nasti_aw_bits_size),  .io_enq_bits_burst (NastiIOTileLinkIOConverter_io_nasti_aw_bits_burst),  .io_enq_bits_lock (NastiIOTileLinkIOConverter_io_nasti_aw_bits_lock),  .io_enq_bits_cache (NastiIOTileLinkIOConverter_io_nasti_aw_bits_cache),  .io_enq_bits_prot (NastiIOTileLinkIOConverter_io_nasti_aw_bits_prot),  .io_enq_bits_qos (NastiIOTileLinkIOConverter_io_nasti_aw_bits_qos),  .io_enq_bits_region (NastiIOTileLinkIOConverte ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 43159
+"Queue_3 Queue_2( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_2_io_enq_ready),  .io_enq_valid (NastiIOTileLinkIOConverter_io_nasti_w_valid),  .io_enq_bits_data (NastiIOTileLinkIOConverter_io_nasti_w_bits_data),  .io_enq_bits_last (NastiIOTileLinkIOConverter_io_nasti_w_bits_last),  .io_enq_bits_strb (NastiIOTileLinkIOConverter_io_nasti_w_bits_strb),  .io_enq_bits_user (NastiIOTileLinkIOConverter_io_nasti_w_bits_user),  .io_deq_ready (mem_ic_io_masters_0_w_ready),  .io_deq_valid (Queue_2_io_deq_valid),  .io_deq_bits_data (Queue_2_io_deq_bits_data),  .io_deq_bits_last (Queue_2_io_deq_bits_last),  .io_deq_bits_strb (Queue_2_io_deq_bits_strb),  .io_deq_bits_user (Queue_2_io_deq_bits_user));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 43174
+"Queue_4 Queue_3( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_3_io_enq_ready),  .io_enq_valid (mem_ic_io_masters_0_r_valid),  .io_enq_bits_resp (mem_ic_io_masters_0_r_bits_resp),  .io_enq_bits_data (mem_ic_io_masters_0_r_bits_data),  .io_enq_bits_last (mem_ic_io_masters_0_r_bits_last),  .io_enq_bits_id (mem_ic_io_masters_0_r_bits_id),  .io_enq_bits_user (mem_ic_io_masters_0_r_bits_user),  .io_deq_ready (NastiIOTileLinkIOConverter_io_nasti_r_ready),  .io_deq_valid (Queue_3_io_deq_valid),  .io_deq_bits_resp (Queue_3_io_deq_bits_resp),  .io_deq_bits_data (Queue_3_io_deq_bits_data),  .io_deq_bits_last (Queue_3_io_deq_bits_last),  .io_deq_bits_id (Queue_3_io_deq_bits_id),  .io_deq_bits_user (Queue_3_io_deq_bits_user));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 43191
+"Queue_5 Queue_4( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_4_io_enq_ready),  .io_enq_valid (mem_ic_io_masters_0_b_valid),  .io_enq_bits_resp (mem_ic_io_masters_0_b_bits_resp),  .io_enq_bits_id (mem_ic_io_masters_0_b_bits_id),  .io_enq_bits_user (mem_ic_io_masters_0_b_bits_user),  .io_deq_ready (NastiIOTileLinkIOConverter_io_nasti_b_ready),  .io_deq_valid (Queue_4_io_deq_valid),  .io_deq_bits_resp (Queue_4_io_deq_bits_resp),  .io_deq_bits_id (Queue_4_io_deq_bits_id),  .io_deq_bits_user (Queue_4_io_deq_bits_user));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 43303
+"Queue_2 Queue_5( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_5_io_enq_ready),  .io_enq_valid (mmio_conv_io_nasti_ar_valid),  .io_enq_bits_addr (mmio_conv_io_nasti_ar_bits_addr),  .io_enq_bits_len (mmio_conv_io_nasti_ar_bits_len),  .io_enq_bits_size (mmio_conv_io_nasti_ar_bits_size),  .io_enq_bits_burst (mmio_conv_io_nasti_ar_bits_burst),  .io_enq_bits_lock (mmio_conv_io_nasti_ar_bits_lock),  .io_enq_bits_cache (mmio_conv_io_nasti_ar_bits_cache),  .io_enq_bits_prot (mmio_conv_io_nasti_ar_bits_prot),  .io_enq_bits_qos (mmio_conv_io_nasti_ar_bits_qos),  .io_enq_bits_region (mmio_conv_io_nasti_ar_bits_region),  .io_enq_bits_id (mmio_conv_io_nasti_ar_bits_id),  .io_enq_bits_user (mmio_conv_io_nasti_ar_bits_user),  .io_deq_ready (mmio_ic_io_masters_0_a ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 43332
+"Queue_2 Queue_6( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_6_io_enq_ready),  .io_enq_valid (mmio_conv_io_nasti_aw_valid),  .io_enq_bits_addr (mmio_conv_io_nasti_aw_bits_addr),  .io_enq_bits_len (mmio_conv_io_nasti_aw_bits_len),  .io_enq_bits_size (mmio_conv_io_nasti_aw_bits_size),  .io_enq_bits_burst (mmio_conv_io_nasti_aw_bits_burst),  .io_enq_bits_lock (mmio_conv_io_nasti_aw_bits_lock),  .io_enq_bits_cache (mmio_conv_io_nasti_aw_bits_cache),  .io_enq_bits_prot (mmio_conv_io_nasti_aw_bits_prot),  .io_enq_bits_qos (mmio_conv_io_nasti_aw_bits_qos),  .io_enq_bits_region (mmio_conv_io_nasti_aw_bits_region),  .io_enq_bits_id (mmio_conv_io_nasti_aw_bits_id),  .io_enq_bits_user (mmio_conv_io_nasti_aw_bits_user),  .io_deq_ready (mmio_ic_io_masters_0_a ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 43361
+"Queue_3 Queue_7( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_7_io_enq_ready),  .io_enq_valid (mmio_conv_io_nasti_w_valid),  .io_enq_bits_data (mmio_conv_io_nasti_w_bits_data),  .io_enq_bits_last (mmio_conv_io_nasti_w_bits_last),  .io_enq_bits_strb (mmio_conv_io_nasti_w_bits_strb),  .io_enq_bits_user (mmio_conv_io_nasti_w_bits_user),  .io_deq_ready (mmio_ic_io_masters_0_w_ready),  .io_deq_valid (Queue_7_io_deq_valid),  .io_deq_bits_data (Queue_7_io_deq_bits_data),  .io_deq_bits_last (Queue_7_io_deq_bits_last),  .io_deq_bits_strb (Queue_7_io_deq_bits_strb),  .io_deq_bits_user (Queue_7_io_deq_bits_user));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 43376
+"Queue_4 Queue_8( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_8_io_enq_ready),  .io_enq_valid (mmio_ic_io_masters_0_r_valid),  .io_enq_bits_resp (mmio_ic_io_masters_0_r_bits_resp),  .io_enq_bits_data (mmio_ic_io_masters_0_r_bits_data),  .io_enq_bits_last (mmio_ic_io_masters_0_r_bits_last),  .io_enq_bits_id (mmio_ic_io_masters_0_r_bits_id),  .io_enq_bits_user (mmio_ic_io_masters_0_r_bits_user),  .io_deq_ready (mmio_conv_io_nasti_r_ready),  .io_deq_valid (Queue_8_io_deq_valid),  .io_deq_bits_resp (Queue_8_io_deq_bits_resp),  .io_deq_bits_data (Queue_8_io_deq_bits_data),  .io_deq_bits_last (Queue_8_io_deq_bits_last),  .io_deq_bits_id (Queue_8_io_deq_bits_id),  .io_deq_bits_user (Queue_8_io_deq_bits_user));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 43393
+"Queue_5 Queue_9( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_9_io_enq_ready),  .io_enq_valid (mmio_ic_io_masters_0_b_valid),  .io_enq_bits_resp (mmio_ic_io_masters_0_b_bits_resp),  .io_enq_bits_id (mmio_ic_io_masters_0_b_bits_id),  .io_enq_bits_user (mmio_ic_io_masters_0_b_bits_user),  .io_deq_ready (mmio_conv_io_nasti_b_ready),  .io_deq_valid (Queue_9_io_deq_valid),  .io_deq_bits_resp (Queue_9_io_deq_bits_resp),  .io_deq_bits_id (Queue_9_io_deq_bits_id),  .io_deq_bits_user (Queue_9_io_deq_bits_user));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 44485
+"Queue_7 Queue( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_io_enq_ready),  .io_enq_valid (io_ar_valid),  .io_enq_bits_addr (io_ar_bits_addr),  .io_enq_bits_len (io_ar_bits_len),  .io_enq_bits_size (io_ar_bits_size),  .io_enq_bits_burst (io_ar_bits_burst),  .io_enq_bits_lock (io_ar_bits_lock),  .io_enq_bits_cache (io_ar_bits_cache),  .io_enq_bits_prot (io_ar_bits_prot),  .io_enq_bits_qos (io_ar_bits_qos),  .io_enq_bits_region (io_ar_bits_region),  .io_enq_bits_id (io_ar_bits_id),  .io_enq_bits_user (io_ar_bits_user),  .io_deq_ready (io_r_ready),  .io_deq_valid (Queue_io_deq_valid),  .io_deq_bits_addr (Queue_io_deq_bits_addr),  .io_deq_bits_len (Queue_io_deq_bits_len),  .io_deq_bits_size (Queue_io_deq_bits_size),  .io_deq_bits_id (Queue_io_deq_bits ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_deq_bits_burst' is not connected,
+  output port 'io_deq_bits_lock' is not connected,
+  output port 'io_deq_bits_cache' is not connected,
+  output port 'io_deq_bits_prot' is not connected,
+  output port 'io_deq_bits_qos' is not connected,
+  output port 'io_deq_bits_region' is not connected,
+  output port 'io_deq_bits_user' is not connected,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 44740
+"Queue_8 fromhost_q( .clk (clk),  .reset (reset),  .io_enq_ready (fromhost_q_io_enq_ready),  .io_enq_valid (T16),  .io_enq_bits (io_in_slow_bits),  .io_deq_ready (io_in_fast_ready),  .io_deq_valid (fromhost_q_io_deq_valid),  .io_deq_bits (fromhost_q_io_deq_bits));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 44749
+"Queue_8 tohost_q( .clk (clk),  .reset (reset),  .io_enq_ready (tohost_q_io_enq_ready),  .io_enq_valid (io_out_fast_valid),  .io_enq_bits (io_out_fast_bits),  .io_deq_ready (T0),  .io_deq_valid (tohost_q_io_deq_valid),  .io_deq_bits (tohost_q_io_deq_bits));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 45380
+"OuterMemorySystem outmemsys( .clk (clk),  .reset (reset),  .io_tiles_cached_0_acquire_ready (outmemsys_io_tiles_cached_0_acquire_ready),  .io_tiles_cached_0_acquire_valid (io_tiles_cached_0_acquire_valid),  .io_tiles_cached_0_acquire_bits_addr_block (io_tiles_cached_0_acquire_bits_addr_block),  .io_tiles_cached_0_acquire_bits_client_xact_id (io_tiles_cached_0_acquire_bits_client_xact_id),  .io_tiles_cached_0_acquire_bits_addr_beat (io_tiles_cached_0_acquire_bits_addr_beat),  .io_tiles_cached_0_acquire_bits_is_builtin_type (io_tiles_cached_0_acquire_bits_is_builtin_type),  .io_tiles_cached_0_acquire_bits_a_type (io_tiles_cached_0_acquire_bits_a_type),  .io_tiles_cached_0_acquire_bits_union (io_tiles_cached_0_acquire_bits_union),  .io_tiles_cached_0_acqui ... "
+  The above instance has fewer port connections than the module definition,
+  input port 'io_deviceTree_b_bits_resp' is not connected,
+  input port 'io_deviceTree_b_bits_id' is not connected,
+  input port 'io_deviceTree_b_bits_user' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 45591
+"SCRFile scrFile( .clk (clk),  .reset (reset),  .io_smi_req_ready (scrFile_io_smi_req_ready),  .io_smi_req_valid (scrArb_io_out_req_valid),  .io_smi_req_bits_rw (scrArb_io_out_req_bits_rw),  .io_smi_req_bits_addr (scrArb_io_out_req_bits_addr),  .io_smi_req_bits_data (scrArb_io_out_req_bits_data),  .io_smi_resp_ready (scrArb_io_out_resp_ready),  .io_smi_resp_valid (scrFile_io_smi_resp_valid),  .io_smi_resp_bits (scrFile_io_smi_resp_bits),  .io_scr_rdata_63 (T34),  .io_scr_rdata_2 (T12),  .io_scr_rdata_1 (64'h0000000000000400),  .io_scr_rdata_0 (64'b1),  .io_scr_wen (scrFile_io_scr_wen),  .io_scr_waddr (scrFile_io_scr_waddr),  .io_scr_wdata (scrFile_io_scr_wdata));"
+  The above instance has fewer port connections than the module definition,
+  input port 'io_scr_rdata_62' is not connected,
+  input port 'io_scr_rdata_61' is not connected,
+  input port 'io_scr_rdata_60' is not connected,
+  input port 'io_scr_rdata_59' is not connected,
+  input port 'io_scr_rdata_58' is not connected,
+  input port 'io_scr_rdata_57' is not connected,
+  input port 'io_scr_rdata_56' is not connected,
+  input port 'io_scr_rdata_55' is not connected,
+  input port 'io_scr_rdata_54' is not connected,
+  input port 'io_scr_rdata_53' is not connected,
+  input port 'io_scr_rdata_52' is not connected,
+  input port 'io_scr_rdata_51' is not connected,
+  input port 'io_scr_rdata_50' is not connected,
+  input port 'io_scr_rdata_49' is not connected,
+  input port 'io_scr_rdata_48' is not connected,
+  input port 'io_scr_rdata_47' is not connected,
+  input port 'io_scr_rdata_46' is not connected,
+  input port 'io_scr_rdata_45' is not connected,
+  input port 'io_scr_rdata_44' is not connected,
+  input port 'io_scr_rdata_43' is not connected,
+  input port 'io_scr_rdata_42' is not connected,
+  input port 'io_scr_rdata_41' is not connected,
+  input port 'io_scr_rdata_40' is not connected,
+  input port 'io_scr_rdata_39' is not connected,
+  input port 'io_scr_rdata_38' is not connected,
+  input port 'io_scr_rdata_37' is not connected,
+  input port 'io_scr_rdata_36' is not connected,
+  input port 'io_scr_rdata_35' is not connected,
+  input port 'io_scr_rdata_34' is not connected,
+  input port 'io_scr_rdata_33' is not connected,
+  ... ...
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 53421
+"ALU alu( .io_dw (ex_ctrl_alu_dw),  .io_fn (ex_ctrl_alu_fn),  .io_in2 (T864),  .io_in1 (T834),  .io_out (alu_io_out),  .io_adder_out (alu_io_adder_out));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_cmp_out' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 59993
+"ICache_tag_array tag_array( .CLK (clk),  .init (init),  .RW0A ((refill_done ? s1_idx : T73)),  .RW0E ((T80 || refill_done)),  .RW0W (refill_done),  .RW0I (T49),  .RW0M (T26),  .RW0O (T24));"
+  The above instance has fewer port connections than the module definition,
+  input port 'RST' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 60162
+"ICache_T178 T178( .CLK (clk),  .init (init),  .RW0A ((T181 ? T183 : T186)),  .RW0E ((T187 || T181)),  .RW0W (T181),  .RW0I (T180),  .RW0O (T177));"
+  The above instance has fewer port connections than the module definition,
+  input port 'RST' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 60182
+"ICache_T178 T192( .CLK (clk),  .init (init),  .RW0A ((T195 ? T197 : T200)),  .RW0E ((T201 || T195)),  .RW0W (T195),  .RW0I (T194),  .RW0O (T191));"
+  The above instance has fewer port connections than the module definition,
+  input port 'RST' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 60202
+"ICache_T178 T206( .CLK (clk),  .init (init),  .RW0A ((T209 ? T211 : T214)),  .RW0E ((T215 || T209)),  .RW0W (T209),  .RW0I (T208),  .RW0O (T205));"
+  The above instance has fewer port connections than the module definition,
+  input port 'RST' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 60221
+"ICache_T178 T219( .CLK (clk),  .init (init),  .RW0A ((T222 ? T224 : T227)),  .RW0E ((T228 || T222)),  .RW0W (T222),  .RW0I (T221),  .RW0O (T218));"
+  The above instance has fewer port connections than the module definition,
+  input port 'RST' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 60235
+"FlowThroughSerializer FlowThroughSerializer( .io_in_ready (FlowThroughSerializer_io_in_ready),  .io_in_valid (io_mem_grant_valid),  .io_in_bits_addr_beat (io_mem_grant_bits_addr_beat),  .io_in_bits_client_xact_id (io_mem_grant_bits_client_xact_id),  .io_in_bits_manager_xact_id (io_mem_grant_bits_manager_xact_id),  .io_in_bits_is_builtin_type (io_mem_grant_bits_is_builtin_type),  .io_in_bits_g_type (io_mem_grant_bits_g_type),  .io_in_bits_data (io_mem_grant_bits_data),  .io_out_ready (1'b1),  .io_out_valid (FlowThroughSerializer_io_out_valid),  .io_out_bits_data (FlowThroughSerializer_io_out_bits_data));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_out_bits_addr_beat' is not connected,
+  output port 'io_out_bits_client_xact_id' is not connected,
+  output port 'io_out_bits_manager_xact_id' is not connected,
+  output port 'io_out_bits_is_builtin_type' is not connected,
+  output port 'io_out_bits_g_type' is not connected,
+  output port 'io_cnt' is not connected,
+  output port 'io_done' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 61737
+"RocketCAM tag_cam( .clk (clk),  .reset (reset),  .io_clear (T221),  .io_clear_mask (T181),  .io_tag (T506),  .io_hits (tag_cam_io_hits),  .io_valid_bits (tag_cam_io_valid_bits),  .io_write (T167),  .io_write_tag (T504),  .io_write_addr (r_refill_waddr));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_hit' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 62514
+"TLB tlb( .clk (clk),  .reset (reset),  .io_req_valid (T36),  .io_req_bits_asid (7'b0),  .io_req_bits_vpn (T35),  .io_req_bits_passthrough (1'b0),  .io_req_bits_instruction (1'b1),  .io_req_bits_store (1'b0),  .io_resp_miss (tlb_io_resp_miss),  .io_resp_ppn (tlb_io_resp_ppn),  .io_resp_xcpt_if (tlb_io_resp_xcpt_if),  .io_ptw_req_ready (io_ptw_req_ready),  .io_ptw_req_valid (tlb_io_ptw_req_valid),  .io_ptw_req_bits_addr (tlb_io_ptw_req_bits_addr),  .io_ptw_req_bits_prv (tlb_io_ptw_req_bits_prv),  .io_ptw_req_bits_store (tlb_io_ptw_req_bits_store),  .io_ptw_req_bits_fetch (tlb_io_ptw_req_bits_fetch),  .io_ptw_resp_valid (io_ptw_resp_valid),  .io_ptw_resp_bits_error (io_ptw_resp_bits_error),  .io_ptw_resp_bits_pte_ppn (io_ptw_resp_bits_pte_ppn),  .io_ptw_re ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_req_ready' is not connected,
+  output port 'io_resp_xcpt_ld' is not connected,
+  output port 'io_resp_xcpt_st' is not connected,
+  output port 'io_resp_hit_idx' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 62560
+"Queue_9 Queue( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_io_enq_ready),  .io_enq_valid (icache_io_resp_valid),  .io_enq_bits_datablock (icache_io_resp_bits_datablock),  .io_deq_ready (T0),  .io_deq_valid (Queue_io_deq_valid),  .io_deq_bits_datablock (Queue_io_deq_bits_datablock));"
+  The above instance has fewer port connections than the module definition,
+  input port 'io_enq_bits_data' is not connected,
+  output port 'io_deq_bits_data' is not connected,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 64433
+"Queue_20 rpq( .clk (clk),  .reset (reset),  .io_enq_ready (rpq_io_enq_ready),  .io_enq_valid (T70),  .io_enq_bits_addr (io_req_bits_addr),  .io_enq_bits_tag (io_req_bits_tag),  .io_enq_bits_cmd (io_req_bits_cmd),  .io_enq_bits_typ (io_req_bits_typ),  .io_enq_bits_kill (io_req_bits_kill),  .io_enq_bits_phys (io_req_bits_phys),  .io_enq_bits_sdq_id (io_req_bits_sdq_id),  .io_deq_ready (T0),  .io_deq_valid (rpq_io_deq_valid),  .io_deq_bits_addr (rpq_io_deq_bits_addr),  .io_deq_bits_tag (rpq_io_deq_bits_tag),  .io_deq_bits_cmd (rpq_io_deq_bits_cmd),  .io_deq_bits_typ (rpq_io_deq_bits_typ),  .io_deq_bits_kill (rpq_io_deq_bits_kill),  .io_deq_bits_sdq_id (rpq_io_deq_bits_sdq_id));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_deq_bits_phys' is not connected,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 65134
+"Queue_20 rpq( .clk (clk),  .reset (reset),  .io_enq_ready (rpq_io_enq_ready),  .io_enq_valid (T70),  .io_enq_bits_addr (io_req_bits_addr),  .io_enq_bits_tag (io_req_bits_tag),  .io_enq_bits_cmd (io_req_bits_cmd),  .io_enq_bits_typ (io_req_bits_typ),  .io_enq_bits_kill (io_req_bits_kill),  .io_enq_bits_phys (io_req_bits_phys),  .io_enq_bits_sdq_id (io_req_bits_sdq_id),  .io_deq_ready (T0),  .io_deq_valid (rpq_io_deq_valid),  .io_deq_bits_addr (rpq_io_deq_bits_addr),  .io_deq_bits_tag (rpq_io_deq_bits_tag),  .io_deq_bits_cmd (rpq_io_deq_bits_cmd),  .io_deq_bits_typ (rpq_io_deq_bits_typ),  .io_deq_bits_kill (rpq_io_deq_bits_kill),  .io_deq_bits_sdq_id (rpq_io_deq_bits_sdq_id));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_deq_bits_phys' is not connected,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 66386
+"Arbiter_7 meta_read_arb( .io_in_1_ready (meta_read_arb_io_in_1_ready),  .io_in_1_valid (MSHR_1_io_meta_read_valid),  .io_in_1_bits_idx (MSHR_1_io_meta_read_bits_idx),  .io_in_1_bits_tag (MSHR_1_io_meta_read_bits_tag),  .io_in_0_ready (meta_read_arb_io_in_0_ready),  .io_in_0_valid (MSHR_io_meta_read_valid),  .io_in_0_bits_idx (MSHR_io_meta_read_bits_idx),  .io_in_0_bits_tag (MSHR_io_meta_read_bits_tag),  .io_out_ready (io_meta_read_ready),  .io_out_valid (meta_read_arb_io_out_valid),  .io_out_bits_idx (meta_read_arb_io_out_bits_idx),  .io_out_bits_way_en (meta_read_arb_io_out_bits_way_en),  .io_out_bits_tag (meta_read_arb_io_out_bits_tag));"
+  The above instance has fewer port connections than the module definition,
+  input port 'io_in_1_bits_way_en' is not connected,
+  input port 'io_in_0_bits_way_en' is not connected,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 66410
+"Arbiter_1 meta_write_arb( .io_in_1_ready (meta_write_arb_io_in_1_ready),  .io_in_1_valid (MSHR_1_io_meta_write_valid),  .io_in_1_bits_idx (MSHR_1_io_meta_write_bits_idx),  .io_in_1_bits_way_en (MSHR_1_io_meta_write_bits_way_en),  .io_in_1_bits_data_tag (MSHR_1_io_meta_write_bits_data_tag),  .io_in_1_bits_data_coh_state (MSHR_1_io_meta_write_bits_data_coh_state),  .io_in_0_ready (meta_write_arb_io_in_0_ready),  .io_in_0_valid (MSHR_io_meta_write_valid),  .io_in_0_bits_idx (MSHR_io_meta_write_bits_idx),  .io_in_0_bits_way_en (MSHR_io_meta_write_bits_way_en),  .io_in_0_bits_data_tag (MSHR_io_meta_write_bits_data_tag),  .io_in_0_bits_data_coh_state (MSHR_io_meta_write_bits_data_coh_state),  .io_out_ready (io_meta_write_ready),  .io_out_valid (meta_write_arb ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 66431
+"LockingArbiter_1 mem_req_arb( .clk (clk),  .reset (reset),  .io_in_2_ready (mem_req_arb_io_in_2_ready),  .io_in_2_valid (IOMSHR_io_acquire_valid),  .io_in_2_bits_addr_block (IOMSHR_io_acquire_bits_addr_block),  .io_in_2_bits_client_xact_id (IOMSHR_io_acquire_bits_client_xact_id),  .io_in_2_bits_addr_beat (IOMSHR_io_acquire_bits_addr_beat),  .io_in_2_bits_is_builtin_type (IOMSHR_io_acquire_bits_is_builtin_type),  .io_in_2_bits_a_type (IOMSHR_io_acquire_bits_a_type),  .io_in_2_bits_union (IOMSHR_io_acquire_bits_union),  .io_in_2_bits_data (IOMSHR_io_acquire_bits_data),  .io_in_1_ready (mem_req_arb_io_in_1_ready),  .io_in_1_valid (MSHR_1_io_mem_req_valid),  .io_in_1_bits_addr_block (MSHR_1_io_mem_req_bits_addr_block),  .io_in_1_bits_client_xact_id (MSHR_1_ ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 66470
+"Arbiter_4 wb_req_arb( .io_in_1_ready (wb_req_arb_io_in_1_ready),  .io_in_1_valid (MSHR_1_io_wb_req_valid),  .io_in_1_bits_addr_beat (MSHR_1_io_wb_req_bits_addr_beat),  .io_in_1_bits_addr_block (MSHR_1_io_wb_req_bits_addr_block),  .io_in_1_bits_client_xact_id (MSHR_1_io_wb_req_bits_client_xact_id),  .io_in_1_bits_voluntary (MSHR_1_io_wb_req_bits_voluntary),  .io_in_1_bits_r_type (MSHR_1_io_wb_req_bits_r_type),  .io_in_1_bits_data (MSHR_1_io_wb_req_bits_data),  .io_in_1_bits_way_en (MSHR_1_io_wb_req_bits_way_en),  .io_in_0_ready (wb_req_arb_io_in_0_ready),  .io_in_0_valid (MSHR_io_wb_req_valid),  .io_in_0_bits_addr_beat (MSHR_io_wb_req_bits_addr_beat),  .io_in_0_bits_addr_block (MSHR_io_wb_req_bits_addr_block),  .io_in_0_bits_client_xact_id (MSHR_io_wb_re ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 66500
+"Arbiter_8 replay_arb( .io_in_1_ready (replay_arb_io_in_1_ready),  .io_in_1_valid (MSHR_1_io_replay_valid),  .io_in_1_bits_addr (MSHR_1_io_replay_bits_addr),  .io_in_1_bits_tag (MSHR_1_io_replay_bits_tag),  .io_in_1_bits_cmd (MSHR_1_io_replay_bits_cmd),  .io_in_1_bits_typ (MSHR_1_io_replay_bits_typ),  .io_in_1_bits_kill (MSHR_1_io_replay_bits_kill),  .io_in_1_bits_phys (MSHR_1_io_replay_bits_phys),  .io_in_1_bits_sdq_id (MSHR_1_io_replay_bits_sdq_id),  .io_in_0_ready (replay_arb_io_in_0_ready),  .io_in_0_valid (MSHR_io_replay_valid),  .io_in_0_bits_addr (MSHR_io_replay_bits_addr),  .io_in_0_bits_tag (MSHR_io_replay_bits_tag),  .io_in_0_bits_cmd (MSHR_io_replay_bits_cmd),  .io_in_0_bits_typ (MSHR_io_replay_bits_typ),  .io_in_0_bits_kill (MSHR_io_replay_bi ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 66530
+"Arbiter_9 alloc_arb( .io_in_1_ready (alloc_arb_io_in_1_ready),  .io_in_1_valid (MSHR_1_io_req_pri_rdy),  .io_in_0_ready (alloc_arb_io_in_0_ready),  .io_in_0_valid (MSHR_io_req_pri_rdy),  .io_out_ready (T82));"
+  The above instance has fewer port connections than the module definition,
+  input port 'io_in_1_bits' is not connected,
+  input port 'io_in_0_bits' is not connected,
+  output port 'io_out_valid' is not connected,
+  output port 'io_out_bits' is not connected,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 66682
+"Arbiter_10 mmio_alloc_arb( .io_in_0_ready (mmio_alloc_arb_io_in_0_ready),  .io_in_0_valid (IOMSHR_io_req_ready),  .io_out_ready (T2));"
+  The above instance has fewer port connections than the module definition,
+  input port 'io_in_0_bits' is not connected,
+  output port 'io_out_valid' is not connected,
+  output port 'io_out_bits' is not connected,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 66696
+"Arbiter_11 resp_arb( .io_in_0_ready (resp_arb_io_in_0_ready),  .io_in_0_valid (IOMSHR_io_resp_valid),  .io_in_0_bits_addr (IOMSHR_io_resp_bits_addr),  .io_in_0_bits_tag (IOMSHR_io_resp_bits_tag),  .io_in_0_bits_cmd (IOMSHR_io_resp_bits_cmd),  .io_in_0_bits_typ (IOMSHR_io_resp_bits_typ),  .io_in_0_bits_data (IOMSHR_io_resp_bits_data),  .io_in_0_bits_nack (IOMSHR_io_resp_bits_nack),  .io_in_0_bits_replay (IOMSHR_io_resp_bits_replay),  .io_in_0_bits_has_data (IOMSHR_io_resp_bits_has_data),  .io_in_0_bits_store_data (IOMSHR_io_resp_bits_store_data),  .io_out_ready (io_resp_ready),  .io_out_valid (resp_arb_io_out_valid),  .io_out_bits_addr (resp_arb_io_out_bits_addr),  .io_out_bits_tag (resp_arb_io_out_bits_tag),  .io_out_bits_cmd (resp_arb_io_out_bits_cmd), ... "
+  The above instance has fewer port connections than the module definition,
+  input port 'io_in_0_bits_data_word_bypass' is not connected,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 66880
+"MetadataArray_T6 T6( .CLK (clk),  .init (init),  .W0A (T55),  .W0E (T32),  .W0I (T24),  .W0M (T8),  .R1A (io_read_bits_idx),  .R1E (io_read_valid),  .R1O (T5));"
+  The above instance has fewer port connections than the module definition,
+  input port 'RST' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 67288
+"DataArray_T9 T9( .CLK (clk),  .init (init),  .W0A (waddr),  .W0E (T22),  .W0I (T18),  .W0M (T11),  .R1A (raddr),  .R1E (T28),  .R1O (T8));"
+  The above instance has fewer port connections than the module definition,
+  input port 'RST' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 67329
+"DataArray_T9 T42( .CLK (clk),  .init (init),  .W0A (waddr),  .W0E (T54),  .W0I (T50),  .W0M (T44),  .R1A (raddr),  .R1E (T60),  .R1O (T41));"
+  The above instance has fewer port connections than the module definition,
+  input port 'RST' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 67378
+"DataArray_T9 T79( .CLK (clk),  .init (init),  .W0A (waddr),  .W0E (T92),  .W0I (T88),  .W0M (T81),  .R1A (raddr),  .R1E (T98),  .R1O (T78));"
+  The above instance has fewer port connections than the module definition,
+  input port 'RST' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 67418
+"DataArray_T9 T112( .CLK (clk),  .init (init),  .W0A (waddr),  .W0E (T124),  .W0I (T120),  .W0M (T114),  .R1A (raddr),  .R1E (T130),  .R1O (T111));"
+  The above instance has fewer port connections than the module definition,
+  input port 'RST' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 69869
+"MSHRFile mshrs( .clk (clk),  .reset (reset),  .io_req_ready (mshrs_io_req_ready),  .io_req_valid (T431),  .io_req_bits_addr (s2_req_addr),  .io_req_bits_tag (s2_req_tag),  .io_req_bits_cmd (s2_req_cmd),  .io_req_bits_typ (s2_req_typ),  .io_req_bits_kill (s2_req_kill),  .io_req_bits_phys (s2_req_phys),  .io_req_bits_data (s2_req_data),  .io_req_bits_tag_match (s2_tag_match),  .io_req_bits_old_meta_tag (T420),  .io_req_bits_old_meta_coh_state (T373),  .io_req_bits_way_en (T356),  .io_resp_ready (T353),  .io_resp_valid (mshrs_io_resp_valid),  .io_resp_bits_addr (mshrs_io_resp_bits_addr),  .io_resp_bits_tag (mshrs_io_resp_bits_tag),  .io_resp_bits_cmd (mshrs_io_resp_bits_cmd),  .io_resp_bits_typ (mshrs_io_resp_bits_typ),  .io_resp_bits_data (mshrs_io_resp_b ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_resp_bits_data_word_bypass' is not connected,
+  output port 'io_meta_read_bits_tag' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 69946
+"TLB dtlb( .clk (clk),  .reset (reset),  .io_req_ready (dtlb_io_req_ready),  .io_req_valid (T337),  .io_req_bits_asid (7'b0),  .io_req_bits_vpn (T336),  .io_req_bits_passthrough (s1_req_phys),  .io_req_bits_instruction (1'b0),  .io_req_bits_store (s1_write),  .io_resp_miss (dtlb_io_resp_miss),  .io_resp_ppn (dtlb_io_resp_ppn),  .io_resp_xcpt_ld (dtlb_io_resp_xcpt_ld),  .io_resp_xcpt_st (dtlb_io_resp_xcpt_st),  .io_ptw_req_ready (io_ptw_req_ready),  .io_ptw_req_valid (dtlb_io_ptw_req_valid),  .io_ptw_req_bits_addr (dtlb_io_ptw_req_bits_addr),  .io_ptw_req_bits_prv (dtlb_io_ptw_req_bits_prv),  .io_ptw_req_bits_store (dtlb_io_ptw_req_bits_store),  .io_ptw_req_bits_fetch (dtlb_io_ptw_req_bits_fetch),  .io_ptw_resp_valid (io_ptw_resp_valid),  .io_ptw_resp_bit ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_resp_xcpt_if' is not connected,
+  output port 'io_resp_hit_idx' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 70013
+"Arbiter_0 metaReadArb( .io_in_4_ready (metaReadArb_io_in_4_ready),  .io_in_4_valid (io_cpu_req_valid),  .io_in_4_bits_idx (T593),  .io_in_3_ready (metaReadArb_io_in_3_ready),  .io_in_3_valid (wb_io_meta_read_valid),  .io_in_3_bits_idx (wb_io_meta_read_bits_idx),  .io_in_2_ready (metaReadArb_io_in_2_ready),  .io_in_2_valid (prober_io_meta_read_valid),  .io_in_2_bits_idx (prober_io_meta_read_bits_idx),  .io_in_1_ready (metaReadArb_io_in_1_ready),  .io_in_1_valid (mshrs_io_meta_read_valid),  .io_in_1_bits_idx (mshrs_io_meta_read_bits_idx),  .io_in_1_bits_way_en (mshrs_io_meta_read_bits_way_en),  .io_in_0_valid (s2_recycle),  .io_in_0_bits_idx (T592),  .io_out_ready (meta_io_read_ready),  .io_out_valid (metaReadArb_io_out_valid),  .io_out_bits_idx (metaRead ... "
+  The above instance has fewer port connections than the module definition,
+  input port 'io_in_4_bits_way_en' is not connected,
+  input port 'io_in_3_bits_way_en' is not connected,
+  input port 'io_in_2_bits_way_en' is not connected,
+  output port 'io_in_0_ready' is not connected,
+  input port 'io_in_0_bits_way_en' is not connected,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 70048
+"Arbiter_1 metaWriteArb( .io_in_1_ready (metaWriteArb_io_in_1_ready),  .io_in_1_valid (prober_io_meta_write_valid),  .io_in_1_bits_idx (prober_io_meta_write_bits_idx),  .io_in_1_bits_way_en (prober_io_meta_write_bits_way_en),  .io_in_1_bits_data_tag (prober_io_meta_write_bits_data_tag),  .io_in_1_bits_data_coh_state (prober_io_meta_write_bits_data_coh_state),  .io_in_0_ready (metaWriteArb_io_in_0_ready),  .io_in_0_valid (mshrs_io_meta_write_valid),  .io_in_0_bits_idx (mshrs_io_meta_write_bits_idx),  .io_in_0_bits_way_en (mshrs_io_meta_write_bits_way_en),  .io_in_0_bits_data_tag (mshrs_io_meta_write_bits_data_tag),  .io_in_0_bits_data_coh_state (mshrs_io_meta_write_bits_data_coh_state),  .io_out_ready (meta_io_write_ready),  .io_out_valid (metaWriteArb_io ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 70069
+"DataArray data( .clk (clk),  .io_read_valid (readArb_io_out_valid),  .io_read_bits_way_en (readArb_io_out_bits_way_en),  .io_read_bits_addr (readArb_io_out_bits_addr),  .io_write_ready (data_io_write_ready),  .io_write_valid (writeArb_io_out_valid),  .io_write_bits_way_en (writeArb_io_out_bits_way_en),  .io_write_bits_addr (writeArb_io_out_bits_addr),  .io_write_bits_wmask (writeArb_io_out_bits_wmask),  .io_write_bits_data (T326),  .io_resp_3 (data_io_resp_3),  .io_resp_2 (data_io_resp_2),  .io_resp_1 (data_io_resp_1),  .io_resp_0 (data_io_resp_0),  .init (init));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_read_ready' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 70086
+"Arbiter_2 readArb( .io_in_3_ready (readArb_io_in_3_ready),  .io_in_3_valid (io_cpu_req_valid),  .io_in_3_bits_way_en (4'hf),  .io_in_3_bits_addr (T591),  .io_in_2_ready (readArb_io_in_2_ready),  .io_in_2_valid (wb_io_data_req_valid),  .io_in_2_bits_way_en (wb_io_data_req_bits_way_en),  .io_in_2_bits_addr (wb_io_data_req_bits_addr),  .io_in_1_ready (readArb_io_in_1_ready),  .io_in_1_valid (mshrs_io_replay_valid),  .io_in_1_bits_way_en (4'hf),  .io_in_1_bits_addr (T590),  .io_in_0_valid (s2_recycle),  .io_in_0_bits_way_en (4'hf),  .io_in_0_bits_addr (T589),  .io_out_ready (T324),  .io_out_valid (readArb_io_out_valid),  .io_out_bits_way_en (readArb_io_out_bits_way_en),  .io_out_bits_addr (readArb_io_out_bits_addr));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_in_0_ready' is not connected,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 70109
+"Arbiter_3 writeArb( .io_in_1_ready (writeArb_io_in_1_ready),  .io_in_1_valid (T314),  .io_in_1_bits_way_en (mshrs_io_refill_way_en),  .io_in_1_bits_addr (mshrs_io_refill_addr),  .io_in_1_bits_wmask (2'h3),  .io_in_1_bits_data (FlowThroughSerializer_io_out_bits_data),  .io_in_0_valid (s3_valid),  .io_in_0_bits_way_en (s3_way),  .io_in_0_bits_addr (T588),  .io_in_0_bits_wmask (rowWMask),  .io_in_0_bits_data (T311),  .io_out_ready (data_io_write_ready),  .io_out_valid (writeArb_io_out_valid),  .io_out_bits_way_en (writeArb_io_out_bits_way_en),  .io_out_bits_addr (writeArb_io_out_bits_addr),  .io_out_bits_wmask (writeArb_io_out_bits_wmask),  .io_out_bits_data (writeArb_io_out_bits_data));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_in_0_ready' is not connected,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 70138
+"LockingArbiter_0 releaseArb( .clk (clk),  .reset (reset),  .io_in_1_ready (releaseArb_io_in_1_ready),  .io_in_1_valid (prober_io_rep_valid),  .io_in_1_bits_addr_beat (prober_io_rep_bits_addr_beat),  .io_in_1_bits_addr_block (prober_io_rep_bits_addr_block),  .io_in_1_bits_client_xact_id (prober_io_rep_bits_client_xact_id),  .io_in_1_bits_voluntary (prober_io_rep_bits_voluntary),  .io_in_1_bits_r_type (prober_io_rep_bits_r_type),  .io_in_1_bits_data (prober_io_rep_bits_data),  .io_in_0_ready (releaseArb_io_in_0_ready),  .io_in_0_valid (wb_io_release_valid),  .io_in_0_bits_addr_beat (wb_io_release_bits_addr_beat),  .io_in_0_bits_addr_block (wb_io_release_bits_addr_block),  .io_in_0_bits_client_xact_id (wb_io_release_bits_client_xact_id),  .io_in_0_bits_vol ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 70165
+"FlowThroughSerializer FlowThroughSerializer( .io_in_ready (FlowThroughSerializer_io_in_ready),  .io_in_valid (io_mem_grant_valid),  .io_in_bits_addr_beat (io_mem_grant_bits_addr_beat),  .io_in_bits_client_xact_id (io_mem_grant_bits_client_xact_id),  .io_in_bits_manager_xact_id (io_mem_grant_bits_manager_xact_id),  .io_in_bits_is_builtin_type (io_mem_grant_bits_is_builtin_type),  .io_in_bits_g_type (io_mem_grant_bits_g_type),  .io_in_bits_data (io_mem_grant_bits_data),  .io_out_ready (T8),  .io_out_valid (FlowThroughSerializer_io_out_valid),  .io_out_bits_addr_beat (FlowThroughSerializer_io_out_bits_addr_beat),  .io_out_bits_client_xact_id (FlowThroughSerializer_io_out_bits_client_xact_id),  .io_out_bits_manager_xact_id (FlowThroughSerializer_io_out_bits ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_cnt' is not connected,
+  output port 'io_done' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 70185
+"Arbiter_4 wbArb( .io_in_1_ready (wbArb_io_in_1_ready),  .io_in_1_valid (mshrs_io_wb_req_valid),  .io_in_1_bits_addr_beat (mshrs_io_wb_req_bits_addr_beat),  .io_in_1_bits_addr_block (mshrs_io_wb_req_bits_addr_block),  .io_in_1_bits_client_xact_id (mshrs_io_wb_req_bits_client_xact_id),  .io_in_1_bits_voluntary (mshrs_io_wb_req_bits_voluntary),  .io_in_1_bits_r_type (mshrs_io_wb_req_bits_r_type),  .io_in_1_bits_data (mshrs_io_wb_req_bits_data),  .io_in_1_bits_way_en (mshrs_io_wb_req_bits_way_en),  .io_in_0_ready (wbArb_io_in_0_ready),  .io_in_0_valid (prober_io_wb_req_valid),  .io_in_0_bits_addr_beat (prober_io_wb_req_bits_addr_beat),  .io_in_0_bits_addr_block (prober_io_wb_req_bits_addr_block),  .io_in_0_bits_client_xact_id (prober_io_wb_req_bits_client_x ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 77326
+"RecFNToRecFN RecFNToRecFN( .io_in (T230),  .io_roundingMode (2'b0),  .io_out (RecFNToRecFN_io_out));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_exceptionFlags' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 77332
+"RecFNToRecFN RecFNToRecFN_1( .io_in (T229),  .io_roundingMode (2'b0),  .io_out (RecFNToRecFN_1_io_out));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_exceptionFlags' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 77338
+"CompareRecFN dcmp( .io_a (in_in1),  .io_b (in_in2),  .io_signaling (1'b1),  .io_lt (dcmp_io_lt),  .io_eq (dcmp_io_eq),  .io_exceptionFlags (dcmp_io_exceptionFlags));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_gt' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 83920
+"FPUFMAPipe_0 sfma( .clk (clk),  .reset (reset),  .io_in_valid (T278),  .io_in_bits_cmd (req_cmd),  .io_in_bits_ldst (req_ldst),  .io_in_bits_wen (req_wen),  .io_in_bits_ren1 (req_ren1),  .io_in_bits_ren2 (req_ren2),  .io_in_bits_ren3 (req_ren3),  .io_in_bits_swap12 (req_swap12),  .io_in_bits_swap23 (req_swap23),  .io_in_bits_single (req_single),  .io_in_bits_fromint (req_fromint),  .io_in_bits_toint (req_toint),  .io_in_bits_fastpipe (req_fastpipe),  .io_in_bits_fma (req_fma),  .io_in_bits_div (req_div),  .io_in_bits_sqrt (req_sqrt),  .io_in_bits_round (req_round),  .io_in_bits_wflags (req_wflags),  .io_in_bits_rm (req_rm),  .io_in_bits_typ (req_typ),  .io_in_bits_in1 (req_in1),  .io_in_bits_in2 (req_in2),  .io_in_bits_in3 (req_in3),  .io_out_bits_data  ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_out_valid' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 83948
+"FPUFMAPipe_1 dfma( .clk (clk),  .reset (reset),  .io_in_valid (T275),  .io_in_bits_cmd (req_cmd),  .io_in_bits_ldst (req_ldst),  .io_in_bits_wen (req_wen),  .io_in_bits_ren1 (req_ren1),  .io_in_bits_ren2 (req_ren2),  .io_in_bits_ren3 (req_ren3),  .io_in_bits_swap12 (req_swap12),  .io_in_bits_swap23 (req_swap23),  .io_in_bits_single (req_single),  .io_in_bits_fromint (req_fromint),  .io_in_bits_toint (req_toint),  .io_in_bits_fastpipe (req_fastpipe),  .io_in_bits_fma (req_fma),  .io_in_bits_div (req_div),  .io_in_bits_sqrt (req_sqrt),  .io_in_bits_round (req_round),  .io_in_bits_wflags (req_wflags),  .io_in_bits_rm (req_rm),  .io_in_bits_typ (req_typ),  .io_in_bits_in1 (req_in1),  .io_in_bits_in2 (req_in2),  .io_in_bits_in3 (req_in3),  .io_out_bits_data  ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_out_valid' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 83976
+"FPToInt fpiu( .clk (clk),  .io_in_valid (T269),  .io_in_bits_cmd (req_cmd),  .io_in_bits_ldst (req_ldst),  .io_in_bits_wen (req_wen),  .io_in_bits_ren1 (req_ren1),  .io_in_bits_ren2 (req_ren2),  .io_in_bits_ren3 (req_ren3),  .io_in_bits_swap12 (req_swap12),  .io_in_bits_swap23 (req_swap23),  .io_in_bits_single (req_single),  .io_in_bits_fromint (req_fromint),  .io_in_bits_toint (req_toint),  .io_in_bits_fastpipe (req_fastpipe),  .io_in_bits_fma (req_fma),  .io_in_bits_div (req_div),  .io_in_bits_sqrt (req_sqrt),  .io_in_bits_round (req_round),  .io_in_bits_wflags (req_wflags),  .io_in_bits_rm (req_rm),  .io_in_bits_typ (req_typ),  .io_in_bits_in1 (req_in1),  .io_in_bits_in2 (req_in2),  .io_in_bits_in3 (req_in3),  .io_as_double_rm (fpiu_io_as_double_rm), ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_as_double_cmd' is not connected,
+  output port 'io_as_double_ldst' is not connected,
+  output port 'io_as_double_wen' is not connected,
+  output port 'io_as_double_ren1' is not connected,
+  output port 'io_as_double_ren2' is not connected,
+  output port 'io_as_double_ren3' is not connected,
+  output port 'io_as_double_swap12' is not connected,
+  output port 'io_as_double_swap23' is not connected,
+  output port 'io_as_double_single' is not connected,
+  output port 'io_as_double_fromint' is not connected,
+  output port 'io_as_double_toint' is not connected,
+  output port 'io_as_double_fastpipe' is not connected,
+  output port 'io_as_double_fma' is not connected,
+  output port 'io_as_double_div' is not connected,
+  output port 'io_as_double_sqrt' is not connected,
+  output port 'io_as_double_round' is not connected,
+  output port 'io_as_double_wflags' is not connected,
+  output port 'io_as_double_typ' is not connected,
+  output port 'io_as_double_in3' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 84028
+"IntToFP ifpu( .clk (clk),  .reset (reset),  .io_in_valid (T268),  .io_in_bits_cmd (req_cmd),  .io_in_bits_ldst (req_ldst),  .io_in_bits_wen (req_wen),  .io_in_bits_ren1 (req_ren1),  .io_in_bits_ren2 (req_ren2),  .io_in_bits_ren3 (req_ren3),  .io_in_bits_swap12 (req_swap12),  .io_in_bits_swap23 (req_swap23),  .io_in_bits_single (req_single),  .io_in_bits_fromint (req_fromint),  .io_in_bits_toint (req_toint),  .io_in_bits_fastpipe (req_fastpipe),  .io_in_bits_fma (req_fma),  .io_in_bits_div (req_div),  .io_in_bits_sqrt (req_sqrt),  .io_in_bits_round (req_round),  .io_in_bits_wflags (req_wflags),  .io_in_bits_rm (req_rm),  .io_in_bits_typ (req_typ),  .io_in_bits_in1 (T267),  .io_in_bits_in2 (req_in2),  .io_in_bits_in3 (req_in3),  .io_out_bits_data (ifpu_io ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_out_valid' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 84056
+"FPToFP fpmu( .clk (clk),  .reset (reset),  .io_in_valid (T266),  .io_in_bits_cmd (req_cmd),  .io_in_bits_ldst (req_ldst),  .io_in_bits_wen (req_wen),  .io_in_bits_ren1 (req_ren1),  .io_in_bits_ren2 (req_ren2),  .io_in_bits_ren3 (req_ren3),  .io_in_bits_swap12 (req_swap12),  .io_in_bits_swap23 (req_swap23),  .io_in_bits_single (req_single),  .io_in_bits_fromint (req_fromint),  .io_in_bits_toint (req_toint),  .io_in_bits_fastpipe (req_fastpipe),  .io_in_bits_fma (req_fma),  .io_in_bits_div (req_div),  .io_in_bits_sqrt (req_sqrt),  .io_in_bits_round (req_round),  .io_in_bits_wflags (req_wflags),  .io_in_bits_rm (req_rm),  .io_in_bits_typ (req_typ),  .io_in_bits_in1 (req_in1),  .io_in_bits_in2 (req_in2),  .io_in_bits_in3 (req_in3),  .io_out_bits_data (fpmu_ ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_out_valid' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 84907
+"LockingRRArbiter_0 LockingRRArbiter( .clk (clk),  .reset (reset),  .io_in_1_ready (LockingRRArbiter_io_in_1_ready),  .io_in_1_valid (io_in_1_acquire_valid),  .io_in_1_bits_addr_block (io_in_1_acquire_bits_addr_block),  .io_in_1_bits_client_xact_id (T20),  .io_in_1_bits_addr_beat (io_in_1_acquire_bits_addr_beat),  .io_in_1_bits_is_builtin_type (io_in_1_acquire_bits_is_builtin_type),  .io_in_1_bits_a_type (io_in_1_acquire_bits_a_type),  .io_in_1_bits_union (io_in_1_acquire_bits_union),  .io_in_1_bits_data (io_in_1_acquire_bits_data),  .io_in_0_ready (LockingRRArbiter_io_in_0_ready),  .io_in_0_valid (io_in_0_acquire_valid),  .io_in_0_bits_addr_block (io_in_0_acquire_bits_addr_block),  .io_in_0_bits_client_xact_id (T19),  .io_in_0_bits_addr_beat (io_in_0_ac ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 84937
+"LockingRRArbiter_1 LockingRRArbiter_1( .clk (clk),  .reset (reset),  .io_in_1_ready (LockingRRArbiter_1_io_in_1_ready),  .io_in_1_valid (io_in_1_release_valid),  .io_in_1_bits_addr_beat (io_in_1_release_bits_addr_beat),  .io_in_1_bits_addr_block (io_in_1_release_bits_addr_block),  .io_in_1_bits_client_xact_id (T18),  .io_in_1_bits_voluntary (io_in_1_release_bits_voluntary),  .io_in_1_bits_r_type (io_in_1_release_bits_r_type),  .io_in_1_bits_data (io_in_1_release_bits_data),  .io_in_0_ready (LockingRRArbiter_1_io_in_0_ready),  .io_in_0_valid (io_in_0_release_valid),  .io_in_0_bits_addr_beat (io_in_0_release_bits_addr_beat),  .io_in_0_bits_addr_block (io_in_0_release_bits_addr_block),  .io_in_0_bits_client_xact_id (T17),  .io_in_0_bits_voluntary (io_in_0_ ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 85265
+"Queue_10 Queue( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_io_enq_ready),  .io_enq_valid (io_in_valid),  .io_enq_bits_inst_funct (io_in_bits_inst_funct),  .io_enq_bits_inst_rs2 (io_in_bits_inst_rs2),  .io_enq_bits_inst_rs1 (io_in_bits_inst_rs1),  .io_enq_bits_inst_xd (io_in_bits_inst_xd),  .io_enq_bits_inst_xs1 (io_in_bits_inst_xs1),  .io_enq_bits_inst_xs2 (io_in_bits_inst_xs2),  .io_enq_bits_inst_rd (io_in_bits_inst_rd),  .io_enq_bits_inst_opcode (io_in_bits_inst_opcode),  .io_enq_bits_rs1 (io_in_bits_rs1),  .io_enq_bits_rs2 (io_in_bits_rs2),  .io_deq_ready (cmdReadys_0),  .io_deq_valid (Queue_io_deq_valid),  .io_deq_bits_inst_funct (Queue_io_deq_bits_inst_funct),  .io_deq_bits_inst_rs2 (Queue_io_deq_bits_inst_rs2),  .io_deq_bits_inst_rs1 (Queu ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Error-[UPIMI-E] Undefined port in module instantiation
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 89840
+  Port "ctrl_resp_go" is not defined in module 'mem_Accel_B_Ctrl' defined in 
+  "/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v",
+  90011
+  Module instance: mem_Accel_B_Ctrl mem_b_ctrl( .ctrl_clk (clk),  .ctrl_rst 
+  (rst),  .ctrl_cmd_vld (cmd_vld),  .ctrl_funct (funct),  .ctrl_mem_req_rdy 
+  (mem_req_rdy),  .ctrl_mem_r ...
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 86504
+"Queue_11 replayq1( .clk (clk),  .reset (reset),  .io_enq_valid (T18),  .io_enq_bits_addr (T17),  .io_enq_bits_tag (T16),  .io_enq_bits_cmd (T15),  .io_enq_bits_typ (T14),  .io_enq_bits_data (T13),  .io_deq_ready (req_arb_io_in_0_ready),  .io_deq_valid (replayq1_io_deq_valid),  .io_deq_bits_addr (replayq1_io_deq_bits_addr),  .io_deq_bits_tag (replayq1_io_deq_bits_tag),  .io_deq_bits_cmd (replayq1_io_deq_bits_cmd),  .io_deq_bits_typ (replayq1_io_deq_bits_typ),  .io_deq_bits_kill (replayq1_io_deq_bits_kill),  .io_deq_bits_phys (replayq1_io_deq_bits_phys),  .io_deq_bits_data (replayq1_io_deq_bits_data));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_enq_ready' is not connected,
+  input port 'io_enq_bits_kill' is not connected,
+  input port 'io_enq_bits_phys' is not connected,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 86531
+"Queue_12 replayq2( .clk (clk),  .reset (reset),  .io_enq_valid (T12),  .io_enq_bits_addr (io_cache_resp_bits_addr),  .io_enq_bits_tag (io_cache_resp_bits_tag),  .io_enq_bits_cmd (io_cache_resp_bits_cmd),  .io_enq_bits_typ (io_cache_resp_bits_typ),  .io_enq_bits_data (io_cache_resp_bits_store_data),  .io_deq_ready (T11),  .io_deq_valid (replayq2_io_deq_valid),  .io_deq_bits_addr (replayq2_io_deq_bits_addr),  .io_deq_bits_tag (replayq2_io_deq_bits_tag),  .io_deq_bits_cmd (replayq2_io_deq_bits_cmd),  .io_deq_bits_typ (replayq2_io_deq_bits_typ),  .io_deq_bits_data (replayq2_io_deq_bits_data));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_enq_ready' is not connected,
+  input port 'io_enq_bits_kill' is not connected,
+  input port 'io_enq_bits_phys' is not connected,
+  output port 'io_deq_bits_kill' is not connected,
+  output port 'io_deq_bits_phys' is not connected,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 86558
+"Arbiter_5 req_arb( .io_in_1_ready (req_arb_io_in_1_ready),  .io_in_1_valid (T0),  .io_in_1_bits_addr (io_requestor_req_bits_addr),  .io_in_1_bits_tag (io_requestor_req_bits_tag),  .io_in_1_bits_cmd (io_requestor_req_bits_cmd),  .io_in_1_bits_typ (io_requestor_req_bits_typ),  .io_in_1_bits_kill (io_requestor_req_bits_kill),  .io_in_1_bits_phys (io_requestor_req_bits_phys),  .io_in_1_bits_data (io_requestor_req_bits_data),  .io_in_0_ready (req_arb_io_in_0_ready),  .io_in_0_valid (replayq1_io_deq_valid),  .io_in_0_bits_addr (replayq1_io_deq_bits_addr),  .io_in_0_bits_tag (replayq1_io_deq_bits_tag),  .io_in_0_bits_cmd (replayq1_io_deq_bits_cmd),  .io_in_0_bits_typ (replayq1_io_deq_bits_typ),  .io_in_0_bits_kill (replayq1_io_deq_bits_kill),  .io_in_0_bits_ph ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_out_bits_kill' is not connected,
+  output port 'io_out_bits_phys' is not connected,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 87241
+"Rocket core( .clk (clk),  .reset (reset),  .io_host_reset (io_host_reset),  .io_host_id (io_host_id),  .io_host_csr_req_ready (core_io_host_csr_req_ready),  .io_host_csr_req_valid (io_host_csr_req_valid),  .io_host_csr_req_bits_rw (io_host_csr_req_bits_rw),  .io_host_csr_req_bits_addr (io_host_csr_req_bits_addr),  .io_host_csr_req_bits_data (io_host_csr_req_bits_data),  .io_host_csr_resp_ready (io_host_csr_resp_ready),  .io_host_csr_resp_valid (core_io_host_csr_resp_valid),  .io_host_csr_resp_bits (core_io_host_csr_resp_bits),  .io_host_debug_stats_csr (core_io_host_debug_stats_csr),  .io_imem_req_valid (core_io_imem_req_valid),  .io_imem_req_bits_pc (core_io_imem_req_bits_pc),  .io_imem_resp_ready (core_io_imem_resp_ready),  .io_imem_resp_valid (icache ... "
+  The above instance has fewer port connections than the module definition,
+  input port 'io_rocc_mem_req_valid' is not connected,
+  input port 'io_rocc_mem_req_bits_addr' is not connected,
+  input port 'io_rocc_mem_req_bits_tag' is not connected,
+  input port 'io_rocc_mem_req_bits_cmd' is not connected,
+  input port 'io_rocc_mem_req_bits_typ' is not connected,
+  input port 'io_rocc_mem_req_bits_kill' is not connected,
+  input port 'io_rocc_mem_req_bits_phys' is not connected,
+  input port 'io_rocc_mem_req_bits_data' is not connected,
+  input port 'io_rocc_mem_invalidate_lr' is not connected,
+  input port 'io_rocc_autl_acquire_valid' is not connected,
+  input port 'io_rocc_autl_acquire_bits_addr_block' is not connected,
+  input port 'io_rocc_autl_acquire_bits_client_xact_id' is not connected,
+  input port 'io_rocc_autl_acquire_bits_addr_beat' is not connected,
+  input port 'io_rocc_autl_acquire_bits_is_builtin_type' is not connected,
+  input port 'io_rocc_autl_acquire_bits_a_type' is not connected,
+  input port 'io_rocc_autl_acquire_bits_union' is not connected,
+  input port 'io_rocc_autl_acquire_bits_data' is not connected,
+  input port 'io_rocc_autl_grant_ready' is not connected,
+  input port 'io_rocc_fpu_req_valid' is not connected,
+  input port 'io_rocc_fpu_req_bits_cmd' is not connected,
+  input port 'io_rocc_fpu_req_bits_ldst' is not connected,
+  input port 'io_rocc_fpu_req_bits_wen' is not connected,
+  input port 'io_rocc_fpu_req_bits_ren1' is not connected,
+  input port 'io_rocc_fpu_req_bits_ren2' is not connected,
+  input port 'io_rocc_fpu_req_bits_ren3' is not connected,
+  input port 'io_rocc_fpu_req_bits_swap12' is not connected,
+  input port 'io_rocc_fpu_req_bits_swap23' is not connected,
+  input port 'io_rocc_fpu_req_bits_single' is not connected,
+  input port 'io_rocc_fpu_req_bits_fromint' is not connected,
+  input port 'io_rocc_fpu_req_bits_toint' is not connected,
+  ... ...
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 87565
+"Frontend icache( .clk (clk),  .reset (reset),  .io_cpu_req_valid (core_io_imem_req_valid),  .io_cpu_req_bits_pc (core_io_imem_req_bits_pc),  .io_cpu_resp_ready (core_io_imem_resp_ready),  .io_cpu_resp_valid (icache_io_cpu_resp_valid),  .io_cpu_resp_bits_pc (icache_io_cpu_resp_bits_pc),  .io_cpu_resp_bits_data_0 (icache_io_cpu_resp_bits_data_0),  .io_cpu_resp_bits_mask (icache_io_cpu_resp_bits_mask),  .io_cpu_resp_bits_xcpt_if (icache_io_cpu_resp_bits_xcpt_if),  .io_cpu_btb_resp_valid (icache_io_cpu_btb_resp_valid),  .io_cpu_btb_resp_bits_taken (icache_io_cpu_btb_resp_bits_taken),  .io_cpu_btb_resp_bits_mask (icache_io_cpu_btb_resp_bits_mask),  .io_cpu_btb_resp_bits_bridx (icache_io_cpu_btb_resp_bits_bridx),  .io_cpu_btb_resp_bits_target (icache_io_cpu_b ... "
+  The above instance has fewer port connections than the module definition,
+  input port 'io_cpu_btb_update_bits_taken' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 87879
+"HellaCacheArbiter dcArb( .clk (clk),  .io_requestor_2_req_ready (dcArb_io_requestor_2_req_ready),  .io_requestor_2_req_valid (SimpleHellaCacheIF_io_cache_req_valid),  .io_requestor_2_req_bits_addr (SimpleHellaCacheIF_io_cache_req_bits_addr),  .io_requestor_2_req_bits_tag (SimpleHellaCacheIF_io_cache_req_bits_tag),  .io_requestor_2_req_bits_cmd (SimpleHellaCacheIF_io_cache_req_bits_cmd),  .io_requestor_2_req_bits_typ (SimpleHellaCacheIF_io_cache_req_bits_typ),  .io_requestor_2_req_bits_kill (SimpleHellaCacheIF_io_cache_req_bits_kill),  .io_requestor_2_req_bits_phys (SimpleHellaCacheIF_io_cache_req_bits_phys),  .io_requestor_2_req_bits_data (SimpleHellaCacheIF_io_cache_req_bits_data),  .io_requestor_2_resp_valid (dcArb_io_requestor_2_resp_valid),  .io_req ... "
+  The above instance has fewer port connections than the module definition,
+  input port 'io_requestor_0_req_bits_tag' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 87998
+"FPU FPU( .clk (clk),  .reset (reset),  .io_inst (core_io_fpu_inst),  .io_fromint_data (core_io_fpu_fromint_data),  .io_fcsr_rm (core_io_fpu_fcsr_rm),  .io_fcsr_flags_valid (FPU_io_fcsr_flags_valid),  .io_fcsr_flags_bits (FPU_io_fcsr_flags_bits),  .io_store_data (FPU_io_store_data),  .io_toint_data (FPU_io_toint_data),  .io_dmem_resp_val (core_io_fpu_dmem_resp_val),  .io_dmem_resp_type (core_io_fpu_dmem_resp_type),  .io_dmem_resp_tag (core_io_fpu_dmem_resp_tag),  .io_dmem_resp_data (core_io_fpu_dmem_resp_data),  .io_valid (core_io_fpu_valid),  .io_fcsr_rdy (FPU_io_fcsr_rdy),  .io_nack_mem (FPU_io_nack_mem),  .io_illegal_rm (FPU_io_illegal_rm),  .io_killx (core_io_fpu_killx),  .io_killm (core_io_fpu_killm),  .io_dec_cmd (FPU_io_dec_cmd),  .io_dec_ldst (FP ... "
+  The above instance has fewer port connections than the module definition,
+  input port 'io_cp_req_bits_cmd' is not connected,
+  input port 'io_cp_req_bits_ldst' is not connected,
+  input port 'io_cp_req_bits_wen' is not connected,
+  input port 'io_cp_req_bits_ren1' is not connected,
+  input port 'io_cp_req_bits_ren2' is not connected,
+  input port 'io_cp_req_bits_ren3' is not connected,
+  input port 'io_cp_req_bits_swap12' is not connected,
+  input port 'io_cp_req_bits_swap23' is not connected,
+  input port 'io_cp_req_bits_single' is not connected,
+  input port 'io_cp_req_bits_fromint' is not connected,
+  input port 'io_cp_req_bits_toint' is not connected,
+  input port 'io_cp_req_bits_fastpipe' is not connected,
+  input port 'io_cp_req_bits_fma' is not connected,
+  input port 'io_cp_req_bits_div' is not connected,
+  input port 'io_cp_req_bits_sqrt' is not connected,
+  input port 'io_cp_req_bits_round' is not connected,
+  input port 'io_cp_req_bits_wflags' is not connected,
+  input port 'io_cp_req_bits_rm' is not connected,
+  input port 'io_cp_req_bits_typ' is not connected,
+  input port 'io_cp_req_bits_in1' is not connected,
+  input port 'io_cp_req_bits_in2' is not connected,
+  input port 'io_cp_req_bits_in3' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 88091
+"ClientTileLinkIOArbiter ClientTileLinkIOArbiter( .clk (clk),  .reset (reset),  .io_in_1_acquire_ready (ClientTileLinkIOArbiter_io_in_1_acquire_ready),  .io_in_1_acquire_valid (SampleAccel_io_autl_acquire_valid),  .io_in_1_grant_ready (SampleAccel_io_autl_grant_ready),  .io_in_1_grant_valid (ClientTileLinkIOArbiter_io_in_1_grant_valid),  .io_in_1_grant_bits_addr_beat (ClientTileLinkIOArbiter_io_in_1_grant_bits_addr_beat),  .io_in_1_grant_bits_client_xact_id (ClientTileLinkIOArbiter_io_in_1_grant_bits_client_xact_id),  .io_in_1_grant_bits_manager_xact_id (ClientTileLinkIOArbiter_io_in_1_grant_bits_manager_xact_id),  .io_in_1_grant_bits_is_builtin_type (ClientTileLinkIOArbiter_io_in_1_grant_bits_is_builtin_type),  .io_in_1_grant_bits_g_type (ClientTileLink ... "
+  The above instance has fewer port connections than the module definition,
+  input port 'io_in_1_acquire_bits_addr_block' is not connected,
+  input port 'io_in_1_acquire_bits_client_xact_id' is not connected,
+  input port 'io_in_1_acquire_bits_addr_beat' is not connected,
+  input port 'io_in_1_acquire_bits_is_builtin_type' is not connected,
+  input port 'io_in_1_acquire_bits_a_type' is not connected,
+  input port 'io_in_1_acquire_bits_union' is not connected,
+  input port 'io_in_1_acquire_bits_data' is not connected,
+  input port 'io_in_1_probe_ready' is not connected,
+  output port 'io_in_1_probe_valid' is not connected,
+  output port 'io_in_1_probe_bits_addr_block' is not connected,
+  output port 'io_in_1_probe_bits_p_type' is not connected,
+  output port 'io_in_1_release_ready' is not connected,
+  input port 'io_in_1_release_valid' is not connected,
+  input port 'io_in_1_release_bits_addr_beat' is not connected,
+  input port 'io_in_1_release_bits_addr_block' is not connected,
+  input port 'io_in_1_release_bits_client_xact_id' is not connected,
+  input port 'io_in_1_release_bits_voluntary' is not connected,
+  input port 'io_in_1_release_bits_r_type' is not connected,
+  input port 'io_in_1_release_bits_data' is not connected,
+  input port 'io_in_0_probe_ready' is not connected,
+  output port 'io_in_0_probe_valid' is not connected,
+  output port 'io_in_0_probe_bits_addr_block' is not connected,
+  output port 'io_in_0_probe_bits_p_type' is not connected,
+  output port 'io_in_0_release_ready' is not connected,
+  input port 'io_in_0_release_valid' is not connected,
+  input port 'io_in_0_release_bits_addr_beat' is not connected,
+  input port 'io_in_0_release_bits_addr_block' is not connected,
+  input port 'io_in_0_release_bits_client_xact_id' is not connected,
+  input port 'io_in_0_release_bits_voluntary' is not connected,
+  input port 'io_in_0_release_bits_r_type' is not connected,
+  ... ...
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 88211
+"RRArbiter_0 RRArbiter( .clk (clk),  .reset (reset),  .io_in_0_ready (RRArbiter_io_in_0_ready),  .io_in_0_valid (Queue_io_deq_valid),  .io_in_0_bits_rd (Queue_io_deq_bits_rd),  .io_in_0_bits_data (Queue_io_deq_bits_data),  .io_out_ready (core_io_rocc_resp_ready),  .io_out_valid (RRArbiter_io_out_valid),  .io_out_bits_rd (RRArbiter_io_out_bits_rd),  .io_out_bits_data (RRArbiter_io_out_bits_data));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_chosen' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 88372
+"Queue_6 Queue( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_io_enq_ready),  .io_enq_valid (SampleAccel_io_resp_valid),  .io_enq_bits_rd (SampleAccel_io_resp_bits_rd),  .io_enq_bits_data (SampleAccel_io_resp_bits_data),  .io_deq_ready (RRArbiter_io_in_0_ready),  .io_deq_valid (Queue_io_deq_valid),  .io_deq_bits_rd (Queue_io_deq_bits_rd),  .io_deq_bits_data (Queue_io_deq_bits_data));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 88859
+"Uncore uncore( .clk (clk),  .reset (reset),  .io_host_clk (uncore_io_host_clk),  .io_host_clk_edge (uncore_io_host_clk_edge),  .io_host_in_ready (uncore_io_host_in_ready),  .io_host_in_valid (io_host_in_valid),  .io_host_in_bits (io_host_in_bits),  .io_host_out_ready (io_host_out_ready),  .io_host_out_valid (uncore_io_host_out_valid),  .io_host_out_bits (uncore_io_host_out_bits),  .io_host_debug_stats_csr (uncore_io_host_debug_stats_csr),  .io_mem_0_aw_ready (Queue_3_io_enq_ready),  .io_mem_0_aw_valid (uncore_io_mem_0_aw_valid),  .io_mem_0_aw_bits_addr (uncore_io_mem_0_aw_bits_addr),  .io_mem_0_aw_bits_len (uncore_io_mem_0_aw_bits_len),  .io_mem_0_aw_bits_size (uncore_io_mem_0_aw_bits_size),  .io_mem_0_aw_bits_burst (uncore_io_mem_0_aw_bits_burst),  .io ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_htif_0_id' is not connected,
+  input port 'io_mem_backup_ctrl_in_valid' is not connected,
+  input port 'io_mem_backup_ctrl_out_ready' is not connected,
+  output port 'io_mem_backup_ctrl_out_valid' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 89099
+"Queue_0 Queue( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_io_enq_ready),  .io_enq_valid (uncore_io_htif_0_csr_req_valid),  .io_enq_bits_rw (uncore_io_htif_0_csr_req_bits_rw),  .io_enq_bits_addr (uncore_io_htif_0_csr_req_bits_addr),  .io_enq_bits_data (uncore_io_htif_0_csr_req_bits_data),  .io_deq_ready (RocketTile_io_host_csr_req_ready),  .io_deq_valid (Queue_io_deq_valid),  .io_deq_bits_rw (Queue_io_deq_bits_rw),  .io_deq_bits_addr (Queue_io_deq_bits_addr),  .io_deq_bits_data (Queue_io_deq_bits_data));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 89112
+"Queue_1 Queue_1( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_1_io_enq_ready),  .io_enq_valid (RocketTile_io_host_csr_resp_valid),  .io_enq_bits (RocketTile_io_host_csr_resp_bits),  .io_deq_ready (uncore_io_htif_0_csr_resp_ready),  .io_deq_valid (Queue_1_io_deq_valid),  .io_deq_bits (Queue_1_io_deq_bits));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 89121
+"Queue_2 Queue_2( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_2_io_enq_ready),  .io_enq_valid (uncore_io_mem_0_ar_valid),  .io_enq_bits_addr (uncore_io_mem_0_ar_bits_addr),  .io_enq_bits_len (uncore_io_mem_0_ar_bits_len),  .io_enq_bits_size (uncore_io_mem_0_ar_bits_size),  .io_enq_bits_burst (uncore_io_mem_0_ar_bits_burst),  .io_enq_bits_lock (uncore_io_mem_0_ar_bits_lock),  .io_enq_bits_cache (uncore_io_mem_0_ar_bits_cache),  .io_enq_bits_prot (uncore_io_mem_0_ar_bits_prot),  .io_enq_bits_qos (uncore_io_mem_0_ar_bits_qos),  .io_enq_bits_region (uncore_io_mem_0_ar_bits_region),  .io_enq_bits_id (uncore_io_mem_0_ar_bits_id),  .io_enq_bits_user (uncore_io_mem_0_ar_bits_user),  .io_deq_ready (io_mem_0_ar_ready),  .io_deq_valid (Queue_2_io_deq_valid), ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_deq_bits_cache' is not connected,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 89150
+"Queue_2 Queue_3( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_3_io_enq_ready),  .io_enq_valid (uncore_io_mem_0_aw_valid),  .io_enq_bits_addr (uncore_io_mem_0_aw_bits_addr),  .io_enq_bits_len (uncore_io_mem_0_aw_bits_len),  .io_enq_bits_size (uncore_io_mem_0_aw_bits_size),  .io_enq_bits_burst (uncore_io_mem_0_aw_bits_burst),  .io_enq_bits_lock (uncore_io_mem_0_aw_bits_lock),  .io_enq_bits_cache (uncore_io_mem_0_aw_bits_cache),  .io_enq_bits_prot (uncore_io_mem_0_aw_bits_prot),  .io_enq_bits_qos (uncore_io_mem_0_aw_bits_qos),  .io_enq_bits_region (uncore_io_mem_0_aw_bits_region),  .io_enq_bits_id (uncore_io_mem_0_aw_bits_id),  .io_enq_bits_user (uncore_io_mem_0_aw_bits_user),  .io_deq_ready (io_mem_0_aw_ready),  .io_deq_valid (Queue_3_io_deq_valid), ... "
+  The above instance has fewer port connections than the module definition,
+  output port 'io_deq_bits_cache' is not connected,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 89179
+"Queue_3 Queue_4( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_4_io_enq_ready),  .io_enq_valid (uncore_io_mem_0_w_valid),  .io_enq_bits_data (uncore_io_mem_0_w_bits_data),  .io_enq_bits_last (uncore_io_mem_0_w_bits_last),  .io_enq_bits_strb (uncore_io_mem_0_w_bits_strb),  .io_enq_bits_user (uncore_io_mem_0_w_bits_user),  .io_deq_ready (io_mem_0_w_ready),  .io_deq_valid (Queue_4_io_deq_valid),  .io_deq_bits_data (Queue_4_io_deq_bits_data),  .io_deq_bits_last (Queue_4_io_deq_bits_last),  .io_deq_bits_strb (Queue_4_io_deq_bits_strb),  .io_deq_bits_user (Queue_4_io_deq_bits_user));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 89194
+"Queue_4 Queue_5( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_5_io_enq_ready),  .io_enq_valid (io_mem_0_r_valid),  .io_enq_bits_resp (io_mem_0_r_bits_resp),  .io_enq_bits_data (io_mem_0_r_bits_data),  .io_enq_bits_last (io_mem_0_r_bits_last),  .io_enq_bits_id (io_mem_0_r_bits_id),  .io_enq_bits_user (io_mem_0_r_bits_user),  .io_deq_ready (uncore_io_mem_0_r_ready),  .io_deq_valid (Queue_5_io_deq_valid),  .io_deq_bits_resp (Queue_5_io_deq_bits_resp),  .io_deq_bits_data (Queue_5_io_deq_bits_data),  .io_deq_bits_last (Queue_5_io_deq_bits_last),  .io_deq_bits_id (Queue_5_io_deq_bits_id),  .io_deq_bits_user (Queue_5_io_deq_bits_user));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.v, 89211
+"Queue_5 Queue_6( .clk (clk),  .reset (reset),  .io_enq_ready (Queue_6_io_enq_ready),  .io_enq_valid (io_mem_0_b_valid),  .io_enq_bits_resp (io_mem_0_b_bits_resp),  .io_enq_bits_id (io_mem_0_b_bits_id),  .io_enq_bits_user (io_mem_0_b_bits_user),  .io_deq_ready (uncore_io_mem_0_b_ready),  .io_deq_valid (Queue_6_io_deq_valid),  .io_deq_bits_resp (Queue_6_io_deq_bits_resp),  .io_deq_bits_id (Queue_6_io_deq_bits_id),  .io_deq_bits_user (Queue_6_io_deq_bits_user));"
+  The above instance has fewer port connections than the module definition,
+  output port 'io_count' is not connected.
+
+
+Lint-[TFIPC-L] Too few instance port connections
+/home/student/yh326/Summer16_CGRA/vsim/generated-src/Top.SampleCPPConfig.tb.vfrag, 147
+"Top dut( .clk (clk),  .reset (reset),  .io_mem_0_ar_valid (ar_valid_delay_0),  .io_mem_0_ar_ready (ar_ready_delay_0),  .io_mem_0_ar_bits_addr (ar_addr_delay_0),  .io_mem_0_ar_bits_id (ar_id_delay_0),  .io_mem_0_ar_bits_size (ar_size_delay_0),  .io_mem_0_ar_bits_len (ar_len_delay_0),  .io_mem_0_aw_valid (aw_valid_delay_0),  .io_mem_0_aw_ready (aw_ready_delay_0),  .io_mem_0_aw_bits_addr (aw_addr_delay_0),  .io_mem_0_aw_bits_id (aw_id_delay_0),  .io_mem_0_aw_bits_size (aw_size_delay_0),  .io_mem_0_aw_bits_len (aw_len_delay_0),  .io_mem_0_w_valid (w_valid_delay_0),  .io_mem_0_w_ready (w_ready_delay_0),  .io_mem_0_w_bits_strb (w_strb_delay_0),  .io_mem_0_w_bits_data (w_data_delay_0),  .io_mem_0_w_bits_last (w_last_delay_0),  .io_mem_0_r_valid (r_valid_delay_ ... "
+  The above instance has fewer port connections than the module definition,
+  input port 'init' is not connected.
+
+1 error
