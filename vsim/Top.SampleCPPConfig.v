@@ -1,3 +1,5 @@
+//`include "src/mem_Accel_B.v"
+
 module Htif(input clk, input reset,
     //output io_host_clk
     //output io_host_clk_edge
@@ -70212,15 +70214,15 @@ module HellaCache(input clk, input reset,
   );
 
   always @(posedge clk) begin
-`ifndef SYNTHESIS
-// synthesis translate_off
-  if(reset) T0 <= 1'b1;
-  if(!T1 && T0 && !reset) begin
-    $fwrite(32'h80000002, "ASSERTION FAILED: %s\n", "DCache exception occurred - cache response not killed.");
-    $finish;
-  end
-// synthesis translate_on
-`endif
+//`ifndef SYNTHESIS
+//// synthesis translate_off
+//  if(reset) T0 <= 1'b1;
+//  if(!T1 && T0 && !reset) begin
+//    $fwrite(32'h80000002, "ASSERTION FAILED: %s\n", "DCache exception occurred - cache response not killed.");
+//    $finish;
+//  end
+//// synthesis translate_on
+//`endif
     R4 <= T5;
     if(T138) begin
       s2_req_data <= s1_req_data;
@@ -85301,475 +85303,6 @@ module RoccCommandRouter(input clk, input reset,
   end
 endmodule
 
-// Yangyi: RTL adder
-module adder_Accel
-(
-  clk,
-  rst,
-  cmd,
-  cmd_vld,
-  cmd_rdy,
-  resp,
-  resp_vld,
-  resp_rdy,      
-);
-
-  initial begin
-    $display("adder_Accel");
-  end
-
-  // check if can remove the "wire"s
-  input              clk;
-  input              rst;
-  input      [159:0] cmd;
-  input              cmd_vld;
-  output reg         cmd_rdy;
-  output     [73:0]  resp;
-  output reg         resp_vld;
-  input              resp_rdy;
-  
-  // Spread The cmd Wires
-  wire [6:0]  cmd_inst_funct;  
-  wire [4:0]  cmd_inst_rs2;    
-  wire [4:0]  cmd_inst_rs1;    
-  wire        cmd_inst_xd;     
-  wire        cmd_inst_xs1;    
-  wire        cmd_inst_xs2;    
-  wire [4:0]  cmd_inst_rd;     
-  wire [6:0]  cmd_inst_opcode; 
-  wire [63:0] cmd_rs1_data;         
-  wire [63:0] cmd_rs2_data;         
-  
-  assign cmd_inst_funct  = cmd[6:0];
-  assign cmd_inst_rs2    = cmd[11:7];
-  assign cmd_inst_rs1    = cmd[16:12];
-  assign cmd_inst_xd     = cmd[17];
-  assign cmd_inst_xs1    = cmd[18];
-  assign cmd_inst_xs2    = cmd[19];
-  assign cmd_inst_rd     = cmd[24:20];
-  assign cmd_inst_opcode = cmd[31:25];
-  assign cmd_rs1_data    = cmd[95:32];
-  assign cmd_rs2_data    = cmd[159:96];
-  
-  // Generate resp Wires
-  wire [63:0] resp_data;
-  wire [4:0]  resp_rd;
-  wire        SampleAccel_io_mem_req_valid;
-  wire        SampleAccel_io_autl_acquire_valid;
-  wire        ClientTileLinkIOArbiter_io_in_1_acquire_ready;
-  wire        SampleAccel_io_interrupt;
-  wire        SampleAccel_io_busy;
-  
-  assign resp = 
-           {
-           resp_data, 
-           resp_rd, 
-           SampleAccel_io_mem_req_valid, 
-           SampleAccel_io_autl_acquire_valid, 
-           ClientTileLinkIOArbiter_io_in_1_acquire_ready,
-           SampleAccel_io_interrupt,
-           SampleAccel_io_busy
-           };
-
-  // ---Datapath---
-  // Add
-  parameter data_nbits = 64;
-  
-  wire [data_nbits-1:0] adder_out;
-  
-  yh326_Adder#(data_nbits) adder
-  (
-    .in0 (cmd_rs1_data),
-    .in1 (cmd_rs2_data),
-    .out (adder_out)
-  );
-  
-  yh326_Reg#(data_nbits) d_reg
-  (
-    .clk (clk),
-    .q   (resp_data),
-    .d   (adder_out)
-  );
-  
-  // rd transition
-  parameter rd_nbits = 5;
-  
-  yh326_Reg#(rd_nbits) rd_reg
-  (
-    .clk (clk),
-    .q   (resp_rd),
-    .d   (cmd_inst_rd)
-  );
-  
-  // Assign Values To The 5 Unused resp Ports
-  assign SampleAccel_io_mem_req_valid = 1'b0;
-  assign SampleAccel_io_autl_acquire_valid = 1'b0;
-  assign ClientTileLinkIOArbiter_io_in_1_acquire_ready = 1'b0;
-  assign SampleAccel_io_interrupt = 1'b0;
-  assign SampleAccel_io_busy = 1'b0;
-
-  // ---Control Path---
-  // States Definition
-  parameter STATE_IDLE = 2'd0;
-  parameter STATE_DONE = 2'd1;
-
-  // State Advancement
-  reg [1:0]  state_reg;
-  reg [1:0]  next_state;
-
-  always @ (posedge clk) begin
-    if (rst) begin
-      state_reg <= STATE_IDLE;
-    end else begin
-      state_reg <= next_state;
-    end
-  end
-
-  // State Advancement Calculations
-  wire cmd_go;
-  wire resp_go;
-
-  assign cmd_go  = cmd_vld  && cmd_rdy;
-  assign resp_go = resp_vld && resp_rdy; 
-
-  always @ (*) begin
-    case ( state_reg )
-      STATE_IDLE: 
-        begin
-          if (cmd_go) begin
-            next_state = STATE_DONE;
-          end else begin
-            next_state = state_reg;
-          end
-        end
-      STATE_DONE: 
-        begin
-          if (resp_go) begin
-            next_state = STATE_IDLE;
-          end else begin
-            next_state = state_reg;
-          end
-        end
-    endcase
-  end
-
-  // State Outputs
-  always @ (*) begin
-    case ( state_reg )
-      STATE_IDLE:
-        begin
-        cmd_rdy  = 1'b1;
-        resp_vld = 1'b0;
-        end
-      STATE_DONE:
-        begin
-        cmd_rdy  = 1'b0;
-        resp_vld = 1'b1;
-        end
-    endcase
-  end
-  /*
-  task as
-  (
-    input as_cmd_rdy;
-    input as_resp_vld
-  );
-  begin
-    cmd_rdy  = as_cmd_rdy;
-    resp_vld = as_resp_vld;
-  end
-  endtask
-  
-  always @ (*) begin
-    case ( state_reg )
-      //              cmd_rdy, resp_vld
-      STATE_IDLE:  as(      1,        0);
-      STATE_DONE:  as(      0,        1);
-    endcase
-  end
-  */
-endmodule
-
-module yh326_Adder
-#(
-  parameter p_nbits = 1
-)(
-  in0,
-  in1,
-  //cin,
-  out,
-  //cout
-);
-
-  input  [p_nbits-1:0] in0;
-  input  [p_nbits-1:0] in1;
-  //input                cin;
-  output [p_nbits-1:0] out;
-  //output               cout;
-
-  //assign {cout,out} = in0 + in1 + cin;
-  assign out = in0 + in1;
-
-endmodule
-
-module yh326_Reg
-#(
-  parameter p_nbits = 1
-)(
-  clk, // Clock input
-  q,   // Data output
-  d    // Data input
-);
-
-  input                    clk;
-  output reg [p_nbits-1:0] q;
-  input      [p_nbits-1:0] d;
-
-  always @( posedge clk ) begin
-    q <= d;
-  end
-
-endmodule
-
-//gai: gcd accelerator gererated by vivado HLS
-
-// ==============================================================
-// RTL generated by Vivado(TM) HLS - High-Level Synthesis from C, C++ and SystemC
-// Version: 2015.3
-// Copyright (C) 2015 Xilinx Inc. All rights reserved.
-// 
-// ===========================================================
-
-`timescale 1 ns / 1 ps 
-
-(* CORE_GENERATION_INFO="gcd,hls_ip_2015_3,{HLS_INPUT_TYPE=cxx,HLS_INPUT_FLOAT=0,HLS_INPUT_FIXED=0,HLS_INPUT_PART=xc7z020clg484-2,HLS_INPUT_CLOCK=5.000000,HLS_INPUT_ARCH=others,HLS_SYN_CLOCK=3.950000,HLS_SYN_LAT=-1,HLS_SYN_TPT=none,HLS_SYN_MEM=0,HLS_SYN_DSP=0,HLS_SYN_FF=137,HLS_SYN_LUT=430}" *)
-
-module gcd (
-        ap_clk,
-        ap_rst,
-        io_cmd_V,
-        io_cmd_V_ap_vld,
-        io_cmd_V_ap_ack,
-        io_resp_V,
-        io_resp_V_ap_vld,
-        io_resp_V_ap_ack
-);
-
-parameter    ap_const_logic_1 = 1'b1;
-parameter    ap_const_logic_0 = 1'b0;
-parameter    ap_ST_st1_fsm_0 = 3'b1;
-parameter    ap_ST_st2_fsm_1 = 3'b10;
-parameter    ap_ST_st3_fsm_2 = 3'b100;
-parameter    ap_const_lv32_0 = 32'b00000000000000000000000000000000;
-parameter    ap_const_lv1_1 = 1'b1;
-parameter    ap_const_lv32_1 = 32'b1;
-parameter    ap_const_lv1_0 = 1'b0;
-parameter    ap_const_lv32_2 = 32'b10;
-parameter    ap_const_lv32_14 = 32'b10100;
-parameter    ap_const_lv32_18 = 32'b11000;
-parameter    ap_const_lv32_20 = 32'b100000;
-parameter    ap_const_lv32_5F = 32'b1011111;
-parameter    ap_const_lv32_60 = 32'b1100000;
-parameter    ap_const_lv32_9F = 32'b10011111;
-parameter    ap_const_lv5_0 = 5'b00000;
-parameter    ap_true = 1'b1;
-
-input   ap_clk;
-input   ap_rst;
-input  [159:0] io_cmd_V;
-input   io_cmd_V_ap_vld;
-output   io_cmd_V_ap_ack;
-output  [73:0] io_resp_V;
-output   io_resp_V_ap_vld;
-input   io_resp_V_ap_ack;
-
-reg io_cmd_V_ap_ack;
-reg io_resp_V_ap_vld;
-reg   [4:0] tmp_rd_V_reg_166;
-(* fsm_encoding = "none" *) reg   [2:0] ap_CS_fsm = 3'b1;
-reg    ap_sig_cseq_ST_st1_fsm_0;
-reg    ap_sig_bdd_24;
-wire   [63:0] a_V_2_fu_140_p3;
-reg    ap_sig_cseq_ST_st2_fsm_1;
-reg    ap_sig_bdd_41;
-wire   [0:0] tmp_fu_116_p2;
-wire   [63:0] b_V_2_fu_148_p3;
-reg   [63:0] tmp_data_V_reg_67;
-reg   [63:0] p_1_reg_77;
-reg    ap_sig_cseq_ST_st3_fsm_2;
-reg    ap_sig_bdd_60;
-reg    ap_reg_ioackin_io_resp_V_ap_ack = 1'b0;
-reg    ap_sig_ioackin_io_resp_V_ap_ack;
-wire   [0:0] tmp_2_fu_122_p2;
-wire   [63:0] a_V_1_fu_128_p2;
-wire   [63:0] b_V_1_fu_134_p2;
-reg   [2:0] ap_NS_fsm;
-
-
-
-
-/// the current state (ap_CS_fsm) of the state machine. ///
-always @ (posedge ap_clk) begin : ap_ret_ap_CS_fsm
-    if (ap_rst == 1'b1) begin
-        ap_CS_fsm <= ap_ST_st1_fsm_0;
-    end else begin
-        ap_CS_fsm <= ap_NS_fsm;
-    end
-end
-
-/// ap_reg_ioackin_io_resp_V_ap_ack assign process. ///
-always @ (posedge ap_clk) begin : ap_ret_ap_reg_ioackin_io_resp_V_ap_ack
-    if (ap_rst == 1'b1) begin
-        ap_reg_ioackin_io_resp_V_ap_ack <= ap_const_logic_0;
-    end else begin
-        if ((ap_const_logic_1 == ap_sig_cseq_ST_st3_fsm_2)) begin
-            if (~(ap_const_logic_0 == ap_sig_ioackin_io_resp_V_ap_ack)) begin
-                ap_reg_ioackin_io_resp_V_ap_ack <= ap_const_logic_0;
-            end else if ((ap_const_logic_1 == io_resp_V_ap_ack)) begin
-                ap_reg_ioackin_io_resp_V_ap_ack <= ap_const_logic_1;
-            end
-        end
-    end
-end
-
-/// assign process. ///
-always @ (posedge ap_clk) begin
-    if (((ap_const_logic_1 == ap_sig_cseq_ST_st2_fsm_1) & (tmp_fu_116_p2 == ap_const_lv1_0))) begin
-        p_1_reg_77 <= b_V_2_fu_148_p3;
-    end else if (((ap_const_logic_1 == ap_sig_cseq_ST_st1_fsm_0) & ~(io_cmd_V_ap_vld == ap_const_logic_0))) begin
-        p_1_reg_77 <= {{io_cmd_V[ap_const_lv32_9F : ap_const_lv32_60]}};
-    end
-end
-
-/// assign process. ///
-always @ (posedge ap_clk) begin
-    if (((ap_const_logic_1 == ap_sig_cseq_ST_st2_fsm_1) & (tmp_fu_116_p2 == ap_const_lv1_0))) begin
-        tmp_data_V_reg_67 <= a_V_2_fu_140_p3;
-    end else if (((ap_const_logic_1 == ap_sig_cseq_ST_st1_fsm_0) & ~(io_cmd_V_ap_vld == ap_const_logic_0))) begin
-        tmp_data_V_reg_67 <= {{io_cmd_V[ap_const_lv32_5F : ap_const_lv32_20]}};
-    end
-end
-
-/// assign process. ///
-always @ (posedge ap_clk) begin
-    if (((ap_const_logic_1 == ap_sig_cseq_ST_st1_fsm_0) & ~(io_cmd_V_ap_vld == ap_const_logic_0))) begin
-        tmp_rd_V_reg_166 <= {{io_cmd_V[ap_const_lv32_18 : ap_const_lv32_14]}};
-    end
-end
-
-/// ap_sig_cseq_ST_st1_fsm_0 assign process. ///
-always @ (ap_sig_bdd_24) begin
-    if (ap_sig_bdd_24) begin
-        ap_sig_cseq_ST_st1_fsm_0 = ap_const_logic_1;
-    end else begin
-        ap_sig_cseq_ST_st1_fsm_0 = ap_const_logic_0;
-    end
-end
-
-/// ap_sig_cseq_ST_st2_fsm_1 assign process. ///
-always @ (ap_sig_bdd_41) begin
-    if (ap_sig_bdd_41) begin
-        ap_sig_cseq_ST_st2_fsm_1 = ap_const_logic_1;
-    end else begin
-        ap_sig_cseq_ST_st2_fsm_1 = ap_const_logic_0;
-    end
-end
-
-/// ap_sig_cseq_ST_st3_fsm_2 assign process. ///
-always @ (ap_sig_bdd_60) begin
-    if (ap_sig_bdd_60) begin
-        ap_sig_cseq_ST_st3_fsm_2 = ap_const_logic_1;
-    end else begin
-        ap_sig_cseq_ST_st3_fsm_2 = ap_const_logic_0;
-    end
-end
-
-/// ap_sig_ioackin_io_resp_V_ap_ack assign process. ///
-always @ (io_resp_V_ap_ack or ap_reg_ioackin_io_resp_V_ap_ack) begin
-    if ((ap_const_logic_0 == ap_reg_ioackin_io_resp_V_ap_ack)) begin
-        ap_sig_ioackin_io_resp_V_ap_ack = io_resp_V_ap_ack;
-    end else begin
-        ap_sig_ioackin_io_resp_V_ap_ack = ap_const_logic_1;
-    end
-end
-
-/// io_cmd_V_ap_ack assign process. ///
-always @ (io_cmd_V_ap_vld or ap_sig_cseq_ST_st1_fsm_0) begin
-    if (((ap_const_logic_1 == ap_sig_cseq_ST_st1_fsm_0) & ~(io_cmd_V_ap_vld == ap_const_logic_0))) begin
-        io_cmd_V_ap_ack = ap_const_logic_1;
-    end else begin
-        io_cmd_V_ap_ack = ap_const_logic_0;
-    end
-end
-
-/// io_resp_V_ap_vld assign process. ///
-always @ (ap_sig_cseq_ST_st3_fsm_2 or ap_reg_ioackin_io_resp_V_ap_ack) begin
-    if (((ap_const_logic_1 == ap_sig_cseq_ST_st3_fsm_2) & (ap_const_logic_0 == ap_reg_ioackin_io_resp_V_ap_ack))) begin
-        io_resp_V_ap_vld = ap_const_logic_1;
-    end else begin
-        io_resp_V_ap_vld = ap_const_logic_0;
-    end
-end
-/// the next state (ap_NS_fsm) of the state machine. ///
-always @ (io_cmd_V_ap_vld or ap_CS_fsm or tmp_fu_116_p2 or ap_sig_ioackin_io_resp_V_ap_ack) begin
-    case (ap_CS_fsm)
-        ap_ST_st1_fsm_0 : 
-        begin
-            if (~(io_cmd_V_ap_vld == ap_const_logic_0)) begin
-                ap_NS_fsm = ap_ST_st2_fsm_1;
-            end else begin
-                ap_NS_fsm = ap_ST_st1_fsm_0;
-            end
-        end
-        ap_ST_st2_fsm_1 : 
-        begin
-            if ((tmp_fu_116_p2 == ap_const_lv1_0)) begin
-                ap_NS_fsm = ap_ST_st2_fsm_1;
-            end else begin
-                ap_NS_fsm = ap_ST_st3_fsm_2;
-            end
-        end
-        ap_ST_st3_fsm_2 : 
-        begin
-            if (~(ap_const_logic_0 == ap_sig_ioackin_io_resp_V_ap_ack)) begin
-                ap_NS_fsm = ap_ST_st1_fsm_0;
-            end else begin
-                ap_NS_fsm = ap_ST_st3_fsm_2;
-            end
-        end
-        default : 
-        begin
-            ap_NS_fsm = 'bx;
-        end
-    endcase
-end
-
-assign a_V_1_fu_128_p2 = (tmp_data_V_reg_67 - p_1_reg_77);
-assign a_V_2_fu_140_p3 = ((tmp_2_fu_122_p2[0:0] === 1'b1) ? a_V_1_fu_128_p2 : tmp_data_V_reg_67);
-
-/// ap_sig_bdd_24 assign process. ///
-always @ (ap_CS_fsm) begin
-    ap_sig_bdd_24 = (ap_CS_fsm[ap_const_lv32_0] == ap_const_lv1_1);
-end
-
-/// ap_sig_bdd_41 assign process. ///
-always @ (ap_CS_fsm) begin
-    ap_sig_bdd_41 = (ap_const_lv1_1 == ap_CS_fsm[ap_const_lv32_1]);
-end
-
-/// ap_sig_bdd_60 assign process. ///
-always @ (ap_CS_fsm) begin
-    ap_sig_bdd_60 = (ap_const_lv1_1 == ap_CS_fsm[ap_const_lv32_2]);
-end
-assign b_V_1_fu_134_p2 = (p_1_reg_77 - tmp_data_V_reg_67);
-assign b_V_2_fu_148_p3 = ((tmp_2_fu_122_p2[0:0] === 1'b1) ? p_1_reg_77 : b_V_1_fu_134_p2);
-assign io_resp_V = {{{tmp_data_V_reg_67}, {tmp_rd_V_reg_166}}, {ap_const_lv5_0}};
-assign tmp_2_fu_122_p2 = (tmp_data_V_reg_67 > p_1_reg_77? 1'b1: 1'b0);
-assign tmp_fu_116_p2 = (tmp_data_V_reg_67 == p_1_reg_77? 1'b1: 1'b0);
-
-
-endmodule //gcd
-
 // ==============================================================
 // RTL generated by Vivado(TM) HLS - High-Level Synthesis from C, C++ and SystemC
 // Version: 2015.3
@@ -87533,6 +87066,14 @@ module RocketTile(input clk, input reset,
   wire[63:0] RoccCommandRouter_io_out_0_bits_rs2;
   wire RoccCommandRouter_io_busy;
   wire SimpleHellaCacheIF_io_requestor_req_ready;
+  wire SimpleHellaCacheIF_io_requestor_req_valid;
+  wire [39:0] SimpleHellaCacheIF_io_requestor_req_addr;
+  wire [9:0] SimpleHellaCacheIF_io_requestor_req_tag;
+  wire [4:0] SimpleHellaCacheIF_io_requestor_req_cmd;
+  wire [2:0] SimpleHellaCacheIF_io_requestor_req_typ;
+  wire SimpleHellaCacheIF_io_requestor_req_kill;
+  wire SimpleHellaCacheIF_io_requestor_req_phys;
+  wire [63:0] SimpleHellaCacheIF_io_requestor_req_data;
   wire SimpleHellaCacheIF_io_requestor_resp_valid;
   wire[39:0] SimpleHellaCacheIF_io_requestor_resp_bits_addr;
   wire[9:0] SimpleHellaCacheIF_io_requestor_resp_bits_tag;
@@ -88706,259 +88247,70 @@ module RocketTile(input clk, input reset,
        .io_busy( RoccCommandRouter_io_busy )
   );
   
-  reg toggle;
-  
-  always @ (posedge clk) begin
-    if (reset) begin
-      toggle <= 1'b0;
-    end
-    if (RoccCommandRouter_io_out_0_valid) begin
-      toggle <= 1'b1;
-      $display("~~~~~");
-      $display("RoccCommandRouter_io_out_0_valid:");
-      $display(RoccCommandRouter_io_out_0_valid);
-      $display("------");
-      $display("rst:");
-      $display(SampleAccel.rst);
-      $display("state_reg:");
-      $display(SampleAccel.state_reg);
-      $display("next_state:");
-      $display(SampleAccel.next_state);
-      $display("cmd_vld:");
-      $display(SampleAccel.cmd_vld);
-      $display("cmd_rdy:");
-      $display(SampleAccel.cmd_rdy);
-      $display("cmd_go:");
-      $display(SampleAccel.cmd_go);
-      $display("resp_vld:");
-      $display(SampleAccel.resp_vld);
-      $display("resp_rdy:");
-      $display(SampleAccel.resp_rdy);
-      $display("resp_go:");
-      $display(SampleAccel.resp_go);
-      $display("------");
-      $display("rs1_data:");
-      $display(SampleAccel.cmd_rs1_data);
-      $display("rs2_data:");
-      $display(SampleAccel.cmd_rs2_data);
-      $display("adder_out:");
-      $display(SampleAccel.adder_out);
-      $display("resp_data:");
-      $display(SampleAccel.resp_data);
-      $display("------");
-      $display("cmd_inst_rd:");
-      $display(SampleAccel.cmd_inst_rd);
-      $display("resp_rd:");
-      $display(SampleAccel.resp_rd);
-      $display("------");
-    end
-    if (toggle) begin
-      toggle <= 1'b0;
-      $display("~~~~~");
-      $display("RoccCommandRouter_io_out_0_valid:");
-      $display(RoccCommandRouter_io_out_0_valid);
-      $display("------");
-      $display("rst:");
-      $display(SampleAccel.rst);
-      $display("state_reg:");
-      $display(SampleAccel.state_reg);
-      $display("next_state:");
-      $display(SampleAccel.next_state);
-      $display("cmd_vld:");
-      $display(SampleAccel.cmd_vld);
-      $display("cmd_rdy:");
-      $display(SampleAccel.cmd_rdy);
-      $display("cmd_go:");
-      $display(SampleAccel.cmd_go);
-      $display("resp_vld:");
-      $display(SampleAccel.resp_vld);
-      $display("resp_rdy:");
-      $display(SampleAccel.resp_rdy);
-      $display("resp_go:");
-      $display(SampleAccel.resp_go);
-      $display("------");
-      $display("rs1_data:");
-      $display(SampleAccel.cmd_rs1_data);
-      $display("rs2_data:");
-      $display(SampleAccel.cmd_rs2_data);
-      $display("adder_out:");
-      $display(SampleAccel.adder_out);
-      $display("resp_data:");
-      $display(SampleAccel.resp_data);
-      $display("------");
-      $display("cmd_inst_rd:");
-      $display(SampleAccel.cmd_inst_rd);
-      $display("resp_rd:");
-      $display(SampleAccel.resp_rd);
-      $display("------");
-    end
-  end
-  
-  // Yangyi
-  adder_Accel SampleAccel
-  (
-    .clk      ( clk ),
-    .rst      ( reset ),
-    .cmd      ({
-                RoccCommandRouter_io_out_0_bits_rs2,
-                RoccCommandRouter_io_out_0_bits_rs1,
-                RoccCommandRouter_io_out_0_bits_inst_opcode,
-                RoccCommandRouter_io_out_0_bits_inst_rd,
-                RoccCommandRouter_io_out_0_bits_inst_xs2,
-                RoccCommandRouter_io_out_0_bits_inst_xs1,
-                RoccCommandRouter_io_out_0_bits_inst_xd,
-                RoccCommandRouter_io_out_0_bits_inst_rs1,
-                RoccCommandRouter_io_out_0_bits_inst_rs2,
-                RoccCommandRouter_io_out_0_bits_inst_funct
-              }),
-    .cmd_vld  ( RoccCommandRouter_io_out_0_valid ),
-    .cmd_rdy  ( SampleAccel_io_cmd_ready ),
-    .resp     ({
-                SampleAccel_io_resp_bits_data,
-                SampleAccel_io_resp_bits_rd,
-                SampleAccel_io_mem_req_valid,
-                SampleAccel_io_autl_acquire_valid,
-                ClientTileLinkIOArbiter_io_in_1_acquire_ready,
-                SampleAccel_io_interrupt,
-                SampleAccel_io_busy
-              }),
-    .resp_vld ( SampleAccel_io_resp_valid ),
-    .resp_rdy ( Queue_io_enq_ready )
+  mem_Accel_B SampleAccel
+    (
+      .clk           ( clk ), 
+      .rst           ( reset ),
+      .cmd_rdy       ( SampleAccel_io_cmd_ready ),
+      .cmd_vld       ( RoccCommandRouter_io_out_0_valid ),
+      .cmd           ({
+                       RoccCommandRouter_io_out_0_bits_rs2,
+                       RoccCommandRouter_io_out_0_bits_rs1,
+                       RoccCommandRouter_io_out_0_bits_inst_opcode,
+                       RoccCommandRouter_io_out_0_bits_inst_rd,
+                       RoccCommandRouter_io_out_0_bits_inst_xs2,
+                       RoccCommandRouter_io_out_0_bits_inst_xs1,
+                       RoccCommandRouter_io_out_0_bits_inst_xd,
+                       RoccCommandRouter_io_out_0_bits_inst_rs1,
+                       RoccCommandRouter_io_out_0_bits_inst_rs2,
+                       RoccCommandRouter_io_out_0_bits_inst_funct
+                     }),
+      .resp_rdy      ( Queue_io_enq_ready ),
+      .resp_vld      ( SampleAccel_io_resp_valid ),
+      .resp          ({
+                       SampleAccel_io_resp_bits_data,
+                       SampleAccel_io_resp_bits_rd,
+                       SampleAccel_io_autl_acquire_valid,
+                       ClientTileLinkIOArbiter_io_in_1_acquire_ready,
+                       SampleAccel_io_interrupt,
+                       SampleAccel_io_busy
+                     }),
+       .mem_req_rdy  ( SimpleHellaCacheIF_io_requestor_req_ready ),
+       .mem_req_vld  ( SimpleHellaCacheIF_io_requestor_req_valid ),
+       .mem_req      ({
+                       SimpleHellaCacheIF_io_requestor_req_addr,
+                       SimpleHellaCacheIF_io_requestor_req_tag,
+                       SimpleHellaCacheIF_io_requestor_req_cmd,
+                       SimpleHellaCacheIF_io_requestor_req_typ, 
+                       SimpleHellaCacheIF_io_requestor_req_kill, 
+                       SimpleHellaCacheIF_io_requestor_req_phys, 
+                       SimpleHellaCacheIF_io_requestor_req_data
+                     }),
+       .mem_resp_vld ( SimpleHellaCacheIF_io_requestor_resp_valid ),
+       .mem_resp     ({
+                       SimpleHellaCacheIF_io_requestor_resp_bits_addr,
+                       SimpleHellaCacheIF_io_requestor_resp_bits_tag,
+                       SimpleHellaCacheIF_io_requestor_resp_bits_cmd,
+                       SimpleHellaCacheIF_io_requestor_resp_bits_typ,
+                       SimpleHellaCacheIF_io_requestor_resp_bits_data,
+                       SimpleHellaCacheIF_io_requestor_resp_bits_nack,
+                       SimpleHellaCacheIF_io_requestor_resp_bits_replay,
+                       SimpleHellaCacheIF_io_requestor_resp_bits_has_data,
+                       SimpleHellaCacheIF_io_requestor_resp_bits_data_word_bypass,
+                       SimpleHellaCacheIF_io_requestor_resp_bits_store_data 
+                     })
   );
   
-  /*
-  //gai
-  gcd SampleAccel(.ap_clk(clk), .ap_rst(reset),
-       .io_cmd_V_ap_ack( SampleAccel_io_cmd_ready ),
-       .io_cmd_V_ap_vld( RoccCommandRouter_io_out_0_valid ),
-       .io_cmd_V({
-                  RoccCommandRouter_io_out_0_bits_rs2,
-                  RoccCommandRouter_io_out_0_bits_rs1,
-                  RoccCommandRouter_io_out_0_bits_inst_opcode,
-                  RoccCommandRouter_io_out_0_bits_inst_rd,
-                  RoccCommandRouter_io_out_0_bits_inst_xs2,
-                  RoccCommandRouter_io_out_0_bits_inst_xs1,
-                  RoccCommandRouter_io_out_0_bits_inst_xd,
-                  RoccCommandRouter_io_out_0_bits_inst_rs1,
-                  RoccCommandRouter_io_out_0_bits_inst_rs2,
-                  RoccCommandRouter_io_out_0_bits_inst_funct
-                  }),
-       //.io_cmd_V[6:0]( RoccCommandRouter_io_out_0_bits_inst_funct ),
-       //.io_cmd_V[11:7]( RoccCommandRouter_io_out_0_bits_inst_rs2 ),
-       //.io_cmd_V[16:12]( RoccCommandRouter_io_out_0_bits_inst_rs1 ),
-       //.io_cmd_V[17]( RoccCommandRouter_io_out_0_bits_inst_xd ),
-       //.io_cmd_V[18]( RoccCommandRouter_io_out_0_bits_inst_xs1 ),
-       //.io_cmd_V[19]( RoccCommandRouter_io_out_0_bits_inst_xs2 ),
-       //.io_cmd_V[24:20]( RoccCommandRouter_io_out_0_bits_inst_rd ),
-       //.io_cmd_V[31:25]( RoccCommandRouter_io_out_0_bits_inst_opcode ),
-       //.io_cmd_V[95:32]( RoccCommandRouter_io_out_0_bits_rs1 ),
-       //.io_cmd_V[159:96]( RoccCommandRouter_io_out_0_bits_rs2 ),
-       .io_resp_V_ap_ack( Queue_io_enq_ready ),
-       .io_resp_V_ap_vld( SampleAccel_io_resp_valid ),
-       .io_resp_V({
-                   SampleAccel_io_resp_bits_data,
-                   SampleAccel_io_resp_bits_rd,
-                   SampleAccel_io_mem_req_valid,
-                   SampleAccel_io_autl_acquire_valid,
-                   ClientTileLinkIOArbiter_io_in_1_acquire_ready,
-                   SampleAccel_io_interrupt,
-                   SampleAccel_io_busy
-                   })
-       //.io_resp_V[0]( SampleAccel_io_busy ),
-       //.io_resp_V[1]( SampleAccel_io_interrupt ),
-       //.io_resp_V[2]( ClientTileLinkIOArbiter_io_in_1_acquire_ready ),
-       //.io_resp_V[3]( SampleAccel_io_autl_acquire_valid ),
-       //.io_resp_V[4]( SampleAccel_io_mem_req_valid ),
-       //.io_resp_V[9:5]( SampleAccel_io_resp_bits_rd ),
-       //.io_resp_V[73:10]( SampleAccel_io_resp_bits_data )
-       //.io_mem_req_ready( SimpleHellaCacheIF_io_requestor_req_ready ),
-       //.io_mem_req_bits_addr(  )
-       //.io_mem_req_bits_tag(  )
-       //.io_mem_req_bits_cmd(  )
-       //.io_mem_req_bits_typ(  )
-       //.io_mem_req_bits_kill(  )
-       //.io_mem_req_bits_phys( SampleAccel_io_mem_req_bits_phys ),
-       //.io_mem_req_bits_data(  )
-       //.io_mem_resp_valid( SimpleHellaCacheIF_io_requestor_resp_valid ),
-       //.io_mem_resp_bits_addr( SimpleHellaCacheIF_io_requestor_resp_bits_addr ),
-       //.io_mem_resp_bits_tag( SimpleHellaCacheIF_io_requestor_resp_bits_tag ),
-       //.io_mem_resp_bits_cmd( SimpleHellaCacheIF_io_requestor_resp_bits_cmd ),
-       //.io_mem_resp_bits_typ( SimpleHellaCacheIF_io_requestor_resp_bits_typ ),
-       //.io_mem_resp_bits_data( SimpleHellaCacheIF_io_requestor_resp_bits_data ),
-       //.io_mem_resp_bits_nack( SimpleHellaCacheIF_io_requestor_resp_bits_nack ),
-       //.io_mem_resp_bits_replay( SimpleHellaCacheIF_io_requestor_resp_bits_replay ),
-       //.io_mem_resp_bits_has_data( SimpleHellaCacheIF_io_requestor_resp_bits_has_data ),
-       //.io_mem_resp_bits_data_word_bypass( SimpleHellaCacheIF_io_requestor_resp_bits_data_word_bypass ),
-       //.io_mem_resp_bits_store_data( SimpleHellaCacheIF_io_requestor_resp_bits_store_data ),
-       //.io_mem_replay_next_valid(  )
-       //.io_mem_replay_next_bits(  )
-       //.io_mem_xcpt_ma_ld(  )
-       //.io_mem_xcpt_ma_st(  )
-       //.io_mem_xcpt_pf_ld(  )
-       //.io_mem_xcpt_pf_st(  )
-       //.io_mem_invalidate_lr(  )
-       //.io_mem_ordered(  )
-       //.io_s( core_io_rocc_s ),
-       //.io_autl_acquire_bits_addr_block(  )
-       //.io_autl_acquire_bits_client_xact_id(  )
-       //.io_autl_acquire_bits_addr_beat(  )
-       //.io_autl_acquire_bits_is_builtin_type(  )
-       //.io_autl_acquire_bits_a_type(  )
-       //.io_autl_acquire_bits_union(  )
-       //.io_autl_acquire_bits_data(  )
-       //.io_autl_grant_ready( SampleAccel_io_autl_grant_ready ),
-       //.io_autl_grant_valid( ClientTileLinkIOArbiter_io_in_1_grant_valid ),
-       //.io_autl_grant_bits_addr_beat( ClientTileLinkIOArbiter_io_in_1_grant_bits_addr_beat ),
-       //.io_autl_grant_bits_client_xact_id( ClientTileLinkIOArbiter_io_in_1_grant_bits_client_xact_id ),
-       //.io_autl_grant_bits_manager_xact_id( ClientTileLinkIOArbiter_io_in_1_grant_bits_manager_xact_id ),
-       //.io_autl_grant_bits_is_builtin_type( ClientTileLinkIOArbiter_io_in_1_grant_bits_is_builtin_type ),
-       //.io_autl_grant_bits_g_type( ClientTileLinkIOArbiter_io_in_1_grant_bits_g_type ),
-       //.io_autl_grant_bits_data( ClientTileLinkIOArbiter_io_in_1_grant_bits_data ),
-       //.io_fpu_req_ready(  )
-       //.io_fpu_req_valid(  )
-       //.io_fpu_req_bits_cmd(  )
-       //.io_fpu_req_bits_ldst(  )
-       //.io_fpu_req_bits_wen(  )
-       //.io_fpu_req_bits_ren1(  )
-       //.io_fpu_req_bits_ren2(  )
-       //.io_fpu_req_bits_ren3(  )
-       //.io_fpu_req_bits_swap12(  )
-       //.io_fpu_req_bits_swap23(  )
-       //.io_fpu_req_bits_single(  )
-       //.io_fpu_req_bits_fromint(  )
-       //.io_fpu_req_bits_toint(  )
-       //.io_fpu_req_bits_fastpipe(  )
-       //.io_fpu_req_bits_fma(  )
-       //.io_fpu_req_bits_div(  )
-       //.io_fpu_req_bits_sqrt(  )
-       //.io_fpu_req_bits_round(  )
-       //.io_fpu_req_bits_wflags(  )
-       //.io_fpu_req_bits_rm(  )
-       //.io_fpu_req_bits_typ(  )
-       //.io_fpu_req_bits_in1(  )
-       //.io_fpu_req_bits_in2(  )
-       //.io_fpu_req_bits_in3(  )
-       //.io_fpu_resp_ready(  )
-       //.io_fpu_resp_valid(  )
-       //.io_fpu_resp_bits_data(  )
-       //.io_fpu_resp_bits_exc(  )
-       //.io_exception( core_io_rocc_exception ),
-       //.io_csr_waddr(  )
-       //.io_csr_wdata(  )
-       //.io_csr_wen(  )
-       //.io_host_id( io_host_id )
-  );
-  */
   SimpleHellaCacheIF SimpleHellaCacheIF(.clk(clk), .reset(reset),
        .io_requestor_req_ready( SimpleHellaCacheIF_io_requestor_req_ready ),
-       .io_requestor_req_valid( SampleAccel_io_mem_req_valid ),
-       //.io_requestor_req_bits_addr(  )
-       //.io_requestor_req_bits_tag(  )
-       //.io_requestor_req_bits_cmd(  )
-       //.io_requestor_req_bits_typ(  )
-       //.io_requestor_req_bits_kill(  )
-       .io_requestor_req_bits_phys( SampleAccel_io_mem_req_bits_phys ),
-       //.io_requestor_req_bits_data(  )
+       .io_requestor_req_valid( SimpleHellaCacheIF_io_requestor_req_valid ),
+       .io_requestor_req_bits_addr( SimpleHellaCacheIF_io_requestor_req_addr ),
+       .io_requestor_req_bits_tag( SimpleHellaCacheIF_io_requestor_req_tag ),
+       .io_requestor_req_bits_cmd( SimpleHellaCacheIF_io_requestor_req_cmd ),
+       .io_requestor_req_bits_typ( SimpleHellaCacheIF_io_requestor_req_typ ),
+       .io_requestor_req_bits_kill( SimpleHellaCacheIF_io_requestor_req_kill ),
+       .io_requestor_req_bits_phys( SimpleHellaCacheIF_io_requestor_req_phys ),
+       .io_requestor_req_bits_data( SimpleHellaCacheIF_io_requestor_req_data ),
        .io_requestor_resp_valid( SimpleHellaCacheIF_io_requestor_resp_valid ),
        .io_requestor_resp_bits_addr( SimpleHellaCacheIF_io_requestor_resp_bits_addr ),
        .io_requestor_resp_bits_tag( SimpleHellaCacheIF_io_requestor_resp_bits_tag ),
@@ -89007,16 +88359,16 @@ module RocketTile(input clk, input reset,
        //.io_cache_invalidate_lr(  )
        .io_cache_ordered( dcArb_io_requestor_2_ordered )
   );
-`ifndef SYNTHESIS
-// synthesis translate_off
-    assign SimpleHellaCacheIF.io_requestor_req_bits_addr = {2{$random}};
-    assign SimpleHellaCacheIF.io_requestor_req_bits_tag = {1{$random}};
-    assign SimpleHellaCacheIF.io_requestor_req_bits_cmd = {1{$random}};
-    assign SimpleHellaCacheIF.io_requestor_req_bits_typ = {1{$random}};
-    assign SimpleHellaCacheIF.io_requestor_req_bits_kill = {1{$random}};
-    assign SimpleHellaCacheIF.io_requestor_req_bits_data = {2{$random}};
-// synthesis translate_on
-`endif
+////`ifndef SYNTHESIS
+//// synthesis translate_off
+//    assign SimpleHellaCacheIF.io_requestor_req_bits_addr = {2{$random}};
+//    assign SimpleHellaCacheIF.io_requestor_req_bits_tag = {1{$random}};
+//    assign SimpleHellaCacheIF.io_requestor_req_bits_cmd = {1{$random}};
+//    assign SimpleHellaCacheIF.io_requestor_req_bits_typ = {1{$random}};
+//    assign SimpleHellaCacheIF.io_requestor_req_bits_kill = {1{$random}};
+//    assign SimpleHellaCacheIF.io_requestor_req_bits_data = {2{$random}};
+//// synthesis translate_on
+////`endif
   Queue_6 Queue(.clk(clk), .reset(reset),
        .io_enq_ready( Queue_io_enq_ready ),
        .io_enq_valid( SampleAccel_io_resp_valid ),
@@ -90014,3 +89366,902 @@ module ICache_tag_array(
 endmodule
 
 
+// ==============================================================
+// RTL generated by Vivado(TM) HLS - High-Level Synthesis from C, C++ and SystemC
+// Version: 2015.3
+// Copyright (C) 2015 Xilinx Inc. All rights reserved.
+// 
+// ===========================================================
+
+`timescale 1 ns / 1 ps 
+
+(* CORE_GENERATION_INFO="gcd,hls_ip_2015_3,{HLS_INPUT_TYPE=cxx,HLS_INPUT_FLOAT=0,HLS_INPUT_FIXED=0,HLS_INPUT_PART=xc7z020clg484-2,HLS_INPUT_CLOCK=5.000000,HLS_INPUT_ARCH=others,HLS_SYN_CLOCK=3.950000,HLS_SYN_LAT=-1,HLS_SYN_TPT=none,HLS_SYN_MEM=0,HLS_SYN_DSP=0,HLS_SYN_FF=138,HLS_SYN_LUT=431}" *)
+
+module gcd (
+        ap_clk,
+        ap_rst,
+        io_cmd_V,
+        io_cmd_V_ap_vld,
+        io_cmd_V_ap_ack,
+        io_resp_V,
+        io_resp_V_ap_vld,
+        io_resp_V_ap_ack,
+        io_mem_req_V,
+        io_mem_req_V_ap_vld,
+        io_mem_req_V_ap_ack
+);
+
+parameter    ap_const_logic_1 = 1'b1;
+parameter    ap_const_logic_0 = 1'b0;
+parameter    ap_ST_st1_fsm_0 = 3'b1;
+parameter    ap_ST_st2_fsm_1 = 3'b10;
+parameter    ap_ST_st3_fsm_2 = 3'b100;
+parameter    ap_const_lv32_0 = 32'b00000000000000000000000000000000;
+parameter    ap_const_lv1_1 = 1'b1;
+parameter    ap_const_lv32_1 = 32'b1;
+parameter    ap_const_lv1_0 = 1'b0;
+parameter    ap_const_lv32_2 = 32'b10;
+parameter    ap_const_lv124_F984000000000000 = 124'b1111100110000100000000000000000000000000000000000000000000000000;
+parameter    ap_const_lv32_14 = 32'b10100;
+parameter    ap_const_lv32_18 = 32'b11000;
+parameter    ap_const_lv32_20 = 32'b100000;
+parameter    ap_const_lv32_5F = 32'b1011111;
+parameter    ap_const_lv32_60 = 32'b1100000;
+parameter    ap_const_lv32_9F = 32'b10011111;
+parameter    ap_const_lv5_0 = 5'b00000;
+parameter    ap_true = 1'b1;
+
+input   ap_clk;
+input   ap_rst;
+input  [159:0] io_cmd_V;
+input   io_cmd_V_ap_vld;
+output   io_cmd_V_ap_ack;
+output  [73:0] io_resp_V;
+output   io_resp_V_ap_vld;
+input   io_resp_V_ap_ack;
+output  [123:0] io_mem_req_V;
+output   io_mem_req_V_ap_vld;
+input   io_mem_req_V_ap_ack;
+
+reg io_cmd_V_ap_ack;
+reg io_resp_V_ap_vld;
+reg io_mem_req_V_ap_vld;
+reg   [4:0] tmp_rd_V_reg_180;
+(* fsm_encoding = "none" *) reg   [2:0] ap_CS_fsm = 3'b1;
+reg    ap_sig_cseq_ST_st1_fsm_0;
+reg    ap_sig_bdd_27;
+wire   [63:0] a_V_2_fu_154_p3;
+reg    ap_sig_cseq_ST_st2_fsm_1;
+reg    ap_sig_bdd_44;
+wire   [0:0] tmp_fu_130_p2;
+wire   [63:0] b_V_2_fu_162_p3;
+reg   [63:0] tmp_data_V_reg_81;
+reg   [63:0] p_s_reg_91;
+reg    ap_sig_cseq_ST_st3_fsm_2;
+reg    ap_sig_bdd_63;
+reg    ap_reg_ioackin_io_resp_V_ap_ack = 1'b0;
+reg    ap_sig_ioackin_io_resp_V_ap_ack;
+reg    ap_sig_ioackin_io_mem_req_V_ap_ack;
+reg    ap_reg_ioackin_io_mem_req_V_ap_ack = 1'b0;
+wire   [0:0] tmp_3_fu_136_p2;
+wire   [63:0] a_V_1_fu_142_p2;
+wire   [63:0] b_V_1_fu_148_p2;
+reg   [2:0] ap_NS_fsm;
+
+
+
+
+/// the current state (ap_CS_fsm) of the state machine. ///
+always @ (posedge ap_clk) begin : ap_ret_ap_CS_fsm
+    if (ap_rst == 1'b1) begin
+        ap_CS_fsm <= ap_ST_st1_fsm_0;
+    end else begin
+        ap_CS_fsm <= ap_NS_fsm;
+    end
+end
+
+/// ap_reg_ioackin_io_mem_req_V_ap_ack assign process. ///
+always @ (posedge ap_clk) begin : ap_ret_ap_reg_ioackin_io_mem_req_V_ap_ack
+    if (ap_rst == 1'b1) begin
+        ap_reg_ioackin_io_mem_req_V_ap_ack <= ap_const_logic_0;
+    end else begin
+        if ((ap_const_logic_1 == ap_sig_cseq_ST_st3_fsm_2)) begin
+            if (~((ap_const_logic_0 == ap_sig_ioackin_io_resp_V_ap_ack) | (ap_const_logic_0 == ap_sig_ioackin_io_mem_req_V_ap_ack))) begin
+                ap_reg_ioackin_io_mem_req_V_ap_ack <= ap_const_logic_0;
+            end else if ((ap_const_logic_1 == io_mem_req_V_ap_ack)) begin
+                ap_reg_ioackin_io_mem_req_V_ap_ack <= ap_const_logic_1;
+            end
+        end
+    end
+end
+
+/// ap_reg_ioackin_io_resp_V_ap_ack assign process. ///
+always @ (posedge ap_clk) begin : ap_ret_ap_reg_ioackin_io_resp_V_ap_ack
+    if (ap_rst == 1'b1) begin
+        ap_reg_ioackin_io_resp_V_ap_ack <= ap_const_logic_0;
+    end else begin
+        if ((ap_const_logic_1 == ap_sig_cseq_ST_st3_fsm_2)) begin
+            if (~((ap_const_logic_0 == ap_sig_ioackin_io_resp_V_ap_ack) | (ap_const_logic_0 == ap_sig_ioackin_io_mem_req_V_ap_ack))) begin
+                ap_reg_ioackin_io_resp_V_ap_ack <= ap_const_logic_0;
+            end else if ((ap_const_logic_1 == io_resp_V_ap_ack)) begin
+                ap_reg_ioackin_io_resp_V_ap_ack <= ap_const_logic_1;
+            end
+        end
+    end
+end
+
+/// assign process. ///
+always @ (posedge ap_clk) begin
+    if (((ap_const_logic_1 == ap_sig_cseq_ST_st2_fsm_1) & (tmp_fu_130_p2 == ap_const_lv1_0))) begin
+        p_s_reg_91 <= b_V_2_fu_162_p3;
+    end else if (((ap_const_logic_1 == ap_sig_cseq_ST_st1_fsm_0) & ~(io_cmd_V_ap_vld == ap_const_logic_0))) begin
+        p_s_reg_91 <= {{io_cmd_V[ap_const_lv32_9F : ap_const_lv32_60]}};
+    end
+end
+
+/// assign process. ///
+always @ (posedge ap_clk) begin
+    if (((ap_const_logic_1 == ap_sig_cseq_ST_st2_fsm_1) & (tmp_fu_130_p2 == ap_const_lv1_0))) begin
+        tmp_data_V_reg_81 <= a_V_2_fu_154_p3;
+    end else if (((ap_const_logic_1 == ap_sig_cseq_ST_st1_fsm_0) & ~(io_cmd_V_ap_vld == ap_const_logic_0))) begin
+        tmp_data_V_reg_81 <= {{io_cmd_V[ap_const_lv32_5F : ap_const_lv32_20]}};
+    end
+end
+
+/// assign process. ///
+always @ (posedge ap_clk) begin
+    if (((ap_const_logic_1 == ap_sig_cseq_ST_st1_fsm_0) & ~(io_cmd_V_ap_vld == ap_const_logic_0))) begin
+        tmp_rd_V_reg_180 <= {{io_cmd_V[ap_const_lv32_18 : ap_const_lv32_14]}};
+    end
+end
+
+/// ap_sig_cseq_ST_st1_fsm_0 assign process. ///
+always @ (ap_sig_bdd_27) begin
+    if (ap_sig_bdd_27) begin
+        ap_sig_cseq_ST_st1_fsm_0 = ap_const_logic_1;
+    end else begin
+        ap_sig_cseq_ST_st1_fsm_0 = ap_const_logic_0;
+    end
+end
+
+/// ap_sig_cseq_ST_st2_fsm_1 assign process. ///
+always @ (ap_sig_bdd_44) begin
+    if (ap_sig_bdd_44) begin
+        ap_sig_cseq_ST_st2_fsm_1 = ap_const_logic_1;
+    end else begin
+        ap_sig_cseq_ST_st2_fsm_1 = ap_const_logic_0;
+    end
+end
+
+/// ap_sig_cseq_ST_st3_fsm_2 assign process. ///
+always @ (ap_sig_bdd_63) begin
+    if (ap_sig_bdd_63) begin
+        ap_sig_cseq_ST_st3_fsm_2 = ap_const_logic_1;
+    end else begin
+        ap_sig_cseq_ST_st3_fsm_2 = ap_const_logic_0;
+    end
+end
+
+/// ap_sig_ioackin_io_mem_req_V_ap_ack assign process. ///
+always @ (io_mem_req_V_ap_ack or ap_reg_ioackin_io_mem_req_V_ap_ack) begin
+    if ((ap_const_logic_0 == ap_reg_ioackin_io_mem_req_V_ap_ack)) begin
+        ap_sig_ioackin_io_mem_req_V_ap_ack = io_mem_req_V_ap_ack;
+    end else begin
+        ap_sig_ioackin_io_mem_req_V_ap_ack = ap_const_logic_1;
+    end
+end
+
+/// ap_sig_ioackin_io_resp_V_ap_ack assign process. ///
+always @ (io_resp_V_ap_ack or ap_reg_ioackin_io_resp_V_ap_ack) begin
+    if ((ap_const_logic_0 == ap_reg_ioackin_io_resp_V_ap_ack)) begin
+        ap_sig_ioackin_io_resp_V_ap_ack = io_resp_V_ap_ack;
+    end else begin
+        ap_sig_ioackin_io_resp_V_ap_ack = ap_const_logic_1;
+    end
+end
+
+/// io_cmd_V_ap_ack assign process. ///
+always @ (io_cmd_V_ap_vld or ap_sig_cseq_ST_st1_fsm_0) begin
+    if (((ap_const_logic_1 == ap_sig_cseq_ST_st1_fsm_0) & ~(io_cmd_V_ap_vld == ap_const_logic_0))) begin
+        io_cmd_V_ap_ack = ap_const_logic_1;
+    end else begin
+        io_cmd_V_ap_ack = ap_const_logic_0;
+    end
+end
+
+/// io_mem_req_V_ap_vld assign process. ///
+always @ (ap_sig_cseq_ST_st3_fsm_2 or ap_reg_ioackin_io_mem_req_V_ap_ack) begin
+    if (((ap_const_logic_1 == ap_sig_cseq_ST_st3_fsm_2) & (ap_const_logic_0 == ap_reg_ioackin_io_mem_req_V_ap_ack))) begin
+        io_mem_req_V_ap_vld = ap_const_logic_1;
+    end else begin
+        io_mem_req_V_ap_vld = ap_const_logic_0;
+    end
+end
+
+/// io_resp_V_ap_vld assign process. ///
+always @ (ap_sig_cseq_ST_st3_fsm_2 or ap_reg_ioackin_io_resp_V_ap_ack) begin
+    if (((ap_const_logic_1 == ap_sig_cseq_ST_st3_fsm_2) & (ap_const_logic_0 == ap_reg_ioackin_io_resp_V_ap_ack))) begin
+        io_resp_V_ap_vld = ap_const_logic_1;
+    end else begin
+        io_resp_V_ap_vld = ap_const_logic_0;
+    end
+end
+/// the next state (ap_NS_fsm) of the state machine. ///
+always @ (io_cmd_V_ap_vld or ap_CS_fsm or tmp_fu_130_p2 or ap_sig_ioackin_io_resp_V_ap_ack or ap_sig_ioackin_io_mem_req_V_ap_ack) begin
+    case (ap_CS_fsm)
+        ap_ST_st1_fsm_0 : 
+        begin
+            if (~(io_cmd_V_ap_vld == ap_const_logic_0)) begin
+                ap_NS_fsm = ap_ST_st2_fsm_1;
+            end else begin
+                ap_NS_fsm = ap_ST_st1_fsm_0;
+            end
+        end
+        ap_ST_st2_fsm_1 : 
+        begin
+            if ((tmp_fu_130_p2 == ap_const_lv1_0)) begin
+                ap_NS_fsm = ap_ST_st2_fsm_1;
+            end else begin
+                ap_NS_fsm = ap_ST_st3_fsm_2;
+            end
+        end
+        ap_ST_st3_fsm_2 : 
+        begin
+            if (~((ap_const_logic_0 == ap_sig_ioackin_io_resp_V_ap_ack) | (ap_const_logic_0 == ap_sig_ioackin_io_mem_req_V_ap_ack))) begin
+                ap_NS_fsm = ap_ST_st1_fsm_0;
+            end else begin
+                ap_NS_fsm = ap_ST_st3_fsm_2;
+            end
+        end
+        default : 
+        begin
+            ap_NS_fsm = 'bx;
+        end
+    endcase
+end
+
+assign a_V_1_fu_142_p2 = (tmp_data_V_reg_81 - p_s_reg_91);
+assign a_V_2_fu_154_p3 = ((tmp_3_fu_136_p2[0:0] === 1'b1) ? a_V_1_fu_142_p2 : tmp_data_V_reg_81);
+
+/// ap_sig_bdd_27 assign process. ///
+always @ (ap_CS_fsm) begin
+    ap_sig_bdd_27 = (ap_CS_fsm[ap_const_lv32_0] == ap_const_lv1_1);
+end
+
+/// ap_sig_bdd_44 assign process. ///
+always @ (ap_CS_fsm) begin
+    ap_sig_bdd_44 = (ap_const_lv1_1 == ap_CS_fsm[ap_const_lv32_1]);
+end
+
+/// ap_sig_bdd_63 assign process. ///
+always @ (ap_CS_fsm) begin
+    ap_sig_bdd_63 = (ap_const_lv1_1 == ap_CS_fsm[ap_const_lv32_2]);
+end
+assign b_V_1_fu_148_p2 = (p_s_reg_91 - tmp_data_V_reg_81);
+assign b_V_2_fu_162_p3 = ((tmp_3_fu_136_p2[0:0] === 1'b1) ? p_s_reg_91 : b_V_1_fu_148_p2);
+assign io_mem_req_V = ap_const_lv124_F984000000000000;
+assign io_resp_V = {{{tmp_data_V_reg_81}, {tmp_rd_V_reg_180}}, {ap_const_lv5_0}};
+assign tmp_3_fu_136_p2 = (tmp_data_V_reg_81 > p_s_reg_91? 1'b1: 1'b0);
+assign tmp_fu_130_p2 = (tmp_data_V_reg_81 == p_s_reg_91? 1'b1: 1'b0);
+
+endmodule //gcd
+
+
+// ==============================================================
+// RTL generated by Vivado(TM) HLS - High-Level Synthesis from C, C++ and SystemC
+// Version: 2015.3
+// Copyright (C) 2015 Xilinx Inc. All rights reserved.
+// 
+// ===========================================================
+
+`timescale 1 ns / 1 ps 
+
+(* CORE_GENERATION_INFO="mem_test,hls_ip_2015_3,{HLS_INPUT_TYPE=cxx,HLS_INPUT_FLOAT=0,HLS_INPUT_FIXED=0,HLS_INPUT_PART=xc7z020clg484-2,HLS_INPUT_CLOCK=5.000000,HLS_INPUT_ARCH=others,HLS_SYN_CLOCK=0.000000,HLS_SYN_LAT=0,HLS_SYN_TPT=none,HLS_SYN_MEM=0,HLS_SYN_DSP=0,HLS_SYN_FF=3,HLS_SYN_LUT=4}" *)
+
+module mem_Accel_B
+(
+  clk,
+  rst,
+  cmd,
+  cmd_vld,
+  cmd_rdy,
+  resp,
+  resp_vld,
+  resp_rdy,
+  mem_req_vld,
+  mem_req_rdy,
+  mem_req,
+  mem_resp_vld,
+  mem_resp
+);
+
+  // ------- INPUTS & OUTPUTS DECLARATION -------
+  input            clk;
+  input            rst;
+  
+  // Wires to Core
+  input  [159:0]   cmd;
+  input            cmd_vld;
+  output           cmd_rdy;
+  output [72:0]    resp;
+  output           resp_vld;
+  input            resp_rdy;
+  
+  // Wires to Mem
+  output           mem_req_vld;
+  input            mem_req_rdy;
+  output [123:0]   mem_req;
+  input            mem_resp_vld;
+  input  [252:0]   mem_resp;
+  
+  // ------- WIRES MANIPULATION -------
+  // Spread the cmd wires
+  wire [6:0]  funct;  
+  wire [4:0]  rs2;    
+  wire [4:0]  rs1;    
+  wire        xd;     
+  wire        xs1;    
+  wire        xs2;    
+  wire [4:0]  rd;     
+  wire [6:0]  opcode; 
+  wire [63:0] rs1_data;         
+  wire [63:0] rs2_data;         
+  
+  assign funct       = cmd[6:0];
+  assign rs2         = cmd[11:7];
+  assign rs1         = cmd[16:12];
+  assign xd          = cmd[17];
+  assign xs1         = cmd[18];
+  assign xs2         = cmd[19];
+  assign rd          = cmd[24:20];
+  assign opcode      = cmd[31:25];
+  assign rs1_data    = cmd[95:32];
+  assign rs2_data    = cmd[159:96];
+  
+  // Generate the resp wires
+  wire [63:0] resp_data;
+  wire [4:0]  resp_rd;
+  //wire        SampleAccel_io_mem_req_valid;
+  wire        SampleAccel_io_autl_acquire_valid;
+  wire        ClientTileLinkIOArbiter_io_in_1_acquire_ready;
+  wire        SampleAccel_io_interrupt;
+  wire        SampleAccel_io_busy;
+  
+  assign resp = 
+           {
+           resp_data, 
+           resp_rd, 
+           //SampleAccel_io_mem_req_valid, 
+           SampleAccel_io_autl_acquire_valid, 
+           ClientTileLinkIOArbiter_io_in_1_acquire_ready,
+           SampleAccel_io_interrupt,
+           SampleAccel_io_busy
+           };
+           
+  // Assign Values To The 5 Unused resp Ports
+  //assign SampleAccel_io_mem_req_valid = 1'b0;
+  assign SampleAccel_io_autl_acquire_valid = 1'b0;
+  assign ClientTileLinkIOArbiter_io_in_1_acquire_ready = 1'b0;
+  assign SampleAccel_io_interrupt = 1'b0;
+  assign SampleAccel_io_busy = 1'b0;
+  
+  // Generate the mem req wires
+  wire [39:0] mem_req_addr;
+  wire [9:0]  mem_req_tag;
+  wire [4:0]  mem_req_cmd;
+  wire [2:0]  mem_req_typ;
+  wire        mem_req_kill;
+  wire        mem_req_phys;
+  wire [63:0] mem_req_data;
+  
+  assign mem_req_tag  = 10'b0;
+  assign mem_req_kill = 1'b0;
+  assign mem_req_phys = 1'b1;
+  
+  assign mem_req = 
+           {
+             mem_req_addr,
+             mem_req_tag,
+             mem_req_cmd,
+             mem_req_typ,
+             mem_req_kill,
+             mem_req_phys,
+             mem_req_data
+           };
+           
+  // Spread the mem resp wires
+  wire [39:0] mem_resp_addr;
+  wire [9:0]  mem_resp_tag;
+  wire [4:0]  mem_resp_cmd;
+  wire [2:0]  mem_resp_typ;
+  wire [63:0] mem_resp_data;
+  wire        mem_resp_nack;
+  wire        mem_resp_replay;
+  wire        mem_resp_has_data;
+  wire [63:0] mem_resp_data_word_bypass;
+  wire [63:0] mem_resp_store_data;
+  
+  assign mem_resp_addr             = mem_resp[252:213];
+  assign mem_resp_tag              = mem_resp[212:203];
+  assign mem_resp_cmd              = mem_resp[202:198];
+  assign mem_resp_typ              = mem_resp[197:195];
+  assign mem_resp_data             = mem_resp[194:131];
+  assign mem_resp_nack             = mem_resp[130];
+  assign mem_resp_replay           = mem_resp[129];
+  assign mem_resp_has_data         = mem_resp[128];
+  assign mem_resp_data_word_bypass = mem_resp[127:64];
+  assign mem_resp_store_data       = mem_resp[63:0];
+  
+  // Wires between DPath and Ctrl
+  wire cmd_go_ctrl_to_dpath;
+  wire mem_req_vld_ctrl_to_dpath;
+  wire [4:0] mem_req_cmd_ctrl_to_dpath;
+  wire mem_go_ctrl_to_dpath;
+  wire mem_back_ctrl_to_dpath;
+  wire mem_resp_sel_ctrl_to_dpath;
+  wire rd_sel_ctrl_to_dpath;
+  wire resp_data_sel_ctrl_to_dpath;
+  wire cc_done_ctrl_to_dpath;
+  
+  mem_Accel_B_DPath mem_b_dpath
+  (
+    .dpath_clk (clk),
+    .dpath_rst (rst),
+  
+    .dpath_P_rd (rd),
+    .dpath_P_rs1_data (rs1_data),
+    .dpath_P_rs2_data (rs2_data),
+  
+    .dpath_cmd_go (cmd_go_ctrl_to_dpath),
+  
+    .dpath_I_mem_req_vld (mem_req_vld_ctrl_to_dpath),
+    .dpath_I_mem_req_cmd (mem_req_cmd_ctrl_to_dpath),
+  
+    .dpath_mem_go (mem_go_ctrl_to_dpath),
+  
+    .dpath_W_mem_req_vld (mem_req_vld),
+    .dpath_W_mem_req_cmd (mem_req_cmd),
+    .dpath_W_mem_req_data (mem_req_data),
+    .dpath_W_mem_req_addr (mem_req_addr),
+    .dpath_W_mem_req_typ (mem_req_typ),
+    .dpath_W_mem_resp_data (mem_resp_data),
+    .dpath_W_mem_resp_store_data (mem_resp_store_data),
+    .dpath_W_rd_sel (rd_sel_ctrl_to_dpath),
+    .dpath_W_resp_data_sel (resp_data_sel_ctrl_to_dpath),
+    .dpath_W_mem_resp_sel (mem_resp_sel_ctrl_to_dpath),
+  
+    .dpath_mem_back (mem_back_ctrl_to_dpath),
+    .dpath_cc_done (cc_done_ctrl_to_dpath),
+    
+    .dpath_D_rd (resp_rd),
+    .dpath_D_resp_data (resp_data)
+  );
+  
+  mem_Accel_B_Ctrl mem_b_ctrl
+  (
+    .ctrl_clk (clk),
+    .ctrl_rst (rst),
+    .ctrl_cmd_vld (cmd_vld),
+    .ctrl_funct (funct),
+    .ctrl_mem_req_rdy (mem_req_rdy),
+    .ctrl_mem_resp_vld (mem_resp_vld),
+    .ctrl_resp_rdy (resp_rdy),
+  
+    .ctrl_cmd_rdy (cmd_rdy),
+    .ctrl_cmd_go (cmd_go_ctrl_to_dpath),
+    .ctrl_mem_req_vld (mem_req_vld_ctrl_to_dpath),
+    .ctrl_mem_req_cmd (mem_req_cmd_ctrl_to_dpath),
+    .ctrl_mem_go (mem_go_ctrl_to_dpath),
+    .ctrl_mem_back (mem_back_ctrl_to_dpath),
+    .ctrl_rd_sel (rd_sel_ctrl_to_dpath),
+    .ctrl_resp_data_sel (resp_data_sel_ctrl_to_dpath),
+    .ctrl_mem_resp_sel (mem_resp_sel_ctrl_to_dpath),
+    .ctrl_resp_vld (resp_vld),
+    .ctrl_cc_done (cc_done_ctrl_to_dpath)
+  );
+  
+endmodule
+
+module mem_Accel_B_DPath
+(
+  dpath_clk,
+  dpath_rst,
+  
+  dpath_P_rd,
+  dpath_P_rs1_data,
+  dpath_P_rs2_data,
+  
+  dpath_cmd_go,
+  
+  dpath_I_mem_req_vld,
+  dpath_I_mem_req_cmd,
+  
+  dpath_mem_go,
+  
+  dpath_W_mem_req_vld,
+  dpath_W_mem_req_cmd,
+  dpath_W_mem_req_data,
+  dpath_W_mem_req_addr,
+  dpath_W_mem_req_typ,
+  dpath_W_mem_resp_data,
+  dpath_W_mem_resp_store_data,
+  dpath_W_rd_sel,
+  dpath_W_resp_data_sel,
+  dpath_W_mem_resp_sel, 
+  
+  dpath_mem_back,
+  dpath_cc_done,
+   
+  dpath_D_rd,
+  dpath_D_resp_data
+);
+
+  // INPUTS & OUTPUTS DECLARATION
+  input dpath_clk;
+  input dpath_rst;
+  
+  input [4:0]   dpath_P_rd;
+  input [63:0]  dpath_P_rs1_data;
+  input [63:0]  dpath_P_rs2_data;
+  
+  input         dpath_cmd_go;
+  
+  input         dpath_I_mem_req_vld;
+  input [4:0]   dpath_I_mem_req_cmd;
+  
+  input         dpath_mem_go;
+  
+  output reg        dpath_W_mem_req_vld;
+  output reg [4:0]  dpath_W_mem_req_cmd;
+  output reg [63:0] dpath_W_mem_req_data;
+  output reg [39:0] dpath_W_mem_req_addr;
+  output reg [2:0]  dpath_W_mem_req_typ;
+  input  [63:0] dpath_W_mem_resp_data;
+  input  [63:0] dpath_W_mem_resp_store_data;
+  input         dpath_W_rd_sel;
+  input         dpath_W_resp_data_sel;
+  input         dpath_W_mem_resp_sel;
+  
+  input         dpath_mem_back;
+  input         dpath_cc_done;
+  
+  output reg [4:0]  dpath_D_rd;
+  output reg [63:0] dpath_D_resp_data;
+  
+  // ---------- P (prepare) stage ----------------
+  
+  // ---------- I (issue) stage ------------------
+  reg  [4:0]  dpath_I_rd;
+  reg  [63:0] dpath_I_rs1_data;
+  reg  [63:0] dpath_I_rs2_data;
+  wire [2:0]  dpath_I_mem_req_typ;
+  
+  always @ (posedge dpath_clk) begin
+    if (dpath_cmd_go) begin
+      dpath_I_rd       <= dpath_P_rd;
+      dpath_I_rs1_data <= dpath_P_rs1_data;
+      dpath_I_rs2_data <= dpath_P_rs2_data;
+    end
+  end
+  
+  assign dpath_I_mem_req_typ = 3'b011;
+  
+  // ---------- Bypass portions from I stage -----
+  parameter data_nbits = 64;
+  
+  wire [63:0] dpath_I_cc_resp_data;
+  
+  vc_Adder#(data_nbits) vc_adder
+  (
+    .in0 (dpath_I_rs1_data),
+    .in1 (dpath_I_rs2_data),
+    .out (dpath_I_cc_resp_data)
+  );
+  
+  
+  // ---------- W (wait) stage -------------------
+  reg [4:0]  dpath_W_rd;
+  reg [4:0]  dpath_W_rd_selected;
+  reg [63:0] dpath_W_resp_data_selected;
+  
+  always @ (posedge dpath_clk) begin
+    if (1/*dpath_mem_go*/) begin
+      dpath_W_rd           <= dpath_I_rd;
+      dpath_W_mem_req_vld  <= dpath_I_mem_req_vld;
+      dpath_W_mem_req_cmd  <= dpath_I_mem_req_cmd;
+      dpath_W_mem_req_data <= dpath_I_rs1_data;
+      dpath_W_mem_req_addr <= dpath_I_rs2_data[39:0];
+      dpath_W_mem_req_typ  <= dpath_I_mem_req_typ;
+    end
+  end
+  
+  // rd mux
+  always @ (*) begin
+    if (dpath_W_rd_sel) begin
+      dpath_W_rd_selected = dpath_W_rd;
+    end else begin
+      dpath_W_rd_selected = dpath_I_rd;
+    end
+  end
+  
+  // resp data mux
+  always @ (*) begin
+    if (dpath_W_resp_data_sel) begin
+      if (dpath_W_mem_resp_sel) begin
+        dpath_W_resp_data_selected = dpath_W_mem_resp_store_data;
+      end else begin
+        dpath_W_resp_data_selected = dpath_W_mem_resp_data;
+      end
+    end else begin
+      dpath_W_resp_data_selected = dpath_I_cc_resp_data;
+    end
+  end
+  
+  // ---------- D (done) stage -------------------
+  always @ (posedge dpath_clk) begin
+    if (dpath_mem_back || dpath_cc_done) begin
+      dpath_D_rd        <= dpath_W_rd_selected;
+      dpath_D_resp_data <= dpath_W_resp_data_selected;
+    end
+  end
+
+endmodule
+
+module mem_Accel_B_Ctrl
+(
+  ctrl_clk,
+  ctrl_rst,
+  ctrl_cmd_vld,
+  ctrl_funct,
+  ctrl_mem_req_rdy,
+  ctrl_mem_resp_vld,
+  ctrl_resp_rdy,
+  
+  ctrl_cmd_rdy,
+  ctrl_cmd_go,
+  ctrl_mem_req_vld,
+  ctrl_mem_req_cmd,
+  ctrl_mem_go,
+  ctrl_mem_back,
+  ctrl_rd_sel,
+  ctrl_resp_data_sel,
+  ctrl_mem_resp_sel,
+  ctrl_resp_vld,
+  ctrl_cc_done
+);
+
+  input ctrl_clk;
+  input ctrl_rst;
+  input ctrl_cmd_vld;
+  input [6:0] ctrl_funct;
+  input ctrl_mem_req_rdy;
+  input ctrl_mem_resp_vld;
+  input ctrl_resp_rdy;
+  
+  output reg ctrl_cmd_rdy;
+  output ctrl_cmd_go;
+  output reg ctrl_mem_req_vld;
+  output reg [4:0] ctrl_mem_req_cmd;
+  output ctrl_mem_go;
+  output ctrl_mem_back;
+  output reg ctrl_rd_sel;
+  output reg ctrl_resp_data_sel;
+  output reg ctrl_mem_resp_sel;
+  output reg ctrl_resp_vld;
+  output reg ctrl_cc_done;
+  
+  // States Definition
+  parameter STATE_IDLE       = 4'd0;
+  parameter STATE_STORE      = 4'd1;
+  parameter STATE_STORE_WAIT = 4'd2;
+  parameter STATE_LOAD       = 4'd3;
+  parameter STATE_LOAD_WAIT  = 4'd4;
+  parameter STATE_DONE       = 4'd5;
+  parameter STATE_CC         = 4'd6; // CC stands for combinational calculation
+  
+  // State Advancement
+  reg [3:0] state_reg;
+  reg [3:0] next_state;
+
+  always @ (posedge ctrl_clk) begin
+    if (ctrl_rst) begin
+      state_reg <= STATE_IDLE;
+    end else begin
+      state_reg <= next_state;
+    end
+  end
+  
+  // State Advancement Calculations
+  wire ctrl_resp_go;
+  
+  assign ctrl_cmd_go  = ctrl_cmd_vld  && ctrl_cmd_rdy;
+  assign ctrl_resp_go = ctrl_resp_vld && ctrl_resp_rdy;
+  
+  wire store_req;
+  wire load_req;
+  wire cc_req;
+  
+  assign store_req = (ctrl_funct == 0) ? 1'b1 : 1'b0;
+  assign load_req  = (ctrl_funct == 1) ? 1'b1 : 1'b0;
+  assign cc_req    = (ctrl_funct == 2) ? 1'b1 : 1'b0;
+  
+  wire ctrl_mem_go;
+  wire ctrl_mem_back;
+  
+  assign ctrl_mem_go   = ctrl_mem_req_rdy && ctrl_mem_req_vld;
+  assign ctrl_mem_back = ctrl_mem_resp_vld;
+
+  always @ (*) begin
+    case ( state_reg )
+      STATE_IDLE: 
+        begin
+          if (ctrl_cmd_go && store_req) begin
+            next_state = STATE_STORE;
+          end else begin
+            if (ctrl_cmd_go && load_req) begin
+              next_state = STATE_LOAD;
+            end else begin
+              if (ctrl_cmd_go && cc_req) begin
+                next_state = STATE_CC;
+              end else begin
+                next_state = state_reg;
+              end
+            end
+          end
+        end
+      STATE_STORE:
+        begin
+          if (ctrl_mem_go) begin
+            next_state = STATE_STORE_WAIT;
+          end else begin
+            next_state = state_reg;
+          end
+        end
+      STATE_STORE_WAIT:
+        begin
+          if (ctrl_mem_back) begin
+            next_state = STATE_DONE;
+          end else begin
+            next_state = state_reg;
+          end
+        end
+      STATE_LOAD:
+        begin
+          if (ctrl_mem_go) begin
+            next_state = STATE_LOAD_WAIT;
+          end else begin
+            next_state = state_reg;
+          end
+        end
+      STATE_LOAD_WAIT:
+        begin
+          if (ctrl_mem_back) begin
+            next_state = STATE_DONE;
+          end else begin
+            next_state = state_reg;
+          end
+        end
+      STATE_DONE: 
+        begin
+          if (ctrl_resp_go) begin
+            next_state = STATE_IDLE;
+          end else begin
+            next_state = state_reg;
+          end
+        end
+      STATE_CC:
+        begin
+          next_state = STATE_DONE; // CC will surely be done in one cycle because it's COMBINATIONAL
+        end
+    endcase
+  end
+  
+  // State Outputs
+  parameter sel_load          = 1'b0;
+  parameter sel_store         = 1'b1;
+  parameter sel_cc_rd         = 1'b0;
+  parameter sel_mem_rd        = 1'b1;
+  parameter sel_cc_resp_data  = 1'b0;
+  parameter sel_mem_resp_data = 1'b1;
+  
+  always @ (*) begin
+    case ( state_reg )
+      STATE_IDLE:
+        begin
+          ctrl_cmd_rdy       = 1'b1;
+          ctrl_resp_vld      = 1'b0;
+          ctrl_mem_req_vld   = 1'b0;
+          ctrl_mem_req_cmd   = 5'bx;
+          ctrl_rd_sel        = 1'bx;
+          ctrl_resp_data_sel = 1'bx;
+          ctrl_mem_resp_sel  = 1'bx;
+          ctrl_cc_done       = 1'b0;
+        end
+      STATE_STORE:
+        begin
+          ctrl_cmd_rdy       = 1'b0;
+          ctrl_resp_vld      = 1'b0;
+          ctrl_mem_req_vld   = 1'b1;
+          ctrl_mem_req_cmd   = 5'b1;
+          ctrl_rd_sel        = sel_mem_rd;
+          ctrl_resp_data_sel = sel_mem_resp_data;
+          ctrl_mem_resp_sel  = sel_store;
+          ctrl_cc_done       = 1'b0;
+        end
+      STATE_STORE_WAIT:
+        begin
+          ctrl_cmd_rdy       = 1'b0;
+          ctrl_resp_vld      = 1'b0;
+          ctrl_mem_req_vld   = 1'b0;
+          ctrl_mem_req_cmd   = 5'bx;
+          ctrl_rd_sel        = sel_mem_rd;
+          ctrl_resp_data_sel = sel_mem_resp_data;
+          ctrl_mem_resp_sel  = sel_store;
+          ctrl_cc_done       = 1'b0;
+        end  
+      STATE_LOAD:
+        begin
+          ctrl_cmd_rdy       = 1'b0;
+          ctrl_resp_vld      = 1'b0;
+          ctrl_mem_req_vld   = 1'b1;
+          ctrl_mem_req_cmd   = 5'b0;
+          ctrl_rd_sel        = sel_mem_rd;
+          ctrl_resp_data_sel = sel_mem_resp_data;
+          ctrl_mem_resp_sel  = sel_load;
+          ctrl_cc_done       = 1'b0;
+        end
+      STATE_LOAD_WAIT:
+        begin
+          ctrl_cmd_rdy       = 1'b0;
+          ctrl_resp_vld      = 1'b0;
+          ctrl_mem_req_vld   = 1'b0;
+          ctrl_mem_req_cmd   = 5'bx;
+          ctrl_rd_sel        = sel_mem_rd;
+          ctrl_resp_data_sel = sel_mem_resp_data;
+          ctrl_mem_resp_sel  = sel_load;
+          ctrl_cc_done       = 1'b0;
+        end
+      STATE_DONE:
+        begin
+          ctrl_cmd_rdy       = 1'b0;
+          ctrl_resp_vld      = 1'b1;
+          ctrl_mem_req_vld   = 1'b0;
+          ctrl_mem_req_cmd   = 5'bx;
+          ctrl_rd_sel        = 1'bx;
+          ctrl_resp_data_sel = 1'bx;
+          ctrl_mem_resp_sel  = 1'bx;
+          ctrl_cc_done       = 1'b0;
+        end
+      STATE_CC:
+        begin
+          ctrl_cmd_rdy       = 1'b0;
+          ctrl_resp_vld      = 1'b0;
+          ctrl_mem_req_vld   = 1'b0;
+          ctrl_mem_req_cmd   = 5'bx;
+          ctrl_rd_sel        = sel_cc_rd;
+          ctrl_resp_data_sel = sel_cc_resp_data;
+          ctrl_mem_resp_sel  = 1'bx;
+          ctrl_cc_done       = 1'b1;
+        end
+    endcase
+  end
+
+endmodule
+
+module vc_Adder
+#(
+  parameter p_nbits = 1
+)(
+  in0,
+  in1,
+  out
+);
+
+  input  [p_nbits-1:0] in0;
+  input  [p_nbits-1:0] in1;
+  output [p_nbits-1:0] out;
+
+  assign out = in0 + in1;
+
+endmodule
+  
