@@ -12,7 +12,7 @@ int main() {
   do {
     // Setup some test data
     unsigned int x_in = 715;
-    unsigned long long y_in = 2;
+    unsigned long long y_in = 0;
     unsigned int result = 120;
     
     asm volatile ("fence");
@@ -25,7 +25,7 @@ int main() {
     asm volatile ("fence");
     // test 2:
     x_in = 0;
-    y_in = 2;
+    y_in = 0;
     asm volatile ("custom0 %0, %[x], %[y], 1"  :  "=r"(result) : [x]"r"(x_in), [y]"r"(y_in));
     printf("test 2: data loaded from address %d is %d\n", y_in, result);
     
