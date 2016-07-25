@@ -23,7 +23,7 @@ module mem_Accel_B
   input  [159:0]   cmd;
   input            cmd_vld;
   output           cmd_rdy;
-  output [73:0]    resp;
+  output [72:0]    resp;
   output           resp_vld;
   input            resp_rdy;
   
@@ -61,7 +61,7 @@ module mem_Accel_B
   // Generate the resp wires
   wire [63:0] resp_data;
   wire [4:0]  resp_rd;
-  wire        SampleAccel_io_mem_req_valid;
+  //wire        SampleAccel_io_mem_req_valid;
   wire        SampleAccel_io_autl_acquire_valid;
   wire        ClientTileLinkIOArbiter_io_in_1_acquire_ready;
   wire        SampleAccel_io_interrupt;
@@ -71,7 +71,7 @@ module mem_Accel_B
            {
            resp_data, 
            resp_rd, 
-           SampleAccel_io_mem_req_valid, 
+           //SampleAccel_io_mem_req_valid, 
            SampleAccel_io_autl_acquire_valid, 
            ClientTileLinkIOArbiter_io_in_1_acquire_ready,
            SampleAccel_io_interrupt,
@@ -79,7 +79,7 @@ module mem_Accel_B
            };
            
   // Assign Values To The 5 Unused resp Ports
-  assign SampleAccel_io_mem_req_valid = 1'b0;
+  //assign SampleAccel_io_mem_req_valid = 1'b0;
   assign SampleAccel_io_autl_acquire_valid = 1'b0;
   assign ClientTileLinkIOArbiter_io_in_1_acquire_ready = 1'b0;
   assign SampleAccel_io_interrupt = 1'b0;
@@ -121,74 +121,83 @@ module mem_Accel_B
   wire [63:0] mem_resp_data_word_bypass;
   wire [63:0] mem_resp_store_data;
   
-  assign mem_resp_addr = mem_resp[252:213];
-  assign mem_resp_tag = mem_resp[212:203];
-  assign mem_resp_cmd = mem_resp[202:198];
-  assign mem_resp_typ = mem_resp[197:195];
-  assign mem_resp_data = mem_resp[194:131];
-  assign mem_resp_nack = mem_resp[130];
-  assign mem_resp_replay = mem_resp[129];
-  assign mem_resp_has_data = mem_resp[128];
+  assign mem_resp_addr             = mem_resp[252:213];
+  assign mem_resp_tag              = mem_resp[212:203];
+  assign mem_resp_cmd              = mem_resp[202:198];
+  assign mem_resp_typ              = mem_resp[197:195];
+  assign mem_resp_data             = mem_resp[194:131];
+  assign mem_resp_nack             = mem_resp[130];
+  assign mem_resp_replay           = mem_resp[129];
+  assign mem_resp_has_data         = mem_resp[128];
   assign mem_resp_data_word_bypass = mem_resp[127:64];
-  assign mem_resp_store_data = mem_resp[63:0];
+  assign mem_resp_store_data       = mem_resp[63:0];
   
   // Wires between DPath and Ctrl
-  wire cmd_go_ctrl_to_dpath;
-  wire mem_req_vld_ctrl_to_dpath;
+  wire       cmd_go_ctrl_to_dpath;
+  wire       mem_req_vld_ctrl_to_dpath;
   wire [4:0] mem_req_cmd_ctrl_to_dpath;
-  wire mem_go_ctrl_to_dpath;
-  wire mem_back_ctrl_to_dpath;
-  wire mem_resp_sel_ctrl_to_dpath;
+  wire       mem_go_ctrl_to_dpath;
+  wire       mem_back_ctrl_to_dpath;
+  wire       mem_resp_sel_ctrl_to_dpath;
+  wire       rd_sel_ctrl_to_dpath;
+  wire       resp_data_sel_ctrl_to_dpath;
+  wire       cc_done_ctrl_to_dpath;
   
-  mem_Accel_B_DPath mem_accel_b_dpath
+  mem_Accel_B_DPath mem_b_dpath
   (
-    .dpath_clk (clk),
-    .dpath_rst (rst),
+    .dpath_clk                   ( clk ),
+    .dpath_rst                   ( rst ),
   
-    .dpath_P_rd (rd),
-    .dpath_P_rs1_data (rs1_data),
-    .dpath_P_rs2_data (rs2_data),
+    .dpath_P_rd                  ( rd ),
+    .dpath_P_rs1_data            ( rs1_data ),
+    .dpath_P_rs2_data            ( rs2_data ),
   
-    .dpath_cmd_go (cmd_go_ctrl_to_dpath),
+    .dpath_cmd_go                ( cmd_go_ctrl_to_dpath ),
   
-    .dpath_I_mem_req_vld (mem_req_vld_ctrl_to_dpath),
-    .dpath_I_mem_req_cmd (mem_req_cmd_ctrl_to_dpath),
+    .dpath_I_mem_req_vld         ( mem_req_vld_ctrl_to_dpath ),
+    .dpath_I_mem_req_cmd         ( mem_req_cmd_ctrl_to_dpath ),
   
-    .dpath_mem_go (mem_go_ctrl_to_dpath),
+    .dpath_mem_go                ( mem_go_ctrl_to_dpath ),
   
-    .dpath_W_mem_req_vld (mem_req_vld),
-    .dpath_W_mem_req_cmd (mem_req_cmd),
-    .dpath_W_mem_req_data (mem_req_data),
-    .dpath_W_mem_req_addr (mem_req_addr),
-    .dpath_W_mem_req_typ (mem_req_typ),
-    .dpath_W_mem_resp_data (mem_resp_data),
-    .dpath_W_mem_resp_store_data (mem_resp_store_data),
+    .dpath_W_mem_req_vld         ( mem_req_vld ),
+    .dpath_W_mem_req_cmd         ( mem_req_cmd ),
+    .dpath_W_mem_req_data        ( mem_req_data ),
+    .dpath_W_mem_req_addr        ( mem_req_addr ),
+    .dpath_W_mem_req_typ         ( mem_req_typ ),
+    .dpath_W_mem_resp_data       ( mem_resp_data ),
+    .dpath_W_mem_resp_store_data ( mem_resp_store_data ),
+    .dpath_W_rd_sel              ( rd_sel_ctrl_to_dpath ),
+    .dpath_W_resp_data_sel       ( resp_data_sel_ctrl_to_dpath ),
+    .dpath_W_mem_resp_sel        ( mem_resp_sel_ctrl_to_dpath ),
   
-    .dpath_mem_back (mem_back_ctrl_to_dpath),
-  
-    .dpath_D_mem_resp_sel (mem_resp_sel_ctrl_to_dpath),
-    .dpath_D_rd (resp_rd),
-    .dpath_D_resp_data (resp_data)
+    .dpath_mem_back              ( mem_back_ctrl_to_dpath ),
+    .dpath_cc_done               ( cc_done_ctrl_to_dpath ),
+    
+    .dpath_D_rd                  ( resp_rd ),
+    .dpath_D_resp_data           ( resp_data )
   );
   
-  mem_Accel_B_Ctrl mem_accel_b_ctrl
+  mem_Accel_B_Ctrl mem_b_ctrl
   (
-    .ctrl_clk (clk),
-    .ctrl_rst (rst),
-    .ctrl_cmd_vld (cmd_vld),
-    .ctrl_funct (funct),
-    .ctrl_mem_req_rdy (mem_req_rdy),
-    .ctrl_mem_resp_vld (mem_resp_vld),
-    .ctrl_resp_rdy (resp_rdy),
+    .ctrl_clk           ( clk ),
+    .ctrl_rst           ( rst ),
+    .ctrl_cmd_vld       ( cmd_vld ),
+    .ctrl_funct         ( funct ),
+    .ctrl_mem_req_rdy   ( mem_req_rdy ),
+    .ctrl_mem_resp_vld  ( mem_resp_vld ),
+    .ctrl_resp_rdy      ( resp_rdy ),
   
-    .ctrl_cmd_rdy (cmd_rdy),
-    .ctrl_cmd_go (cmd_go_ctrl_to_dpath),
-    .ctrl_mem_req_vld (mem_req_vld_ctrl_to_dpath),
-    .ctrl_mem_req_cmd (mem_req_cmd_ctrl_to_dpath),
-    .ctrl_mem_go (mem_go_ctrl_to_dpath),
-    .ctrl_mem_back (mem_back_ctrl_to_dpath),
-    .ctrl_mem_resp_sel (mem_resp_sel_ctrl_to_dpath),
-    .ctrl_resp_vld (resp_vld)
+    .ctrl_cmd_rdy       ( cmd_rdy ),
+    .ctrl_cmd_go        ( cmd_go_ctrl_to_dpath ),
+    .ctrl_mem_req_vld   ( mem_req_vld_ctrl_to_dpath ),
+    .ctrl_mem_req_cmd   ( mem_req_cmd_ctrl_to_dpath ),
+    .ctrl_mem_go        ( mem_go_ctrl_to_dpath ),
+    .ctrl_mem_back      ( mem_back_ctrl_to_dpath ),
+    .ctrl_rd_sel        ( rd_sel_ctrl_to_dpath ),
+    .ctrl_resp_data_sel ( resp_data_sel_ctrl_to_dpath ),
+    .ctrl_mem_resp_sel  ( mem_resp_sel_ctrl_to_dpath ),
+    .ctrl_resp_vld      ( resp_vld ),
+    .ctrl_cc_done       ( cc_done_ctrl_to_dpath )
   );
   
 endmodule
@@ -216,46 +225,52 @@ module mem_Accel_B_DPath
   dpath_W_mem_req_typ,
   dpath_W_mem_resp_data,
   dpath_W_mem_resp_store_data,
+  dpath_W_rd_sel,
+  dpath_W_resp_data_sel,
+  dpath_W_mem_resp_sel, 
   
   dpath_mem_back,
-  
-  dpath_D_mem_resp_sel,  
+  dpath_cc_done,
+   
   dpath_D_rd,
   dpath_D_resp_data
 );
 
   // INPUTS & OUTPUTS DECLARATION
-  input dpath_clk;
-  input dpath_rst;
+  input             dpath_clk;
+  input             dpath_rst;
   
-  input [4:0]   dpath_P_rd;
-  input [63:0]  dpath_P_rs1_data;
-  input [63:0]  dpath_P_rs2_data;
+  input [4:0]       dpath_P_rd;
+  input [63:0]      dpath_P_rs1_data;
+  input [63:0]      dpath_P_rs2_data;
   
-  input         dpath_cmd_go;
+  input             dpath_cmd_go;
   
-  input         dpath_I_mem_req_vld;
-  input [4:0]   dpath_I_mem_req_cmd;
+  input             dpath_I_mem_req_vld;
+  input [4:0]       dpath_I_mem_req_cmd;
   
-  input         dpath_mem_go;
+  input             dpath_mem_go;
   
   output reg        dpath_W_mem_req_vld;
   output reg [4:0]  dpath_W_mem_req_cmd;
   output reg [63:0] dpath_W_mem_req_data;
   output reg [39:0] dpath_W_mem_req_addr;
   output reg [2:0]  dpath_W_mem_req_typ;
-  input  [63:0] dpath_W_mem_resp_data;
-  input  [63:0] dpath_W_mem_resp_store_data;
+  input      [63:0] dpath_W_mem_resp_data;
+  input      [63:0] dpath_W_mem_resp_store_data;
+  input             dpath_W_rd_sel;
+  input             dpath_W_resp_data_sel;
+  input             dpath_W_mem_resp_sel;
   
-  input         dpath_mem_back;
+  input             dpath_mem_back;
+  input             dpath_cc_done;
   
-  input         dpath_D_mem_resp_sel;
   output reg [4:0]  dpath_D_rd;
   output reg [63:0] dpath_D_resp_data;
   
-  // ---------- P (prepare) stage ----------
+  // ---------- P (prepare) stage ----------------
   
-  // ---------- I (issue) stage ------------
+  // ---------- I (issue) stage ------------------
   reg  [4:0]  dpath_I_rd;
   reg  [63:0] dpath_I_rs1_data;
   reg  [63:0] dpath_I_rs2_data;
@@ -271,11 +286,26 @@ module mem_Accel_B_DPath
   
   assign dpath_I_mem_req_typ = 3'b011;
   
-  // ---------- W (wait) stage -------------
-  reg [4:0] dpath_W_rd;
+  // ---------- Bypass portions from I stage -----
+  parameter data_nbits = 64;
+  
+  wire [63:0] dpath_I_cc_resp_data;
+  
+  vc_Adder#(data_nbits) vc_adder
+  (
+    .in0 (dpath_I_rs1_data),
+    .in1 (dpath_I_rs2_data),
+    .out (dpath_I_cc_resp_data)
+  );
+  
+  
+  // ---------- W (wait) stage -------------------
+  reg [4:0]  dpath_W_rd;
+  reg [4:0]  dpath_W_rd_selected;
+  reg [63:0] dpath_W_resp_data_selected;
   
   always @ (posedge dpath_clk) begin
-    if (dpath_mem_go) begin
+    if (1/*dpath_mem_go*/) begin
       dpath_W_rd           <= dpath_I_rd;
       dpath_W_mem_req_vld  <= dpath_I_mem_req_vld;
       dpath_W_mem_req_cmd  <= dpath_I_mem_req_cmd;
@@ -285,13 +315,33 @@ module mem_Accel_B_DPath
     end
   end
   
-  // ---------- D (done) stage -------------
-  // Currently the resp data directly assigned to be the data returned from store requests.
+  // rd mux
+  always @ (*) begin
+    if (dpath_W_rd_sel) begin
+      dpath_W_rd_selected = dpath_W_rd;
+    end else begin
+      dpath_W_rd_selected = dpath_I_rd;
+    end
+  end
   
+  // resp data mux
+  always @ (*) begin
+    if (dpath_W_resp_data_sel) begin
+      if (dpath_W_mem_resp_sel) begin
+        dpath_W_resp_data_selected = dpath_W_mem_resp_store_data;
+      end else begin
+        dpath_W_resp_data_selected = dpath_W_mem_resp_data;
+      end
+    end else begin
+      dpath_W_resp_data_selected = dpath_I_cc_resp_data;
+    end
+  end
+  
+  // ---------- D (done) stage -------------------
   always @ (posedge dpath_clk) begin
-    if (dpath_mem_back) begin
-      dpath_D_rd        <= dpath_W_rd;
-      dpath_D_resp_data <= dpath_W_mem_resp_store_data;
+    if (dpath_mem_back || dpath_cc_done) begin
+      dpath_D_rd        <= dpath_W_rd_selected;
+      dpath_D_resp_data <= dpath_W_resp_data_selected;
     end
   end
 
@@ -313,38 +363,45 @@ module mem_Accel_B_Ctrl
   ctrl_mem_req_cmd,
   ctrl_mem_go,
   ctrl_mem_back,
+  ctrl_rd_sel,
+  ctrl_resp_data_sel,
   ctrl_mem_resp_sel,
-  ctrl_resp_vld
+  ctrl_resp_vld,
+  ctrl_cc_done
 );
 
-  input ctrl_clk;
-  input ctrl_rst;
-  input ctrl_cmd_vld;
-  input [6:0] ctrl_funct;
-  input ctrl_mem_req_rdy;
-  input ctrl_mem_resp_vld;
-  input ctrl_resp_rdy;
+  input            ctrl_clk;
+  input            ctrl_rst;
+  input            ctrl_cmd_vld;
+  input [6:0]      ctrl_funct;
+  input            ctrl_mem_req_rdy;
+  input            ctrl_mem_resp_vld;
+  input            ctrl_resp_rdy;
   
-  output reg ctrl_cmd_rdy;
-  output ctrl_cmd_go;
-  output reg ctrl_mem_req_vld;
+  output reg       ctrl_cmd_rdy;
+  output           ctrl_cmd_go;
+  output reg       ctrl_mem_req_vld;
   output reg [4:0] ctrl_mem_req_cmd;
-  output ctrl_mem_go;
-  output ctrl_mem_back;
-  output reg ctrl_mem_resp_sel;
-  output reg ctrl_resp_vld;
+  output           ctrl_mem_go;
+  output           ctrl_mem_back;
+  output reg       ctrl_rd_sel;
+  output reg       ctrl_resp_data_sel;
+  output reg       ctrl_mem_resp_sel;
+  output reg       ctrl_resp_vld;
+  output reg       ctrl_cc_done;
   
   // States Definition
-  parameter STATE_IDLE       = 3'd0;
-  parameter STATE_STORE      = 3'd1;
-  parameter STATE_STORE_WAIT = 3'd2;
-  parameter STATE_LOAD       = 3'd3;
-  parameter STATE_LOAD_WAIT  = 3'd4;
-  parameter STATE_DONE       = 3'd5;
+  parameter STATE_IDLE       = 4'd0;
+  parameter STATE_STORE      = 4'd1;
+  parameter STATE_STORE_WAIT = 4'd2;
+  parameter STATE_LOAD       = 4'd3;
+  parameter STATE_LOAD_WAIT  = 4'd4;
+  parameter STATE_DONE       = 4'd5;
+  parameter STATE_CC         = 4'd6; // CC stands for combinational calculation
   
   // State Advancement
-  reg [2:0] state_reg;
-  reg [2:0] next_state;
+  reg [3:0] state_reg;
+  reg [3:0] next_state;
 
   always @ (posedge ctrl_clk) begin
     if (ctrl_rst) begin
@@ -355,16 +412,18 @@ module mem_Accel_B_Ctrl
   end
   
   // State Advancement Calculations
-  wire resp_go;
+  wire ctrl_resp_go;
   
   assign ctrl_cmd_go  = ctrl_cmd_vld  && ctrl_cmd_rdy;
-  assign resp_go = ctrl_resp_vld && ctrl_resp_rdy;
+  assign ctrl_resp_go = ctrl_resp_vld && ctrl_resp_rdy;
   
   wire store_req;
   wire load_req;
+  wire cc_req;
   
   assign store_req = (ctrl_funct == 0) ? 1'b1 : 1'b0;
   assign load_req  = (ctrl_funct == 1) ? 1'b1 : 1'b0;
+  assign cc_req    = (ctrl_funct == 2) ? 1'b1 : 1'b0;
   
   wire ctrl_mem_go;
   wire ctrl_mem_back;
@@ -382,7 +441,11 @@ module mem_Accel_B_Ctrl
             if (ctrl_cmd_go && load_req) begin
               next_state = STATE_LOAD;
             end else begin
-              next_state = state_reg;
+              if (ctrl_cmd_go && cc_req) begin
+                next_state = STATE_CC;
+              end else begin
+                next_state = state_reg;
+              end
             end
           end
         end
@@ -420,71 +483,125 @@ module mem_Accel_B_Ctrl
         end
       STATE_DONE: 
         begin
-          if (resp_go) begin
+          if (ctrl_resp_go) begin
             next_state = STATE_IDLE;
           end else begin
             next_state = state_reg;
           end
         end
+      STATE_CC:
+        begin
+          next_state = STATE_DONE; // CC will surely be done in one cycle because it's COMBINATIONAL
+        end
     endcase
   end
   
   // State Outputs
-  parameter sel_load  = 1'b0;
-  parameter sel_store = 1'b1;
+  parameter sel_load          = 1'b0;
+  parameter sel_store         = 1'b1;
+  parameter sel_cc_rd         = 1'b0;
+  parameter sel_mem_rd        = 1'b1;
+  parameter sel_cc_resp_data  = 1'b0;
+  parameter sel_mem_resp_data = 1'b1;
   
   always @ (*) begin
     case ( state_reg )
       STATE_IDLE:
         begin
-          ctrl_cmd_rdy      = 1'b1;
-          ctrl_resp_vld     = 1'b0;
-          ctrl_mem_req_vld  = 1'b0;
-          ctrl_mem_req_cmd  = 5'bx;
-          ctrl_mem_resp_sel = 1'bx;
+          ctrl_cmd_rdy       = 1'b1;
+          ctrl_resp_vld      = 1'b0;
+          ctrl_mem_req_vld   = 1'b0;
+          ctrl_mem_req_cmd   = 5'bx;
+          ctrl_rd_sel        = 1'bx;
+          ctrl_resp_data_sel = 1'bx;
+          ctrl_mem_resp_sel  = 1'bx;
+          ctrl_cc_done       = 1'b0;
         end
       STATE_STORE:
         begin
-          ctrl_cmd_rdy      = 1'b0;
-          ctrl_resp_vld     = 1'b0;
-          ctrl_mem_req_vld  = 1'b1;
-          ctrl_mem_req_cmd  = 5'b1;
-          ctrl_mem_resp_sel = sel_store;
+          ctrl_cmd_rdy       = 1'b0;
+          ctrl_resp_vld      = 1'b0;
+          ctrl_mem_req_vld   = 1'b1;
+          ctrl_mem_req_cmd   = 5'b1;
+          ctrl_rd_sel        = sel_mem_rd;
+          ctrl_resp_data_sel = sel_mem_resp_data;
+          ctrl_mem_resp_sel  = sel_store;
+          ctrl_cc_done       = 1'b0;
         end
       STATE_STORE_WAIT:
         begin
-          ctrl_cmd_rdy      = 1'b0;
-          ctrl_resp_vld     = 1'b0;
-          ctrl_mem_req_vld  = 1'b0;
-          ctrl_mem_req_cmd  = 5'bx;
-          ctrl_mem_resp_sel = sel_store;
+          ctrl_cmd_rdy       = 1'b0;
+          ctrl_resp_vld      = 1'b0;
+          ctrl_mem_req_vld   = 1'b0;
+          ctrl_mem_req_cmd   = 5'bx;
+          ctrl_rd_sel        = sel_mem_rd;
+          ctrl_resp_data_sel = sel_mem_resp_data;
+          ctrl_mem_resp_sel  = sel_store;
+          ctrl_cc_done       = 1'b0;
         end  
       STATE_LOAD:
         begin
-          ctrl_cmd_rdy      = 1'b0;
-          ctrl_resp_vld     = 1'b0;
-          ctrl_mem_req_vld  = 1'b1;
-          ctrl_mem_req_cmd  = 5'b0;
-          ctrl_mem_resp_sel = sel_load;
+          ctrl_cmd_rdy       = 1'b0;
+          ctrl_resp_vld      = 1'b0;
+          ctrl_mem_req_vld   = 1'b1;
+          ctrl_mem_req_cmd   = 5'b0;
+          ctrl_rd_sel        = sel_mem_rd;
+          ctrl_resp_data_sel = sel_mem_resp_data;
+          ctrl_mem_resp_sel  = sel_load;
+          ctrl_cc_done       = 1'b0;
         end
       STATE_LOAD_WAIT:
         begin
-          ctrl_cmd_rdy      = 1'b0;
-          ctrl_resp_vld     = 1'b0;
-          ctrl_mem_req_vld  = 1'b0;
-          ctrl_mem_req_cmd  = 5'bx;
-          ctrl_mem_resp_sel = sel_load;
+          ctrl_cmd_rdy       = 1'b0;
+          ctrl_resp_vld      = 1'b0;
+          ctrl_mem_req_vld   = 1'b0;
+          ctrl_mem_req_cmd   = 5'bx;
+          ctrl_rd_sel        = sel_mem_rd;
+          ctrl_resp_data_sel = sel_mem_resp_data;
+          ctrl_mem_resp_sel  = sel_load;
+          ctrl_cc_done       = 1'b0;
         end
       STATE_DONE:
         begin
-          ctrl_cmd_rdy      = 1'b0;
-          ctrl_resp_vld     = 1'b1;
-          ctrl_mem_req_vld  = 1'b0;
-          ctrl_mem_req_cmd  = 5'bx;
-          ctrl_mem_resp_sel = 1'bx;
+          ctrl_cmd_rdy       = 1'b0;
+          ctrl_resp_vld      = 1'b1;
+          ctrl_mem_req_vld   = 1'b0;
+          ctrl_mem_req_cmd   = 5'bx;
+          ctrl_rd_sel        = 1'bx;
+          ctrl_resp_data_sel = 1'bx;
+          ctrl_mem_resp_sel  = 1'bx;
+          ctrl_cc_done       = 1'b0;
+        end
+      STATE_CC:
+        begin
+          ctrl_cmd_rdy       = 1'b0;
+          ctrl_resp_vld      = 1'b0;
+          ctrl_mem_req_vld   = 1'b0;
+          ctrl_mem_req_cmd   = 5'bx;
+          ctrl_rd_sel        = sel_cc_rd;
+          ctrl_resp_data_sel = sel_cc_resp_data;
+          ctrl_mem_resp_sel  = 1'bx;
+          ctrl_cc_done       = 1'b1;
         end
     endcase
   end
+
+endmodule
+
+module vc_Adder
+#(
+  parameter p_nbits = 1
+)(
+  in0,
+  in1,
+  out
+);
+
+  input  [p_nbits-1:0] in0;
+  input  [p_nbits-1:0] in1;
+  output [p_nbits-1:0] out;
+
+  assign out = in0 + in1;
 
 endmodule
   

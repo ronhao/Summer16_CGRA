@@ -22,9 +22,9 @@ module mem_Accel_B
   // Wires to Core
   input  [159:0]   cmd;
   input            cmd_vld;
-  output reg           cmd_rdy;
+  output           cmd_rdy;
   output [73:0]    resp;
-  output reg          resp_vld;
+  output           resp_vld;
   input            resp_rdy;
   
   // Wires to Mem
@@ -59,8 +59,8 @@ module mem_Accel_B
   assign rs2_data    = cmd[159:96];
   
   // Generate the resp wires
-  reg [63:0] resp_data;
-  reg [4:0]  resp_rd;
+  wire [63:0] resp_data;
+  wire [4:0]  resp_rd;
   wire        SampleAccel_io_mem_req_valid;
   wire        SampleAccel_io_autl_acquire_valid;
   wire        ClientTileLinkIOArbiter_io_in_1_acquire_ready;
@@ -86,13 +86,13 @@ module mem_Accel_B
   assign SampleAccel_io_busy = 1'b0;
   
   // Generate the mem req wires
-  reg [39:0] mem_req_addr;
+  wire [39:0] mem_req_addr;
   wire [9:0]  mem_req_tag;
-  reg [4:0]  mem_req_cmd;
-  reg [2:0]  mem_req_typ;
+  wire [4:0]  mem_req_cmd;
+  wire [2:0]  mem_req_typ;
   wire        mem_req_kill;
   wire        mem_req_phys;
-  reg [63:0] mem_req_data;
+  wire [63:0] mem_req_data;
   
   assign mem_req_tag  = 10'b0;
   assign mem_req_kill = 1'b0;
@@ -134,11 +134,11 @@ module mem_Accel_B
   
   // Wires between DPath and Ctrl
   wire cmd_go_ctrl_to_dpath;
-  reg mem_req_vld_ctrl_to_dpath;
-  reg [4:0] mem_req_cmd_ctrl_to_dpath;
+  wire mem_req_vld_ctrl_to_dpath;
+  wire [4:0] mem_req_cmd_ctrl_to_dpath;
   wire mem_go_ctrl_to_dpath;
   wire mem_back_ctrl_to_dpath;
-  reg mem_resp_sel_ctrl_to_dpath;
+  wire mem_resp_sel_ctrl_to_dpath;
   
   mem_Accel_B_DPath mem_accel_b_dpath
   (
