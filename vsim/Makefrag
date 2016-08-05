@@ -12,21 +12,6 @@ sim_vsrcs = \
 	$(base_dir)/vsrc/backup_mem.v \
 	$ accel_src/mem_Accel_B.v \
 	$ accel_src/module_src.v \
-	#$ accel_src/digitrec_rtl_wrapper.v \
-	#$ accel_src/digitrec_rtl.v \
-	#$ accel_src/digitrec_RAM_10X32_2.v \
-	#$ accel_src/digitrec_RAM_1800X49_1.v \
-	#$ accel_src/digitrec_ROM_1800X49_training_data_0.v \
-	#$ accel_src/digitrec_ROM_1800X49_training_data_1.v \
-	#$ accel_src/digitrec_ROM_1800X49_training_data_2.v \
-	#$ accel_src/digitrec_ROM_1800X49_training_data_3.v \
-	#$ accel_src/digitrec_ROM_1800X49_training_data_4.v \
-	#$ accel_src/digitrec_ROM_1800X49_training_data_5.v \
-	#$ accel_src/digitrec_ROM_1800X49_training_data_6.v \
-	#$ accel_src/digitrec_ROM_1800X49_training_data_7.v \
-	#$ accel_src/digitrec_ROM_1800X49_training_data_8.v \
-	#$ accel_src/digitrec_ROM_1800X49_training_data_9.v \
-
 
 # C sources
 
@@ -78,6 +63,7 @@ $(simv) : $(sim_vsrcs) $(sim_csrcs) $(sim_dir)/libdramsim.a $(consts_header)
 	rm -rf csrc && \
 	$(VCS) $(VCS_OPTS) -o $(simv) \
   +vcs+vcdpluson -debug_pp \
+  #-debug_pp \
 
 simv_debug = $(sim_dir)/simv-$(MODEL)-$(CONFIG)-debug
 $(simv_debug) : $(sim_vsrcs) $(sim_csrcs) $(sim_dir)/libdramsim.a $(consts_header)
